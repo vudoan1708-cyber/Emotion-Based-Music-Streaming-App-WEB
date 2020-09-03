@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music App</title>
+</head>
+<body>
+    <h2>Test Case 1: Search for Songs by Titles and Search for User Profiles</h2>
+    <div>
+        <label>Song Title</label>
+        <input type="text" id="song_title" aria-label="input text field"/><br />
+
+        <label>Artist</label>
+        <input type="text" id="artist_name" aria-label="input text field"/><br /><br />
+
+        <!-- Buttons -->
+        <button onclick="getToken(1)">Search</button>
+    </div>
+
+    <div>
+        <button onclick="getToken(2)">User Detail</button>
+    </div>
+
+    <!-- Valence and Energy Level input -->
+    <br /><br />
+    <h2>Test Case 2: Search for Songs by Valence Level Conveyed from them</h2>
+    <div>
+        <label>Valence</label>
+        <input type="number" id="valenceLv" aria-label="input number field"/><br /><br />
+
+        <!-- Buttons -->
+        <button onclick="getToken(3)">Enter</button>
+    </div>
+
+    <!-- <script src="https://sdk.scdn.co/spotify-player.js"></script> -->
+    <script src="sketch.js"></script>
+</body>
+</html>
