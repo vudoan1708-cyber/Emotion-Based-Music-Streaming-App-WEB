@@ -1,4 +1,10 @@
-let lyricsData = null;
+let lyricsData = null,
+    mood = '';
+
+// ERROR HANDLING
+function errHandling(err) {
+    console.log(err);
+}
 
 // GET AN ACTIVE DEVICE ID
 async function getDeviceId(accessToken) {
@@ -15,13 +21,29 @@ async function getDeviceId(accessToken) {
         }
     }
 
-    const request = await fetch(URL, options);
-    const device = await request.json();
+    // try to fetch the url
+    try {
+        const request = await fetch(URL, options);
+        const device = await request.json();
+        
+        // check if there is any available device
+        if (device.devices.length > 0) {
 
-    // currently active device
-    const currentDeviceId = device.devices[0].id;
-    
-    return currentDeviceId;
+            // check if the device is active
+            if (device.devices[0].is_active) {
+
+                // currently available device
+                const currentDeviceId = device.devices[0].id;
+                return currentDeviceId;
+            } else return null;
+            
+        } else return '';
+        
+
+    // catch error
+    } catch(err) {
+        errHandling(err);
+    }
 }
 
 // PLAY SONGS FROM SPOTIFY USING WEB API
@@ -30,30 +52,44 @@ async function songPlayer(accessToken, id) {
     // get a string that represents a device id
     const device_id = await getDeviceId(accessToken);
 
-    // get the url
-    const BASE_URL = 'https://api.spotify.com/v1/me/player/play?',
-          FETCH_URL = BASE_URL + 'q=' + device_id;
-          
-    // create a data instance
-    const data = {
-        'uris': ['spotify:track:' + id]
-    };
+    // check if the returned device id is null
+    if (device_id === null)
+        errHandling('NO ACTIVE DEVICE');
 
-    // create an options instance
-    const options = {
-        method: 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken
-        },
-        body: JSON.stringify(data)
-    };
+    // otherwise
+    else {
 
-    // fetch it
-    const request = await fetch(FETCH_URL, options);
-    const json = await request.json();
-    console.log(json);
+        // get the url
+        const BASE_URL = 'https://api.spotify.com/v1/me/player/play?',
+            FETCH_URL = BASE_URL + 'q=' + device_id;
+            
+        // create a data instance
+        const data = {
+            'uris': ['spotify:track:' + id]
+        };
+
+        // create an options instance
+        const options = {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
+            body: JSON.stringify(data)
+        };
+
+        // try to fetch it
+        try {
+            const request = await fetch(FETCH_URL, options);
+            const json = await request.json();
+            console.log(json);
+
+        // catch error
+        } catch(err) {
+            errHandling(err);
+        }
+    }
 }
 
 // GET SONG TITLE THROUGH LYRICS
@@ -78,13 +114,11 @@ async function getAPI() {
     const API_KEY = await request.json();
 
     // call the getLyrics function
-    await getLyrics("I love you baby and if it's quite alright I need you baby", API_KEY);
+    await getLyrics("anh muốn được cùng em về vùng biển vắng", API_KEY);
 }
 
-
-
 // GET AUDIO FEATURE THROUGH A PROVIDED ID OF A SONG
-async function getAudioFeature(id, accessToken, available) {
+async function getAudioFeature(id, accessToken, available, search) {
 
     // get the url
     const BASE_URL = 'https://api.spotify.com/v1/audio-features/',
@@ -99,37 +133,57 @@ async function getAudioFeature(id, accessToken, available) {
     };
 
     // fetch the url with the provided options
-    const request = await fetch(FETCH_URL, options);
-    const audio_value = await request.json();
-    console.log(audio_value);
+    try {
+        const request = await fetch(FETCH_URL, options);
+        const audio_value = await request.json();
+        console.log(audio_value);
 
-    // check if a user's playlist is empty
-    if (!available) {
+        // check if a user's playlist is empty and the workflow of find songs is random
+        if (!available && !search) {
 
-        // check if the songs's valence level is less than a requested value
-        if (audio_value.valence < valenceLv.value) {
+            // check if the songs's valence level is less than a requested value
+            if (audio_value.valence < valenceLv.value) {
 
-            // redo the workflow
-            getToken(3);
+                // redo the workflow
+                getToken(3);
 
-        // otherwise
-        } else {
+            // otherwise
+            } else {
+
+                // play the found song
+                songPlayer(accessToken, id);
+            }
+
+        // otherwise, if a user's playlist is empty but a searched keyword is found
+        } else if (!available && search) {
 
             // play the found song
             songPlayer(accessToken, id);
+
+        // otherwise, if a user's playlist is available but a searched keyword is not found
+        } else if (available && !search) {
+
+            // check if the songs's valence level is less than a requested value
+            if (audio_value.valence < valenceLv.value) {
+
+                // redo the workflow
+                getToken(3);
+
+            // otherwise
+            } else {
+
+                // play the found song
+                songPlayer(accessToken, id);
+            }
         }
-
-    // otherwise
-    } else {
-
-        // play the found song
-        songPlayer(accessToken, id);
+    } catch(err) {
+        errHandling(err);
     }
 }
 
 
-// SONGS AVAILABLE IN USERS' PLAYLIST
-async function songsAvailable(accessToken, BASE_URL) {
+// SEARCH SONGS
+async function searchSongsByKeywords(accessToken, BASE_URL) {
 
     // get the song title and artist name from the input field
     let title = song_title.value,
@@ -150,15 +204,84 @@ async function songsAvailable(accessToken, BASE_URL) {
     };
 
     // fetch the url with provided options
-    const request = await fetch(FETCH_URL, options);
-    const json = await request.json();
-    console.log(json);
+    try {
+        const request = await fetch(FETCH_URL, options);
+        const json = await request.json();
+        const status = request.status;
+        
+        // check for the expiry of an access token
+        if (status !== 401) {
 
-    // get the song's id
-    const id = json.tracks.items[0].id;
+            // get the song's id
+            const id = json.tracks.items[0].id;
 
-    // pass the id to the getAudioFeature func
-    getAudioFeature(id, accessToken, true);
+            // pass the id to the getAudioFeature func, no tracks but with searches
+            getAudioFeature(id, accessToken, false, true);
+        } else {
+
+            redirectToAuth(status, 'Timeout!!! Please log back into your account');
+        }
+    } catch(err) {
+        errHandling(err);
+    }
+}
+
+// FIND A TRACK FROM A PLAYLIST
+async function getATrackFromAPlaylist(accessToken, tracks) {
+
+    // create an options instance
+    const options = {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    };
+
+    // try make a request
+    try {
+
+        const request = await fetch(tracks, options);
+        const track_info = await request.json();
+        
+        // find a random track
+        const random_item = Math.floor(Math.random() * track_info.items.length);
+        const track_uri = track_info.items[random_item].track.href;
+        
+        return track_uri;
+
+    // catch error
+    } catch(err) {
+        errHandling(err);
+    }
+}
+
+// SONGS AVAILABLE IN USERS' PLAYLIST
+async function songsAvailable(accessToken, tracks) {
+
+    const track_uri = await getATrackFromAPlaylist(accessToken, tracks);
+    
+    // create an options instance
+    const options = {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    }
+
+    // try making a request
+    try {
+
+        const request = await fetch(track_uri, options);
+        const song = await request.json();
+
+        // get the song's id
+        const id = song.id;
+
+        // pass the id to the getAudioFeature func, with tracks, and no searches
+        getAudioFeature(id, accessToken, true, false);
+    } catch(err) {
+        errHandling(err);
+    }
 }
 
 // GET A RANDOM CHARACTER
@@ -197,42 +320,42 @@ async function songsNotAvailable(accessToken, BASE_URL) {
     };
 
     // fetch the url with provided options
-    const request = await fetch(FETCH_URL, options);
-    const json = await request.json();
-    console.log(json);
+    try {
+        const request = await fetch(FETCH_URL, options);
+        const json = await request.json();
+        console.log(json);
 
-    // get the song's id
-    const id = json.tracks.items[Math.floor(Math.random() * lim)].id;
+        // get the song's id
+        const id = json.tracks.items[Math.floor(Math.random() * lim)].id;
 
-    // pass the id to the getAudioFeature func
-    getAudioFeature(id, accessToken, false);
-}
-
-
-// GET SONG ID
-async function getSongID(accessToken, num) {
-
-    // base URL
-    const BASE_URL = 'https://api.spotify.com/v1/search?';
-
-    // check for which button is pressed
-    // if button 1
-    // check for input of a song's name and search it
-    if (num == 1) {
-
-        songsAvailable(accessToken, BASE_URL);
-
-    // otherwise
-    // get a random character for a random song search
-    } else if (num == 3) {
-
-        songsNotAvailable(accessToken, BASE_URL);
+        // pass the id to the getAudioFeature func, no tracks, and no searches
+        getAudioFeature(id, accessToken, false, false);
+    } catch(err) {
+        errHandling(err);
     }
 }
 
+// REDIRECT USER BACK TO THE AUTHORISATION PAGE WHEN AN ACCESS TOKEN IS EXPIRED
+async function redirectToAuth(status, message) {
+
+    // fetch an endpoint from the server side to get an uri
+    // to reload the authorisation page
+    const requestAuth = await fetch('/reload/');
+    const AUTH_URI = await requestAuth.json();
+    location.href = AUTH_URI;
+    console.log('Error Code: ' + status + '\n' + message);
+}
+
+function searchOnUserPlaylist() {
+
+    // if a radio button that reppresents an option of playing songs on playlists is true
+    if (radio_btn1.checked && !radio_btn2.checked) {
+        return true;
+    } else return false;
+}
 
 // GET USER PROFILE
-async function getUserPlaylists(accessToken) {
+async function getUserPlaylists(accessToken, BASE_URL) {
 
     // get the url
     const URL = 'https://api.spotify.com/v1/me/playlists';
@@ -245,11 +368,73 @@ async function getUserPlaylists(accessToken) {
         } 
     };
     
-    const request = await fetch(URL, options);
-    const json = await request.json();
-    console.log(json);
+    // try fetching it
+    try {
+        const request = await fetch(URL, options);
+        const playlists = await request.json();
+        const status = request.status;
+
+        // check for the expiry of an access token
+        if (status !== 401) {
+        
+            // if there are available playlists in a user account
+            if (playlists.items.length > 0) {
+
+                // get a random number
+                const random_item = Math.floor(Math.random() * playlists.items.length);
+
+                // find all tracks from a random playlist
+                const tracks = playlists.items[random_item].tracks.href;
+                
+                // find out if the user wants to play songs on their playlist
+                // or play those off the playlist
+                const onUserPlaylist = searchOnUserPlaylist();
+                
+                if (onUserPlaylist)
+                    songsAvailable(accessToken, tracks);
+                else songsNotAvailable(accessToken, BASE_URL);
+
+            // otherwise
+            } else {
+                songsNotAvailable(accessToken, BASE_URL);
+            }
+
+        // if the access token is expired
+        } else {
+
+            // redirect back to the authorisation page
+            redirectToAuth(status, 'Timeout!!! Please log back into your account');
+        }
+
+    // catch error
+    } catch(err) {
+        errHandling(err);
+    }
 }
 
+// GET SONG ID
+async function getSongID(accessToken, num) {
+
+    // base URL
+    const BASE_URL = 'https://api.spotify.com/v1/search?';
+
+    // check for which button is pressed
+    // if button 1
+    // check for input of a song's name and search it
+    if (num == 1) {
+
+        searchSongsByKeywords(accessToken, BASE_URL);
+
+    // otherwise
+    // search random songs
+    } else if (num == 3) {
+
+        // first of all, find out if there is a playlist in a user's account
+        // if not, search songs with random keywords
+        // otherwise, search songs randomly on his / her playlist
+        getUserPlaylists(accessToken, BASE_URL);
+    }
+}
 
 // GET SPOTIFY TOKEN NUMBER
 async function getToken(num) {
@@ -269,11 +454,6 @@ async function getToken(num) {
     else if (num == 3)
         await getSongID(TOKEN, num);
 }
-
-
-// initialise the function as the website starts to get the web SDK defined first
-// without using an actual access token
-// songPlayer(null);
 
 // getAPI()
 //     .then(() => { console.log(lyricsData.message.body) });

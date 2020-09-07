@@ -32,11 +32,12 @@ app.get('/api/', (req, res) => {
     res.json(API_KEY);
 });
 
-// get random character
-app.get('/random/', (req, res) => {
+// get the uri for automatic reload to the authorisation page
+app.get('/reload/', (req, res) => {
 
-    // grasp the headers
-    const headers = req.headers;
+    // get the uri from dotenv
+    const AUTH_URI = process.env.AUTH_URI;
 
-    // const FETCH_URL = 
+    // create a response to the client side
+    res.json(AUTH_URI);
 })
