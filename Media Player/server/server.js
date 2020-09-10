@@ -36,7 +36,7 @@ app.get('/api/', (req, res) => {
 app.get('/reload/', (req, res) => {
 
     // get the uri from dotenv
-    const AUTH_URI = process.env.AUTH_URI;
+    const AUTH_URI = process.env.AUTH_URI || 'http://localhost:8888';
 
     // create a response to the client side
     res.json(AUTH_URI);
