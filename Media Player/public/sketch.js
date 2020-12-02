@@ -1,5 +1,7 @@
-let lyricsData = null;
-let mood = '';
+import getUserEmotion from './components/emotion.js';
+
+let lyricsData = null,
+    moodScr = 0;
 
 // ERROR HANDLING
 function errHandling(err) {
@@ -9,130 +11,152 @@ function errHandling(err) {
         window.open('https://open.spotify.com/');
     }
 }
+function hashURL () {
+    const splittedString = window.location.search.split('=');
+    const result = splittedString[splittedString.length - 1];
+    
+    return result;
+}
+
+// Set up the Web Playback SDK
+
+// Set token
+const TOKEN = 'BQAQ8XDnGPbbOGGwKIUSubI0jWoJHQaO4GmIVFkPwiLADuTYvPjUKIvHLJV8Pe-7XmQgbbbbb37suaB4ouTDnngP6YZhDEzWqAvZxvnwcSpzKyxWfNObl0Qc1ry7EfOr7t6hgx5zI6uElq3rmc7TkIV3_E7z25T--f7WEaZpwqj0bHLRaTHgLmIIFbm2QOsi_DNasa1P-kT3NPRRTYKuDazk1hvciReSo-uzs7HIuNHIOkg675m0-g';
+
+window.onSpotifyPlayerAPIReady = () => {
+    const player = new Spotify.Player({
+      name: 'Web Playback SDK Template',
+      getOAuthToken: cb => { cb(TOKEN); }
+    });
+  
+    // Error handling
+    player.on('initialization_error', e => console.error(e));
+    player.on('authentication_error', e => console.error(e));
+    player.on('account_error', e => console.error(e));
+    player.on('playback_error', e => console.error(e));
+  
+    // Playback status updates
+    // player.on('player_state_changed', state => {
+    //   console.log(state)
+    //   $('#current-track').attr('src', state.track_window.current_track.album.images[0].url);
+    //   $('#current-track-name').text(state.track_window.current_track.name);
+    // });
+  
+    // Ready
+    player.on('ready', data => {
+      console.log('Ready with Device ID', data.device_id);
+  
+      getEmotion(data.device_id);
+    });
+  
+    // Connect to the player!
+    player.connect();
+}
+  
+  // Play a specified track on the Web Playback SDK's device ID
+//   function playSong(device_id) {
+//     $.ajax({
+//      url: "https://api.spotify.com/v1/me/player/play?device_id=" + device_id,
+//      type: "PUT",
+//      data: '{"uris": ["spotify:track:5ya2gsaIhTkAuWYEMB0nw5"]}',
+//      beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + _token );},
+//      success: function(data) { 
+//        console.log(data)
+//      }
+//     });
+//   }
 
 
-// GET AN ACTIVE DEVICE ID
-async function getDeviceId(accessToken) {
+// Play a track using our new device ID
+async function playSong(accessToken, device_id, tempPlaylist) {
 
-    // get the url
-    const URL = 'https://api.spotify.com/v1/me/player/devices'
+    const data = {
+        'uris': tempPlaylist,
+        'play': true,
+    };
+
+    const BASE_URL = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`;
 
     const options = {
-        method: 'GET',
+        method: 'PUT',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + accessToken
-        }
-    }
+        },
+        body: JSON.stringify(data),
+    };
 
-    // try to fetch the url
     try {
-        const request = await fetch(URL, options);
-        const device = await request.json();
-        
-        // check if there is any available device
-        if (device.devices.length > 0) {
+        const response = await fetch(BASE_URL, options);
+        const json = await response.json();
+        console.log(json);
 
-            // check if the device is active
-            if (device.devices[0].is_active) {
-
-                // currently available device
-                const currentDeviceId = device.devices[0].id;
-                return currentDeviceId;
-            } else return null;
-            
-        } else return '';
-        
-
-    // catch error
     } catch(err) {
         errHandling(err);
     }
 }
 
-// PLAY SONGS FROM SPOTIFY USING WEB API
-async function songPlayer(accessToken, id) {
+// const audio = document.getElementById('player');
 
-    // get a string that represents a device id
-    const device_id = await getDeviceId(accessToken);
+// // PLAY SONGS FROM SPOTIFY USING WEB API
+// async function songPreview(accessToken, id) {
 
-    // check if the returned device id is null
-    if (device_id === null || device_id === '')
-        errHandling('NO ACTIVE DEVICE');
+//     let songHolders = [];
+//     const oldSource = document.getElementsByTagName('source');
+//     console.log(oldSource)
+//     console.log(oldSource.length)
 
-    // otherwise
-    else {
+//     // check for a single id 
+//     if (typeof(id) === 'string') {
+        
 
-        // get the url
-        const BASE_URL = 'https://api.spotify.com/v1/me/player/play?',
-              FETCH_URL = BASE_URL + 'q=' + device_id;
+//     // or a collection of ids
+//     } else {
+        
+//         // loop through the array
+//         for (let i = 0; i < id.length; i++) {
 
-        // check for a single id 
-        if (typeof(id) === 'string') {
-            
-            // create a data instance
-            const data = {
-                'uris': ['spotify:track:' + id]
-            };
+//             // create div tags
+//             songHolders[i] = document.createElement('div');
+//             songHolders[i].innerHTML = titles[i];
+//             songHolders[i].style.display = 'inline-block';
+//             songHolders[i].style.backgroundColor = 'rgb(111, 97, 255)';
+//             songHolders[i].style.color = 'white';
+//             songHolders[i].style.margin = '10px';
+//             songHolders[i].style.padding = '10px';
 
-            // create an options instance
-            const options = {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + accessToken
-                },
-                body: JSON.stringify(data)
-            };
+//             // append to the DOM
+//             document.body.appendChild(songHolders[i]);
+//             console.log(preview_urls);
 
-            // try to fetch it
-            try {
-                const request = await fetch(FETCH_URL, options);
-                const json = await request.json();
-                console.log(json);
+//             // add a global event listener
+//             songHolders[i].addEventListener('click', () => {
 
-            // catch error
-            } catch(err) {
-                errHandling(err);
-            }
+//                 if (oldSource.length > 0) {
+//                     for (let n = 0; n < oldSource.length; n++) {
+//                         oldSource[n].remove();
+//                     }
+//                 }
+//                 const player = document.createElement('source');
 
-        // or a collection of ids
-        } else {
-            
-            // create a data instance
-            const data = {
-                'uris': id
-            };
+//                 player.src = preview_urls[i];
 
-            // create an options instance
-            const options = {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + accessToken
-                },
-                body: JSON.stringify(data)
-            };
+//                 audio.load(); //call this to just preload the audio without playing
 
-            // try to fetch it
-            try {
-                const request = await fetch(FETCH_URL, options);
-                const json = await request.json();
-                console.log(json);
+//                 audio.play(); //call this to play the song right away
 
-            // catch error
-            } catch(err) {
-                errHandling(err);
-            }
-        }
-    }
-}
+//                 audio.appendChild(player);
+//             });
+//         }
+//     }
+// }
+
+let preview_urls = [], 
+    titles = [];
 
 // MAKE A TEMPORARY PLAYLIST OF SONGS FOR THE CUURENT MOOD
-function makeATempPlaylist(accessToken, id, tempPlaylist) {
+function makeATempPlaylist(accessToken, id, preview_url, title, tempPlaylist, device_id) {
 
     // re-format the id
     id = 'spotify:track:' + id;
@@ -149,7 +173,7 @@ function makeATempPlaylist(accessToken, id, tempPlaylist) {
                 if (id === tempPlaylist[i]) {
                     
                     // redo the workflow
-                    getSongID(accessToken, 3, tempPlaylist);
+                    getSongID(accessToken, tempPlaylist, device_id);
 
                     break;
                 } else {
@@ -160,8 +184,14 @@ function makeATempPlaylist(accessToken, id, tempPlaylist) {
                         // append the song's id to the array
                         tempPlaylist.push(id);
 
+                        preview_urls.push(preview_url);
+
+                        titles.push(title);
+
+                        console.log(tempPlaylist.length + 1);
+
                         // redo the workflow from getting a song's id, since we already have an access token
-                        getSongID(accessToken, 3, tempPlaylist);
+                        getSongID(accessToken, tempPlaylist, device_id);
 
                         break;
                     }
@@ -171,8 +201,9 @@ function makeATempPlaylist(accessToken, id, tempPlaylist) {
         // if the array's length reaches the limit
         } else {
             
-            // play the found songs
-            songPlayer(accessToken, tempPlaylist);
+            // Play a track using our new device ID
+            playSong(accessToken, device_id, tempPlaylist);
+            console.log(tempPlaylist);
         }
 
     // if the array is empty
@@ -180,40 +211,36 @@ function makeATempPlaylist(accessToken, id, tempPlaylist) {
     
         // append the song's id to the array
         tempPlaylist.push(id);
+        
+        preview_urls.push(preview_url);
+
+        titles.push(title);
 
         // redo the workflow
-        getSongID(accessToken, 3, tempPlaylist);
+        getSongID(accessToken, tempPlaylist, device_id);
     }
 }
 
 // GET SONG TITLE THROUGH LYRICS
-async function getLyrics(lyrics, apiKey) {
+// async function getLyrics(lyrics, apiKey) {
 
-    // get the URL
-    const URL = `http://api.musixmatch.com/ws/1.1/track.search?q_lyrics=${lyrics}&apikey=${apiKey}`
+//     // get the URL
+//     const URL = `http://api.musixmatch.com/ws/1.1/track.search?q_lyrics=${lyrics}&apikey=${apiKey}`
 
-    // fetch it
-    const request = await fetch(URL);
-    lyricsData = await request.json();
-    return lyricsData;
-}
+//     // fetch it
+//     const request = await fetch(URL);
+//     lyricsData = await request.json();
+//     return lyricsData;
+// }
 
-// GET THE API_KEY STORED FROM THE SERVESIDE
-async function getAPI() {
-
-    // fetch the endpoint from the server side
-    const request = await fetch('/api/');
-
-    // pass the api key to a local variable
-    const API_KEY = await request.json();
-
-    // call the getLyrics function
-    await getLyrics("anh muốn được cùng em về vùng biển vắng", API_KEY);
-}
 
 // GET AUDIO FEATURE THROUGH A PROVIDED ID OF A SONG
-async function getAudioFeature(id, accessToken, available, search, tempPlaylist) {
+async function getAudioFeature(id, preview_url, title, accessToken, available, search, tempPlaylist, device_id) {
 
+    // convert a string from  object to a number that represents a user's emotion
+    const user_emotion = await getUserEmotion();
+    console.log(user_emotion.valence, user_emotion.arousal)
+    
     // get the url
     const BASE_URL = 'https://api.spotify.com/v1/audio-features/',
           FETCH_URL = BASE_URL + id;
@@ -229,32 +256,32 @@ async function getAudioFeature(id, accessToken, available, search, tempPlaylist)
     // fetch the url with the provided options
     try {
         const request = await fetch(FETCH_URL, options);
-        const audio_value = await request.json();
-        console.log(audio_value);
+        const song_emotion = await request.json();
+        console.log(song_emotion.valence.toFixed(3), song_emotion.energy.toFixed(3));
+        // console.log(song_emotion)
 
         // check if a user's playlist is empty and the workflow of find songs is random
         // or, if a user's playlist is available but a searched keyword is not found
         if (!available && !search || available && !search) {
 
-            // check if the songs's valence level is less than a requested value
-            if (audio_value.valence < Number(valenceLv.value)) {
-
-                // redo the workflow, from getting a song's id,
-                // as an access token has been taken since the initialisation
-                getSongID(accessToken, 3, tempPlaylist);
-
-            // otherwise
-            } else {
+            // CATEGORISING DIFFERENT EMOTION VALUES
+            // happy
+            if (user_emotion.valence > song_emotion.valence.toFixed(2) - 0.4 || user_emotion.valence < song_emotion.valence.toFixed(2) + 0.4
+                && user_emotion.arousal > song_emotion.energy.toFixed(2) - 0.4 || user_emotion.arousal < song_emotion.energy.toFixed(2) + 0.4)
 
                 // make a temporary playlist for the mood
-                makeATempPlaylist(accessToken, id, tempPlaylist);
-            }
+                makeATempPlaylist(accessToken, id, preview_url, title, tempPlaylist, device_id);
+
+            // otherwise
+            // redo the workflow, from getting a song's id,
+            // as an access token has been taken since the initialisation
+            else getSongID(accessToken, tempPlaylist, device_id);
 
         // otherwise, if a user's playlist is empty but a searched keyword is found
         } else if (!available && search) {
 
             // play the found song
-            songPlayer(accessToken, id);
+            songPreview(accessToken, id);
         }
     } catch(err) {
         errHandling(err);
@@ -347,7 +374,7 @@ async function getATrackFromAPlaylist(accessToken, tracks) {
 }
 
 // SONGS AVAILABLE IN USERS' PLAYLIST
-async function songsAvailable(accessToken, tracks, tempPlaylist) {
+async function songsAvailable(accessToken, tracks, tempPlaylist, ) {
 
     const track_uri = await getATrackFromAPlaylist(accessToken, tracks);
     
@@ -388,16 +415,19 @@ function getRandomCharacter() {
 }
 
 // NO SONGS AVAILABLE IN USERS' PLAYLIST
-async function songsNotAvailable(accessToken, BASE_URL, tempPlaylist) {
+async function songsNotAvailable(accessToken, BASE_URL, tempPlaylist, device_id) {
 
     // search limit
     const lim = 10;
 
     // random character
     const randomChar = getRandomCharacter();
+
+    // market
+    const MARKET = 'from_token';
     
     // query params
-    const QUERY = randomChar + '&type=track&limit=' + lim;
+    const QUERY = randomChar + `&type=track&market=${MARKET}&limit=${lim}`;
 
     // get the url
     const FETCH_URL = BASE_URL + 'q=' + QUERY;
@@ -414,13 +444,19 @@ async function songsNotAvailable(accessToken, BASE_URL, tempPlaylist) {
     try {
         const request = await fetch(FETCH_URL, options);
         const json = await request.json();
-        console.log(json);
 
         // get the song's id
-        const id = json.tracks.items[Math.floor(Math.random() * lim)].id;
+        const random_value = Math.floor(Math.random() * lim);
+
+        const id = json.tracks.items[random_value].id;
+        const preview_url = json.tracks.items[random_value].preview_url;
+        const title = json.tracks.items[random_value].name;
+        console.log(json.tracks.items[random_value]);
+
+        console.log(id);
 
         // pass the id to the getAudioFeature func, no tracks, and no searches
-        getAudioFeature(id, accessToken, false, false, tempPlaylist);
+        getAudioFeature(id, preview_url, title, accessToken, false, false, tempPlaylist, device_id);
     } catch(err) {
         errHandling(err);
     }
@@ -435,7 +471,7 @@ function searchOnUserPlaylist() {
 }
 
 // GET USER PROFILE
-async function getUserPlaylists(accessToken, BASE_URL, tempPlaylist) {
+async function getUserPlaylists(accessToken, BASE_URL, tempPlaylist, device_id) {
 
     // get the url
     const URL = 'https://api.spotify.com/v1/me/playlists';
@@ -471,12 +507,12 @@ async function getUserPlaylists(accessToken, BASE_URL, tempPlaylist) {
                 const onUserPlaylist = searchOnUserPlaylist();
                 
                 if (onUserPlaylist)
-                    songsAvailable(accessToken, tracks, tempPlaylist);
-                else songsNotAvailable(accessToken, BASE_URL, tempPlaylist);
+                    songsAvailable(accessToken, tracks, tempPlaylist, );
+                else songsNotAvailable(accessToken, BASE_URL, tempPlaylist, device_id);
 
             // otherwise
             } else {
-                songsNotAvailable(accessToken, BASE_URL, tempPlaylist);
+                songsNotAvailable(accessToken, BASE_URL, tempPlaylist, device_id);
             }
 
         // if the access token is expired
@@ -493,7 +529,7 @@ async function getUserPlaylists(accessToken, BASE_URL, tempPlaylist) {
 }
 
 // GET SONG ID
-async function getSongID(accessToken, num, tempPlaylist) {
+async function getSongID(accessToken, tempPlaylist, device_id) {
 
     // base URL
     const BASE_URL = 'https://api.spotify.com/v1/search?';
@@ -501,41 +537,47 @@ async function getSongID(accessToken, num, tempPlaylist) {
     // check for which button is pressed
     // if button 1
     // check for input of a song's name and search it
-    if (num == 1) {
+    // if (num == 1) {
 
-        searchSongsByKeywords(accessToken, BASE_URL);
+    //     searchSongsByKeywords(accessToken, BASE_URL);
 
-    // otherwise
-    // search random songs
-    } else if (num == 3) {
+    // // otherwise
+    // // search random songs
+    // } else if (num == 3) {
 
-        // first of all, find out if there is a playlist in a user's account
-        // if not, search songs with random keywords
-        // otherwise, search songs randomly on his / her playlist
-        getUserPlaylists(accessToken, BASE_URL, tempPlaylist);
-    }
+    //     // first of all, find out if there is a playlist in a user's account
+    //     // if not, search songs with random keywords
+    //     // otherwise, search songs randomly on his / her playlist
+    //     getUserPlaylists(accessToken, BASE_URL, tempPlaylist);
+    // }
+    getUserPlaylists(accessToken, BASE_URL, tempPlaylist, device_id);
 }
 
-// GET SPOTIFY TOKEN NUMBER
-async function getToken(num) {
 
-    // create an empty array for a temporary playlist
-    let tempPlaylist = [];
+// GET A USER'S EMOTION FROM EMOTION.JS FILE
+async function getEmotion(device_id) {
 
-    // get the query string and split it using the = sign as a separator
-    const splitted_queryString = location.search.split('=');
-    
-    // get the access token
-    const TOKEN = splitted_queryString[splitted_queryString.length - 1];
+    // if detecting is yet to be true
+    // if (!detecting) {
+    //     setTimeout(() => {
+    //         getEmotion(device_id)
+    //     }, 1000);
 
-    // check for whichever button is clicked
-    // and pass the access token to a corresponding function
-    if (num == 1)
-        await getSongID(TOKEN, num, null);
-    else if (num == 2)
-        await getUserPlaylists(TOKEN);
-    else if (num == 3)
-        await getSongID(TOKEN, num, tempPlaylist);
+    // // otherwise
+    // } else {
+
+        // create an empty array for a temporary playlist
+        let tempPlaylist = [];
+
+        // // get the query string and split it using the = sign as a separator
+        // const splitted_queryString = location.search.split('=');
+        
+        // // get the access token
+        // const TOKEN = splitted_queryString[splitted_queryString.length - 1];
+
+        // start getting a song's id
+        await getSongID(TOKEN, tempPlaylist, device_id);
+    // }
 }
 
 // getAPI()

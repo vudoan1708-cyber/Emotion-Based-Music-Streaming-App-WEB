@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music App</title>
+    <style>
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
 </head>
 <body>
+
     <h2>Test Case 1: Search for Songs by Titles and Search for User Profiles</h2>
     <div>
         <label>Song Title</label>
@@ -43,7 +52,18 @@
         <button onclick="getToken(3)">Enter</button>
     </div>
 
-    <!-- <script src="https://sdk.scdn.co/spotify-player.js"></script> -->
-    <script src="sketch.js"></script>
+    <div>
+        <audio id="player" controls autoplay>
+            
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <!-- Include the Web Playback SDK -->
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+    <script defer src="components/face-api.js-master/dist/face-api.js"></script>
+    <script type="module" defer src="components/emotion.js"></script>
+    <script type="module" src="sketch.js" defer></script>
 </body>
 </html>
