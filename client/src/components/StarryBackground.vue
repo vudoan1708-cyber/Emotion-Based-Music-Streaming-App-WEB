@@ -24,8 +24,8 @@ import { Geometry } from 'three/src/core/Geometry';
 
 import { onMounted } from 'vue';
 
-// Reusable Components
-import loadResource from '@/components/Hooks/loadResource';
+// Utilities
+import loadResource from '@/components/Utils/loadResource';
 
 export default {
   name: 'StarryBackground',
@@ -87,7 +87,7 @@ export default {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      loadResource(starGeo, renderer, scene, camera);
+      loadResource('./assets/star.png', starGeo, renderer, scene, camera);
     // makeStars();
       // animate();
     }

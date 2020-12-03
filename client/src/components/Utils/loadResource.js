@@ -3,7 +3,7 @@ import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import { Points } from 'three/src/objects/Points';
 import { PointsMaterial } from 'three/src/materials/PointsMaterial';
 
-export default function loadResource(starGeo, renderer, scene, camera) {
+export default function loadResource(URL, starGeo, renderer, scene, camera) {
   /* eslint-disable no-console */
   /* eslint-disable padded-blocks */
   /* eslint-disable no-trailing-spaces */
@@ -16,8 +16,6 @@ export default function loadResource(starGeo, renderer, scene, camera) {
   const numStars = 3000;
 
   const loader = new TextureLoader();
-
-  const URL = './assets/star.png';
 
   let starMaterial;
 

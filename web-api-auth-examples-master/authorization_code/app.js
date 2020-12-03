@@ -69,7 +69,7 @@ app.get('/callback', function(req, res) {
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;
-
+  console.log('State ' + state + 'Stored State ' + storedState);
   if (state === null || state !== storedState) {
     res.redirect('/#' +
       querystring.stringify({
