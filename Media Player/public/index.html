@@ -15,41 +15,41 @@
 </head>
 <body>
 
-    <h2>Test Case 1: Search for Songs by Titles and Search for User Profiles</h2>
+    <!-- <h2>Test Case 1: Search for Songs by Titles and Search for User Profiles</h2>
     <div>
         <label>Song Title</label>
         <input type="text" id="song_title" aria-label="input text field"/><br />
 
         <label>Artist</label>
-        <input type="text" id="artist_name" aria-label="input text field"/><br /><br />
+        <input type="text" id="artist_name" aria-label="input text field"/><br /><br /> -->
 
         <!-- Buttons -->
-        <button onclick="getToken(1)">Search</button>
+        <!-- <button onclick="getToken(1)">Search</button>
     </div>
 
     <div>
         <button onclick="getToken(2)">User Detail</button>
-    </div>
+    </div> -->
 
     <!-- Valence and Energy Level input -->
-    <br /><br />
+    <!-- <br /><br />
     <h2>Test Case 2: Search for Songs by Valence Level Conveyed from them</h2>
     <div>
         <label>Valence</label>
-        <input type="number" id="valenceLv" aria-label="input number field"/><br /><br />
+        <input type="number" id="valenceLv" aria-label="input number field"/><br /><br /> -->
        
         <!-- Radio Buttons -->
-        <div>
+        <!-- <div>
             <label for="radio_btn1">On Playlist</label>
             <input type="radio" id="radio_btn1" aria-label="radio buttons" name="playlist" value="radio_btn1"><br />
 
             <label for="radio_btn2">Off Playlist</label>
             <input type="radio" id="radio_btn2" aria-label="radio buttons" name="playlist" value="radio_btn2"><br /><br />
-        </div>
+        </div> -->
         
 
         <!-- Buttons -->
-        <button onclick="getToken(3)">Enter</button>
+        <!-- <button onclick="getToken(3)">Enter</button>
     </div>
 
     <div>
@@ -57,13 +57,19 @@
             
             Your browser does not support the audio element.
         </audio>
-    </div>
+    </div> -->
 
+
+
+
+
+
+
+    <canvas id="myChart"></canvas>
     <!-- Include the Web Playback SDK -->
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
-
-    <script defer src="components/face-api.js-master/dist/face-api.js"></script>
-    <script type="module" defer src="components/emotion.js"></script>
-    <script type="module" src="sketch.js" defer></script>
+    <!-- <script src="https://sdk.scdn.co/spotify-player.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <!-- <script type="module" defer src="components/emotion.js"></script> -->
+    <script src="sketch.js" defer></script>
 </body>
 </html>

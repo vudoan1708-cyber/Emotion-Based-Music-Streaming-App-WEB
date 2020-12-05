@@ -8,14 +8,17 @@ import requests as req
 # from oauth import SpotifyAuth
 
 def getRandomCharacter():
+
+  text = ''
     
   # a list of characters that can be chosen
   char = 'abcdefghijklmnopqrstuvwxyz'
 
-  # get random character from the string
-  randomChar = char[random.randint(0, len(char) - 1)]
+  # get 2 random characters from the string
+  for _ in range(2):
+    text += char[random.randint(0, len(char) - 1)]
 
-  return randomChar
+  return text
 
 def searchSong():
 

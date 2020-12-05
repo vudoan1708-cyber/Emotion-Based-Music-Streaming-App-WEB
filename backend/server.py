@@ -1,10 +1,11 @@
-# flask
+# Flask
 from flask import Flask, jsonify, make_response
 from flask_cors import CORS
 
 # components
 from components import SenpyAPI
 from components import SpotifyAPI
+from components import IBM_NLU
 from components.oauth import SpotifyAuth
 
 # operating system
@@ -19,8 +20,7 @@ app.secret_key = os.urandom(24)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # sanity check route
-
-# login
+# login to Spotify
 @app.route('/', methods=['GET'])
 def Login():
   response = make_response(
@@ -29,6 +29,21 @@ def Login():
   )
   return response
 
+
+'''
+IBM WATSON
+'''
+###########################
+# NATURAL LANGUAGE UNDERSTANDING
+###########################
+
+
+'''
+SPOTIFY
+'''
+###########################
+# AUTHENTICATION CODE FLOW
+###########################
 # authentication route
 @app.route('/login', methods=['GET'])
 def Auth():
@@ -40,12 +55,25 @@ def Callback():
   frontend_redirect = SpotifyAuth.callback()
   return frontend_redirect
 
-# home route
-@app.route('/home', methods=['GET'])
-def Home():
+###########################
+# FETCHING ENDPOINTS
+###########################
+@app.route('/searchspotify', methods=['GET'])
+def SearchSpotifySongs():
+  return 'Great'
+
+
+'''
+SENPY
+'''
+###########################
+###########################
+# user emotion route
+@app.route('/userscore', methods=['GET'])
+def UserEmotionScore():
 
   # get back valence and arousal values
-  valence, arousal, _ = SenpyAPI.getEmotion("I'm sad")
+  valence, arousal, _ = SenpyAPI.getEmotion("I'm happy")
 
   # make a response
   response = make_response(
