@@ -36,8 +36,6 @@ export default function loadResource(URL, starGeo, renderer, scene, camera) {
         transparent: true,
       });
 
-      console.log(starMaterial);
-
       // loop through the number of stars
       for (let i = 0; i < numStars; i += 1) {
 

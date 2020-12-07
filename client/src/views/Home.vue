@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <img id="logo" src="../assets/logo.png" alt="Vue logo">
   </div>
 </template>
 

@@ -1,6 +1,14 @@
 /* eslint-disable no-console */
-export default async function userFetch() {
-  const request = await fetch();
+export default async function userFetch(URL) {
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': '*',
+      'Access-Control-Allow-Origin': '*',
+    },
+  };
+
+  const request = await fetch(URL, options);
   const response = await request.json();
-  console.log(response);
+  return response;
 }

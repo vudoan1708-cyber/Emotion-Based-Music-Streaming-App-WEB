@@ -6,7 +6,7 @@
 import { methods } from 'vue';
 
 // Utilities
-import hashURL from '@/components/Utils/hashURL';
+// import hashURL from '@/components/Utils/hashURL';
 
 export default {
   name: 'Player',

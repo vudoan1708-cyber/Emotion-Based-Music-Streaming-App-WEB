@@ -22,9 +22,11 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 # sanity check route
 # login to Spotify
 @app.route('/', methods=['GET'])
-def Login():
+def WakeUp():
   response = make_response(
-    jsonify({'status': 'success'}),
+    jsonify({
+      'status': 'success',
+    }),
     201,
   )
   return response

@@ -13,6 +13,7 @@ from flask import (
   make_response, 
   redirect,
   session,
+  jsonify,
   abort
 )
 
@@ -33,14 +34,12 @@ CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
 REDIRECT_URI = os.getenv('REDIRECT_URI')
 FRONTEND_URI = os.getenv('FRONTEND_URI')
+STATE_KEY = os.getenv('STATE_KEY')
 
 # variables of URLs for authorisation code flow for Spotify
 AUTH_URL = 'https://accounts.spotify.com/authorize?'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 ME_URL = 'https://api.spotify.com/v1/me'
-
-# a state key for cookie
-stateKey = 'spotify_auth_state'
 
 def generateRandomString(length):
   text = ''
@@ -72,7 +71,7 @@ def login():
   res = make_response(redirect(f'{AUTH_URL}{urlencode(payload)}'))
 
   # set cookie when redirecting with stateKey is the name of the cookie, and state is the value
-  res.set_cookie(stateKey, state)
+  res.set_cookie(STATE_KEY, state)
 
   return res
 
@@ -80,49 +79,49 @@ def callback():
 
   # error = request.args.get('error')
   code = request.args.get('code')
-  state = request.args.get('state')
-  stored_state = request.cookies.get(stateKey)
-  print(f'State {state} Stored State {stored_state}')
+  # state = request.args.get('state')
+  # stored_state = request.cookies.get(STATE_KEY)
+  # print(f'State {state} Stored State {stored_state}')
 
-  # Check state
-  if state is None and state != stored_state:
-    # app.logger.error('Error message: %s', repr(error))
-    # app.logger.error('State mismatch: %s != %s', stored_state, state)
-    abort(400)
+  # # Check state
+  # if state is None and state != stored_state:
+  #   # app.logger.error('Error message: %s', repr(error))
+  #   # app.logger.error('State mismatch: %s != %s', stored_state, state)
+  #   abort(400)
+
+  # else:
+
+  # Request tokens with code we obtained
+  payload = {
+    'grant_type': 'authorization_code',
+    'code': code,
+    'redirect_uri': REDIRECT_URI,
+  }
+
+  # `auth=(CLIENT_ID, SECRET)` basically wraps an 'Authorization'
+  # header with value:
+  # b'Basic ' + b64encode((CLIENT_ID + ':' + SECRET).encode())
+  res = requests.post(TOKEN_URL, auth=(CLIENT_ID, CLIENT_SECRET), data=payload)
+  res_data = res.json()
+
+  if res_data.get('error') and res.status_code != 200:
+    # app.logger.error(
+    #     'Failed to receive token: %s',
+    #     res_data.get('error', 'No error information received.'),
+    # )
+    abort(res.status_code)
 
   else:
 
-    # Request tokens with code we obtained
-    payload = {
-      'grant_type': 'authorization_code',
-      'code': code,
-      'redirect_uri': REDIRECT_URI,
+    # Load tokens into session
+    session['tokens'] = {
+      'access_token': res_data.get('access_token'),
+      'refresh_token': res_data.get('refresh_token'),
     }
 
-    # `auth=(CLIENT_ID, SECRET)` basically wraps an 'Authorization'
-    # header with value:
-    # b'Basic ' + b64encode((CLIENT_ID + ':' + SECRET).encode())
-    res = requests.post(TOKEN_URL, auth=(CLIENT_ID, CLIENT_SECRET), data=payload)
+    # set headers
+    headers = {'Authorization': f"Bearer {session['tokens'].get('access_token')}"}
+    res = requests.get(ME_URL, headers=headers)
     res_data = res.json()
 
-    if res_data.get('error') and res.status_code != 200:
-      # app.logger.error(
-      #     'Failed to receive token: %s',
-      #     res_data.get('error', 'No error information received.'),
-      # )
-      abort(res.status_code)
-
-    else:
-
-      # Load tokens into session
-      session['tokens'] = {
-        'access_token': res_data.get('access_token'),
-        'refresh_token': res_data.get('refresh_token'),
-      }
-
-      # set headers
-      headers = {'Authorization': f"Bearer {session['tokens'].get('access_token')}"}
-      res = requests.get(ME_URL, headers=headers)
-      res_data = res.json()
-
-      return redirect(f"{FRONTEND_URI}?access_token={session['tokens'].get('access_token')}")
+    return redirect(f"{FRONTEND_URI}?access_token={session['tokens'].get('access_token')}")
