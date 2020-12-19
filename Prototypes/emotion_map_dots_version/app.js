@@ -140,7 +140,9 @@ function drawStarDots() {
   for (let i = 0; i < starDots.length; i++) {
     for (let j = 0; j < starDots[i].length; j++) {
 
-      fill(255);
+      const c = random(200, 255);
+      const a = random(20, 255);
+      fill(c, a);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
       
       if (starDots[i][j].onHover()) {
