@@ -2,6 +2,8 @@ const width = window.innerWidth,
       height = window.innerHeight;
 
 let starDots = [];
+const stars = Array(1000);
+let r, g, b, a;
 let showMap = false;
 
 function make2dArray(cols, rows) {
@@ -13,8 +15,66 @@ function make2dArray(cols, rows) {
   return arr;
 }
 
+function star(x, y, radius1, radius2, npoints, colour) {
+  let angle = TWO_PI / npoints;
+  let halfAngle = angle / 2.0;
+
+  if (colour)
+    fill(colour);
+
+  beginShape();
+  for (let a = 0; a < TWO_PI; a += angle) {
+    let sx = x + cos(a) * radius2;
+    let sy = y + sin(a) * radius2;
+    vertex(sx, sy);
+    sx = x + cos(a + halfAngle) * radius1;
+    sy = y + sin(a + halfAngle) * radius1;
+    vertex(sx, sy);
+  }
+  endShape(CLOSE);
+}
+
+function makeBGStars() {
+  for (let i = 0; i < stars.length; i++) {
+    const a = random(45, 100);
+    
+    if (i < stars.length / 4) {
+      r = random(200, 255);
+      g = random(200, 255);
+      b = 0;
+    } else if (i >= stars.length / 4 && i < stars.length / 2) {
+      r = random(200, 255);
+      g = random(20, 40);
+      b = random(20, 40);
+    } else if (i >= stars.length / 2 && i < stars.length / 1.5) {
+      r = random(20, 40);
+      g = random(200, 255);
+      b = random(20, 40);
+    } else {
+      r = random(20, 40);
+      g = random(20, 40);
+      b = random(200, 255);
+    }
+    var galaxy = { 
+      locationX : random(width),
+      locationY : random(height),
+      size1 : random(1.0, 1.5),
+      size2 : random(1.5, 2.7),
+      colour: color(r, g, b, a)
+    }
+    // fill(galaxy.colour);
+    star(galaxy.locationX ,galaxy.locationY, galaxy.size1, galaxy.size2, 4, galaxy.colour);
+  }
+}
+
 function setup() {
   createCanvas(width, height);
+
+  if (!showMap) {
+    background(0);
+    makeBGStars();
+  }
+  
 
   ellipseMode(CENTER);
 
@@ -31,6 +91,8 @@ function setup() {
       starDots[i][j] = new StarDots(x, y, random(5, 12));
     }
   }
+
+  noLoop();
 }
 
 function drawLines(i, j) {
@@ -78,6 +140,9 @@ function drawStarDots() {
   for (let i = 0; i < starDots.length; i++) {
     for (let j = 0; j < starDots[i].length; j++) {
 
+      fill(255);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
+      
       if (starDots[i][j].onHover()) {
 
         // draw highlighted paths
@@ -124,7 +189,8 @@ function drawStarDots() {
       } else {
         fill(220, 150);
       }
-      starDots[i][j].show(false);
+      // starDots[i][j].show(false);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
     }
   }
 }
@@ -132,7 +198,6 @@ function drawStarDots() {
 function changeMap() {
   loop();
   showMap = true;
-  console.log('1')
 }
 
 function mousePressed() {
@@ -149,9 +214,7 @@ function mousePressed() {
 
 function draw() {
   if (showMap) {
-    background(10, 45);
+    background(10);
     drawStarDots();
-  } else {
-    noLoop();
   }
 }
