@@ -5,8 +5,14 @@ class StarDots {
     this.size = size;
   }
 
-  show() {
-    ellipse(this.x, this.y, this.size);
+  show(hovered) {
+    if (!hovered)
+      ellipse(this.x, this.y, this.size);
+    else ellipse(this.x, this.y, 20);
+  }
+
+  showPaths(size) {
+    ellipse(this.x, this.y, size);
   }
 
   onHover() {

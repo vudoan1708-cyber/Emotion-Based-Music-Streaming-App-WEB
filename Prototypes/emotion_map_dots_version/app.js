@@ -2,6 +2,7 @@ const width = window.innerWidth,
       height = window.innerHeight;
 
 let starDots = [];
+let showMap = false;
 
 function make2dArray(cols, rows) {
   const arr = new Array(cols);
@@ -24,18 +25,18 @@ function setup() {
   for (let i = 0; i < starDots.length; i++) {
     for (let j = 0; j < starDots[i].length; j++) {
 
-      const x = width / 4.5 + i * 15;
-      const y = height / 4.5 + j * 15;
+      const x = width / 5 + i * 15;
+      const y = height / 5 + j * 15;
       // starDots.push([x, y]);
-      starDots[i][j] = new StarDots(x, y, 12);
+      starDots[i][j] = new StarDots(x, y, random(5, 12));
     }
   }
 }
 
 function drawLines(i, j) {
   push();
-    stroke(200);
-    strokeWeight(4);
+    stroke(200, 220);
+    strokeWeight(4.5);
 
     // VERTICAL LINE
     line(starDots[i][j].x, starDots[i][j].y, starDots[i][j].x, starDots[i][Math.floor(starDots[i].length / 2)].y);
@@ -45,55 +46,93 @@ function drawLines(i, j) {
   pop();
 }
 
+function drawHighlights(i, j) {
+  
+  // TOP LEFT
+  // if (i < starDots.length / 2 && j < starDots[i].length / 2) {
+  //   for (let a = i; a < starDots.length / 2; a++) {
+  //     push();
+  //       fill(255);
+  //       starDots[a][j].show(true);
+  //     pop();
+  //     if (a === i) {
+  //       for (let b = j; b < starDots[a].length / 2; b++) {
+  //         push();
+  //           fill(255);
+  //           starDots[a][b].show(true);
+  //         pop();
+  //       }
+  //     }
+  //   }
+  // }
+
+  push();
+    fill(255);
+    starDots[i][j].show(true);
+  pop();
+}
+
 function drawStarDots() {
+  
+  noStroke();
   for (let i = 0; i < starDots.length; i++) {
     for (let j = 0; j < starDots[i].length; j++) {
 
       if (starDots[i][j].onHover()) {
 
+        // draw highlighted paths
+        drawHighlights(i, j);
+        
         // draw guidlines
         drawLines(i, j);
+
         fill(255, 0, 0);
         
       // the centred dot
       } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
         fill(0);
 
-      // TOP RIGHT (ANGRY)
+      // TOP LEFT (ANGRY)
       } else if (i >= 0 && i < Math.floor(starDots.length / 2)
               && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
           
           // orange
-          fill(200, 98, 20, 150);
+          fill(200, 98, 20, 90);
 
-      // BOTTOM RIGHT (SAD)
+      // BOTTOM LEFT (SAD)
       } else if (i >= 0 && i < Math.floor(starDots.length / 2)
               && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
 
           // blue
-          fill(20, 20, 180, 150);
+          fill(73, 27, 180, 90);
 
-      // TOP LEFT (HAPPY / EXCITED)
+      // TOP RIGHT (HAPPY / EXCITED)
       } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
               && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
           
           // green
-          fill(176, 220, 90, 150);
+          fill(176, 220, 90, 90);
 
-      // BOTTOM LEFT (CALM / RELAXED)
+      // BOTTOM RIGHT (CALM / RELAXED)
       } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
           && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
       
         // pink
-        fill(180, 83, 250, 150);
+        fill(180, 83, 250, 90);
 
       // dots on the intersection lines
       } else {
-        fill(220);
+        fill(220, 150);
       }
-      starDots[i][j].show();
+      starDots[i][j].show(false);
     }
   }
+}
+
+function changeMap() {
+  loop();
+  showMap = true;
+  console.log('1')
 }
 
 function mousePressed() {
@@ -102,12 +141,17 @@ function mousePressed() {
 
       if (starDots[i][j].onHover()) {
         console.log(i / starDots.length, 1 - j / starDots[i].length);
+        // showMap = false;
       }
     }
   }
 }
 
 function draw() {
-  background(10);
-  drawStarDots();
+  if (showMap) {
+    background(10, 45);
+    drawStarDots();
+  } else {
+    noLoop();
+  }
 }
