@@ -2,9 +2,13 @@ const width = window.innerWidth,
       height = window.innerHeight;
 
 let starDots = [];
-const stars = Array(1000);
-let r, g, b, a;
+let galaxy = [];
+let chosenPoints = [];
+
+const stars = Array(500);
+
 let showMap = false;
+let isClicked = false;
 
 function make2dArray(cols, rows) {
   const arr = new Array(cols);
@@ -15,12 +19,10 @@ function make2dArray(cols, rows) {
   return arr;
 }
 
-function star(x, y, radius1, radius2, npoints, colour) {
+function star(x, y, radius1, radius2, npoints) {
+
   let angle = TWO_PI / npoints;
   let halfAngle = angle / 2.0;
-
-  if (colour)
-    fill(colour);
 
   beginShape();
   for (let a = 0; a < TWO_PI; a += angle) {
@@ -35,6 +37,9 @@ function star(x, y, radius1, radius2, npoints, colour) {
 }
 
 function makeBGStars() {
+
+  let r, g, b;
+
   for (let i = 0; i < stars.length; i++) {
     const a = random(45, 100);
     
@@ -55,15 +60,14 @@ function makeBGStars() {
       g = random(20, 40);
       b = random(200, 255);
     }
-    var galaxy = { 
-      locationX : random(width),
-      locationY : random(height),
-      size1 : random(1.0, 1.5),
-      size2 : random(1.5, 2.7),
-      colour: color(r, g, b, a)
-    }
-    // fill(galaxy.colour);
-    star(galaxy.locationX ,galaxy.locationY, galaxy.size1, galaxy.size2, 4, galaxy.colour);
+
+    galaxy[i] = new GalaxyStars(random(width), random(height), random(1.0, 1.5), random(1.5, 2.5), color(r, g, b, a), random(255));
+  }
+}
+
+function drawGalaxyBG() {
+  for (let i = 0; i < galaxy.length; i++) {
+    galaxy[i].show();
   }
 }
 
@@ -73,6 +77,7 @@ function setup() {
   if (!showMap) {
     background(0);
     makeBGStars();
+    // drawGalaxyBG();
   }
   
 
@@ -87,12 +92,11 @@ function setup() {
 
       const x = width / 5 + i * 15;
       const y = height / 5 + j * 15;
-      // starDots.push([x, y]);
       starDots[i][j] = new StarDots(x, y, random(5, 12));
     }
   }
 
-  noLoop();
+  // noLoop();
 }
 
 function drawLines(i, j) {
@@ -130,71 +134,83 @@ function drawHighlights(i, j) {
 
   push();
     fill(255);
-    starDots[i][j].show(true);
+    starDots[i][j].show();
   pop();
 }
 
 function drawStarDots() {
   
-  noStroke();
-  for (let i = 0; i < starDots.length; i++) {
-    for (let j = 0; j < starDots[i].length; j++) {
+  push();
+    noStroke();
 
-      const c = random(200, 255);
-      const a = random(20, 255);
-      fill(c, a);
-      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
-      
-      if (starDots[i][j].onHover()) {
-
-        // draw highlighted paths
-        drawHighlights(i, j);
-        
-        // draw guidlines
-        drawLines(i, j);
-
-        fill(255, 0, 0);
-        
-      // the centred dot
-      } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
-        fill(0);
-
-      // TOP LEFT (ANGRY)
-      } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-              && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+    if (!isClicked) {
+      for (let i = 0; i < starDots.length; i++) {
+        for (let j = 0; j < starDots[i].length; j++) {
+    
+          const c = random(200, 255);
+          const a = random(20, 255);
+          fill(c, a);
           
-          // orange
-          fill(200, 98, 20, 90);
-
-      // BOTTOM LEFT (SAD)
-      } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
+          
+          if (starDots[i][j].onHover()) {
+    
+            // draw highlighted paths
+            drawHighlights(i, j);
+            
+            // draw guidlines
+            drawLines(i, j);
+    
+            fill(255, 0, 0);
+            
+          // the centred dot
+          } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
+            fill(0);
+    
+          // TOP LEFT (ANGRY)
+          } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+                  && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+              
+              // orange
+              fill(200, 98, 20, 90);
+    
+          // BOTTOM LEFT (SAD)
+          } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+                  && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+    
+              // blue
+              fill(73, 27, 180, 90);
+    
+          // TOP RIGHT (HAPPY / EXCITED)
+          } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+                  && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+              
+              // green
+              fill(176, 220, 90, 90);
+    
+          // BOTTOM RIGHT (CALM / RELAXED)
+          } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
               && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
-
-          // blue
-          fill(73, 27, 180, 90);
-
-      // TOP RIGHT (HAPPY / EXCITED)
-      } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-              && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
           
-          // green
-          fill(176, 220, 90, 90);
-
-      // BOTTOM RIGHT (CALM / RELAXED)
-      } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-          && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
-      
-        // pink
-        fill(180, 83, 250, 90);
-
-      // dots on the intersection lines
-      } else {
-        fill(220, 150);
+            // pink
+            fill(180, 83, 250, 90);
+    
+          // dots on the intersection lines
+          } else {
+            fill(220, 150);
+          }
+          // starDots[i][j].show(false);
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        }
       }
-      // starDots[i][j].show(false);
-      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+    } else {
+      drawHighlights(chosenPoints[0], chosenPoints[1]);
+
+      fill(255, 0, 0);
+      star(starDots[chosenPoints[0]][chosenPoints[1]].x, starDots[chosenPoints[0]][chosenPoints[1]].y, 
+            starDots[chosenPoints[0]][chosenPoints[1]].size / 2, starDots[chosenPoints[0]][chosenPoints[1]].size / 4, 4);
     }
-  }
+  pop();
 }
 
 function changeMap() {
@@ -203,20 +219,28 @@ function changeMap() {
 }
 
 function mousePressed() {
-  for (let i = 0; i < starDots.length; i++) {
-    for (let j = 0; j < starDots[i].length; j++) {
 
-      if (starDots[i][j].onHover()) {
-        console.log(i / starDots.length, 1 - j / starDots[i].length);
-        // showMap = false;
+  // only clickable when the emotion map is shown
+  if (showMap) {
+    for (let i = 0; i < starDots.length; i++) {
+      for (let j = 0; j < starDots[i].length; j++) {
+  
+        if (starDots[i][j].onHover()) {
+          console.log(i / starDots.length, 1 - j / starDots[i].length);
+          isClicked = true;
+          chosenPoints.push(i, j);
+        }
       }
     }
   }
 }
 
 function draw() {
+
+  background(10);
+  drawGalaxyBG();
+  
   if (showMap) {
-    background(10);
     drawStarDots();
   }
 }
