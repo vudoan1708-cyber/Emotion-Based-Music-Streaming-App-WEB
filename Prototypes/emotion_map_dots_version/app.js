@@ -1,3 +1,5 @@
+p5.disableFriendlyErrors = true; // disables FES
+
 const width = window.innerWidth,
       height = window.innerHeight;
 
@@ -5,7 +7,7 @@ let starDots = [];
 let galaxy = [];
 let chosenPoints = [];
 
-const stars = Array(500);
+const stars = Array(360);
 
 let showMap = false;
 let isClicked = false;
@@ -77,11 +79,11 @@ function setup() {
   if (!showMap) {
     background(0);
     makeBGStars();
-    // drawGalaxyBG();
   }
   
-
   ellipseMode(CENTER);
+
+  rectMode(CENTER);
 
   // make a 2D array
   starDots = make2dArray(Math.floor(width / 25), Math.floor(height / 25));
@@ -90,9 +92,7 @@ function setup() {
   for (let i = 0; i < starDots.length; i++) {
     for (let j = 0; j < starDots[i].length; j++) {
 
-      const x = width / 5 + i * 15;
-      const y = height / 5 + j * 15;
-      starDots[i][j] = new StarDots(x, y, random(5, 12));
+      starDots[i][j] = new StarDots(i, j, random(5, 12));
     }
   }
 
@@ -138,83 +138,100 @@ function drawHighlights(i, j) {
   pop();
 }
 
+function fillStarsColor(i, j) {
+
+  push();
+    if (starDots[i][j].onHover()) {
+      
+      // draw highlighted dot
+      drawHighlights(i, j);
+      
+      // draw guidlines
+      drawLines(i, j);
+
+      fill(255, 0, 0);
+      
+    // the centred dot
+    } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
+      fill(0);
+
+    // TOP LEFT (ANGRY)
+    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+            && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+        
+        // orange
+        fill(200, 98, 20, 90);
+
+    // BOTTOM LEFT (SAD)
+    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+            && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+
+        // blue
+        fill(73, 27, 180, 90);
+
+    // TOP RIGHT (HAPPY / EXCITED)
+    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+            && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+        
+        // green
+        fill(176, 220, 90, 90);
+
+    // BOTTOM RIGHT (CALM / RELAXED)
+    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+        && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+    
+      // pink
+      fill(180, 83, 250, 90);
+
+    // dots on the intersection lines
+    } else {
+      fill(220, 150);
+    }
+    
+    // show all stars with different colours depending on different conditions
+    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+  pop();
+}
+
 function drawStarDots() {
   
   push();
     noStroke();
 
-    if (!isClicked) {
-      for (let i = 0; i < starDots.length; i++) {
-        for (let j = 0; j < starDots[i].length; j++) {
-    
+    for (let i = 0; i < starDots.length; i++) {
+      for (let j = 0; j < starDots[i].length; j++) {
+  
+        if (!isClicked) {
+              
+          // twinkle effects
           const c = random(200, 255);
           const a = random(20, 255);
           fill(c, a);
           
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
-          
-          if (starDots[i][j].onHover()) {
+
+          fillStarsColor(i, j);
+        } else {
+          fillStarsColor(i, j);
+
+          // a circle represents a chosen dot
+          drawHighlights(chosenPoints[0], chosenPoints[1]);
+
+          // zone of the accepted
+          starDots[chosenPoints[0]][chosenPoints[1]].showZoneofTheAccepted();
     
-            // draw highlighted paths
-            drawHighlights(i, j);
-            
-            // draw guidlines
-            drawLines(i, j);
-    
-            fill(255, 0, 0);
-            
-          // the centred dot
-          } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
-            fill(0);
-    
-          // TOP LEFT (ANGRY)
-          } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-                  && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
-              
-              // orange
-              fill(200, 98, 20, 90);
-    
-          // BOTTOM LEFT (SAD)
-          } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-                  && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
-    
-              // blue
-              fill(73, 27, 180, 90);
-    
-          // TOP RIGHT (HAPPY / EXCITED)
-          } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-                  && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
-              
-              // green
-              fill(176, 220, 90, 90);
-    
-          // BOTTOM RIGHT (CALM / RELAXED)
-          } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-              && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
-          
-            // pink
-            fill(180, 83, 250, 90);
-    
-          // dots on the intersection lines
-          } else {
-            fill(220, 150);
-          }
-          // starDots[i][j].show(false);
-          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          // red star on top
+          fill(255, 0, 0);
+          star(starDots[chosenPoints[0]][chosenPoints[1]].x, starDots[chosenPoints[0]][chosenPoints[1]].y, 
+                starDots[chosenPoints[0]][chosenPoints[1]].size / 2, starDots[chosenPoints[0]][chosenPoints[1]].size / 4, 4);
         }
       }
-    } else {
-      drawHighlights(chosenPoints[0], chosenPoints[1]);
-
-      fill(255, 0, 0);
-      star(starDots[chosenPoints[0]][chosenPoints[1]].x, starDots[chosenPoints[0]][chosenPoints[1]].y, 
-            starDots[chosenPoints[0]][chosenPoints[1]].size / 2, starDots[chosenPoints[0]][chosenPoints[1]].size / 4, 4);
-    }
+    }   
   pop();
 }
 
 function changeMap() {
-  loop();
+  // loop();
   showMap = true;
 }
 
@@ -243,4 +260,8 @@ function draw() {
   if (showMap) {
     drawStarDots();
   }
+}
+
+function windowResized() {
+  resizeCanvas(width, height);
 }
