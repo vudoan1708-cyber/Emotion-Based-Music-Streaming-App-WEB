@@ -3,15 +3,14 @@
   <div id="nav">
   </div>
 
-  <!-- background -->
-  <StarryBackground />
+  <!-- <SketchP5 /> -->
   <router-view/>
 </template>
 
 <script>
 import { onMounted } from 'vue';
+// import SketchP5 from '@/components/SketchP5.vue';
 
-import StarryBackground from './components/StarryBackground.vue';
 // import InitialisePlayer from './components/InitialisePlayer.vue';
 
 export default {
@@ -19,9 +18,9 @@ export default {
     onMounted(() => {
       window.onSpotifyPlayerAPIReady = () => {};
     });
-    return {
-      StarryBackground,
-    };
+    // return {
+    //   SketchP5,
+    // };
   },
 };
 </script>

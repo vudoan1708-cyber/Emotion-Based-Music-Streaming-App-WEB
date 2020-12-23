@@ -1,4 +1,4 @@
-// import getUserEmotion from './components/emotion.js';
+import ChosenEmotion from './components/emotion.js';
 
 // ERROR HANDLING
 function errHandling(err) {
@@ -201,104 +201,6 @@ async function makeATempPlaylist(accessToken, id, preview_url, title, tempPlayli
 
         arousals.push(song_energy);
     }
-}
-
-function plotEmotion(titles, valences, arousals, valence, arousal) {
-    console.log(titles, valences, arousals)
-    const ctx = document.getElementById('myChart').getContext('2d');
-
-    const myBubbleChart = new Chart(ctx, {
-      type: 'bubble',
-      data: {
-          labels: "Song's Emotions",
-          datasets: [
-            {
-                label: titles[0],
-            //   backgroundColor: 'rgb(255, 99, 132)',
-                data: [
-                    {
-                        x: valences[0],
-                        y: arousals[0],
-                        r: 10, 
-                    }
-                ]
-            },
-            {
-                label: titles[1],
-            //   backgroundColor: 'rgb(255, 99, 132)',
-                data: [
-                    {
-                        x: valences[1],
-                        y: arousals[1],
-                        r: 10, 
-                    }
-                ]
-            },
-            {
-                label: titles[2],
-            //   backgroundColor: 'rgb(255, 99, 132)',
-                data: [
-                    {
-                        x: valences[2],
-                        y: arousals[2],
-                        r: 10, 
-                    }
-                ]
-            },
-            {
-                label: titles[3],
-            //   backgroundColor: 'rgb(255, 99, 132)',
-                data: [
-                    {
-                        x: valences[3],
-                        y: arousals[3],
-                        r: 10, 
-                    }
-                ]
-            },
-            {
-                label: titles[4],
-            //   backgroundColor: 'rgb(255, 99, 132)',
-                data: [
-                    {
-                        x: valences[4],
-                        y: arousals[4],
-                        r: 10, 
-                    }
-                ]
-            },
-            {
-                label: "User's Emotion",
-                backgroundColor: 'rgb(255, 99, 132)',
-                data: [
-                    {
-                        x: valence,
-                        y: arousal,
-                        r: 10, 
-                    }
-                ]
-            }
-        ]
-      },
-      options: {
-          scales: {
-            xAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true,
-                    max: 1,
-                }
-            }],
-            yAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true,
-                    max: 1,
-                }
-            }]
-          }
-      }
-    });
 }
 
 // GET SONG TITLE THROUGH LYRICS
@@ -683,7 +585,7 @@ async function getEmotion(valence, arousal) {
     await getSongID(TOKEN, tempPlaylist, valence, arousal);
     // }
 }
-getUserEmotion();
-
+// getUserEmotion();
+ChosenEmotion();
 // getAPI()
 //     .then(() => { console.log(lyricsData.message.body) });
