@@ -101,7 +101,7 @@ async function setup() {
 
   getSocket();
 
-  await getSongs();
+  // await getSongs();
 
   if (!showMap) {
     background(0);
