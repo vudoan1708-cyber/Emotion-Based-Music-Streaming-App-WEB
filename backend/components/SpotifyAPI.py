@@ -20,7 +20,7 @@ def getRandomCharacter():
 
   return text
 
-def searchSong():
+def getSong():
 
   # try to parse the URL
   try:

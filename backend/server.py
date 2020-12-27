@@ -1,20 +1,33 @@
 # Flask
-from flask import Flask, jsonify, make_response
+from flask import (
+  Flask, 
+  jsonify, 
+  make_response, 
+  request,
+  render_template
+)
 from flask_cors import CORS
+from flask_socketio import SocketIO, send, emit
 
 # components
-from components import SenpyAPI
 from components import SpotifyAPI
-from components import IBM_NLU
 from components.oauth import SpotifyAuth
+
+# logic
+from components.logic import Client
 
 # operating system
 import os
+
+PYTHON_ENV = os.getenv('PYTHON_ENV')
 
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.secret_key = os.urandom(24)
+
+# instantiate the socket
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
@@ -23,21 +36,24 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 # login to Spotify
 @app.route('/', methods=['GET'])
 def WakeUp():
-  response = make_response(
-    jsonify({
-      'status': 'success',
-    }),
-    201,
-  )
-  return response
 
+  # if the server is not running in production
+  if PYTHON_ENV != 'production':
+    response = make_response(
+      jsonify({
+        'status': 'success',
+        'host': request.host,
+      }),
+      201,
+    )
+    return response
 
-'''
-IBM WATSON
-'''
-###########################
-# NATURAL LANGUAGE UNDERSTANDING
-###########################
+  # otherwise
+  else:
+
+    # render static files
+    # return render_template('index.html')
+    pass
 
 
 '''
@@ -66,29 +82,38 @@ def SearchSpotifySongs():
 
 
 '''
-SENPY
+SOCKETIO
 '''
-###########################
-###########################
-# user emotion route
-@app.route('/userscore', methods=['GET'])
-def UserEmotionScore():
+history = []
+clients = []
 
-  # get back valence and arousal values
-  valence, arousal, _ = SenpyAPI.getEmotion("I'm happy")
+@socketio.on('connect')
+def Init():
+  print('New Connection')
 
-  # make a response
-  response = make_response(
-    jsonify({
-      'valence': valence, 
-      'arousal': arousal,
-    }),
-    200,
-  )
+  # add new client id to client array
+  clients.append(request.sid)
 
-  # set headers option
-  response.headers['Content-Type'] = 'application/json'
-  return response
+  # find the new connected client in the array
+  getClientID = Client.findNewConnection(clients, request.sid)
+
+  # if the client ids match
+  if getClientID:
+
+    # send the historical data to everyone
+    emit('click', history)
+
+# Handling click event
+@socketio.on('click')
+def HandlingUserLocation(data):
+  print('Receiving ' + str(data))
+
+  # append new element to history array 
+  # for broadcasting old info to new connections
+  history.append(data)
+
+  # send the message back out to all clients except one that's not connecting
+  emit('click', data, broadcast=True)
 
 if __name__ == '__main__':
-  app.run(debug=True)
+  socketio.run(app, debug=True)
