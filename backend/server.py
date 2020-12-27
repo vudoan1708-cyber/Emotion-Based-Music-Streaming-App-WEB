@@ -78,7 +78,9 @@ def Callback():
 ###########################
 @app.route('/searchspotify', methods=['GET'])
 def SearchSpotifySongs():
-  return 'Great'
+  return jsonify({
+    'status': 'success',
+  })
 
 
 '''
