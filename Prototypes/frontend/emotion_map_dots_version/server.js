@@ -7,8 +7,6 @@ const server = http.createServer(app);
 
 const path = require('path');
 
-const fetch = require('node-fetch');
-
 server.listen(port, () => console.log('Listening at ' + port));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json({ limit: '1mb' }));

@@ -286,7 +286,6 @@ async function getAudioFeature(ids, preview_urls, titles, accessToken, available
 
 // REDIRECT USER BACK TO THE AUTHORISATION PAGE WHEN AN ACCESS TOKEN IS EXPIRED
 async function redirectToAuth(status, message) {
-    console.log(status, message)
 
     // fetch an endpoint from the server side to get an uri
     // to reload the authorisation page

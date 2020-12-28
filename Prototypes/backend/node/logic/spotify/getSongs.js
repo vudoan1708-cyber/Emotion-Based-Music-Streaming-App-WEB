@@ -34,10 +34,8 @@ module.exports = async function getSongs(TOKEN) {
   try {
       const request = await fetch(FETCH_URL, options);
       const json = await request.json();
-      console.log(json.tracks)
+      
       // get the song's id
-      // const random_value = Math.floor(Math.random() * lim);
-
       const ids = [];
       const preview_urls = [];
       const titles = [];
@@ -50,5 +48,6 @@ module.exports = async function getSongs(TOKEN) {
       return {ids, preview_urls, titles, TOKEN};
   } catch(err) {
       console.warn(err);
+      return err;
   }
 }

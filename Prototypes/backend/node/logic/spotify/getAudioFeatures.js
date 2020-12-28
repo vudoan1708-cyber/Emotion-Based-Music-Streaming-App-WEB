@@ -1,63 +1,66 @@
 const fetch = require('node-fetch');
 
-// logic
-const sleep = require('../utils/sleep');
-
 module.exports = async function getAudioFeature(data) {
+
+  const TOKEN = data.TOKEN;
+  const IDs = data.ids;
+  const PREVIEW_URLS = data.preview_urls;
+  const TITLES = data.titles;
+
+  const responses = [];
+  
   // get the url
   const BASE_URL = 'https://api.spotify.com/v1/audio-features/?';
   let concatinatedID = '';
 
-  ids.forEach((id, index) => {
-    if (index !== ids.length - 1)
+  IDs.forEach((id, index) => {
+
+    // check the loop comes to the last element of the array
+    // if not
+    if (index !== IDs.length - 1)
+
+      // concatenate the IDs with a comma after
       concatinatedID += `${id},`;
+
+    // otherwise, add one final ID without comma
     else concatinatedID += `${id}`;
   })
-  const FETCH_URL = BASE_URL + 'ids=' + concatinatedID;
+  const FETCH_URL = `${BASE_URL}ids=${concatinatedID}`;
   // console.log(FETCH_URL)
 
   // create options object that includes Authorisation header
   const options = {
     method: 'GET',
     headers: {
-      'Authorization': 'Bearer ' + TOKEN
-    }
+      'Authorization': `Bearer ${TOKEN}`,
+    },
   };
 
   // fetch the url with the provided options
   try {
 
-      const request = await fetch(FETCH_URL, options);
-      const json = await request.json();
-      const audio_features = json.audio_features;
+    const request = await fetch(FETCH_URL, options);
+    const json = await request.json();
+    const audio_features = json.audio_features;
 
-      for (let i = 0; i < audio_features.length; i++) {
+    // clean up the data from Spotify 
+    // and only send what is necessary to the client
+    for (let i = 0; i < audio_features.length; i++) {
 
-        const song_emotion = audio_features[i];
-
-        console.log(song_emotion.valence, song_emotion.energy, valence, arousal);
-        // console.log(song_emotion)
-
-        if (i < audio_features.length - 1) {
-
-            if (valence > song_emotion.valence - 0.050 && 
-                    valence < song_emotion.valence + 0.050
-                && arousal > song_emotion.energy - 0.050 && 
-                    arousal < song_emotion.energy + 0.050) {
-
-                        // make a temporary playlist for the mood
-                        makeATempPlaylist(accessToken, ids[i], preview_urls[i], titles[i], tempPlaylist, valence, arousal, song_emotion.valence, song_emotion.energy);
-            }
-        }
-        
-        else {
-          await sleep(500);
-          
-          getSongID(accessToken, tempPlaylist, valence, arousal);
-        }
-      }     
+      // IDs and TITLEs arrays have the same length as audio_features array
+      responses.push({
+        id: IDs[i],
+        title: TITLES[i],
+        valence: audio_features[i].valence,
+        arousal: audio_features[i].energy,
+        access_token: TOKEN,
+      });
+    }
+    return responses;
       
+  // catch for any error
   } catch(err) {
-      errHandling(err);
+      console.warn(err);
+      return err;
   }
 }

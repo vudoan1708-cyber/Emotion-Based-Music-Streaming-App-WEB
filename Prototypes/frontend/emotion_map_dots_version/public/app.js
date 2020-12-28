@@ -8,6 +8,12 @@ let galaxy = [];
 const songDots = [];
 const chosenPoints = [];
 
+// to visualise songs ouside and inside the zone of the accepted
+const unacceptedSongs = [];
+const acceptedSongs = [];
+// const neighbours = [];
+
+
 const stars = Array(360);
 
 let showMap = false;
@@ -269,6 +275,10 @@ async function mousePressed() {
   
         if (starDots[i][j].onHover()) {
           console.log(i / starDots.length, 1 - j / starDots[i].length);
+          console.log(i, j);
+
+          const valence = i / starDots.length;
+          const arousal = 1 - j / starDots[i].length;
           isClicked = true;
           chosenPoints.push(i, j);
 
@@ -279,10 +289,8 @@ async function mousePressed() {
           }
           socket.emit('click', data);
 
-          await getSongs()
-            .then((data) => {
-              console.log(data);
-            });
+          // get songs data from Spotify via the server
+          handlingSongsData(valence, arousal);
         }
       }
     }
@@ -305,6 +313,8 @@ function windowResized() {
 
 
 // Spotify
+const playlist = [];
+
 function hashURL () {
   const splittedString = window.location.search.split('=');
   const result = splittedString[splittedString.length - 1];
@@ -312,7 +322,16 @@ function hashURL () {
   return result;
 }
 
-async function getSongs() {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+function makeATempPlaylist(access_token, id, title, valence, arousal) {
+
+}
+
+async function getSongsData() {
 
   const TOKEN = hashURL();
 
@@ -325,4 +344,42 @@ async function getSongs() {
   const response = await request.json();
   // console.log(response);
   return response;
+}
+
+async function handlingSongsData(valence, arousal) {
+
+  // get songs' valence and arousal data 
+  const audio_features = await getSongsData();
+  
+  console.log(audio_features);
+  for (let i = 0; i < audio_features.length; i++) {
+
+    const song_data = audio_features[i];
+
+    console.log(song_data.valence, song_data.arousal);
+    // console.log(song_data)
+
+    // if playlist array has a length of less requested length (atm 5)
+    if (playlist.length < 5) {
+      // if i hasn't reached the end of the array
+      if (i < audio_features.length - 1) {
+
+        if (valence > song_data.valence - 0.050 && 
+            valence < song_data.valence + 0.050
+        && arousal > song_data.energy - 0.050 && 
+            arousal < song_data.energy + 0.050) {
+
+            // make a temporary playlist for the mood
+            makeATempPlaylist(song_data.access_token, song_data.id, song_data.title, song_data.valence, song_data.arousal);
+        }
+      } else {
+        await sleep(500);
+        
+        // handlingSongsData(valence, arousal);
+      }
+    } else {
+      console.log(playlist.length);
+      break;
+    }
+  }
 }
