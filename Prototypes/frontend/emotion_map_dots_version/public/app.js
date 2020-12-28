@@ -86,7 +86,6 @@ function getSocket() {
 
   socket.on('connect', () => {
     console.log('Successfully Connected');
-    socket.send('User has connected!');
   });
 
   socket.on('click', userDataEmit);
@@ -96,12 +95,10 @@ function getSocket() {
   })
 }
 
-async function setup() {
+function setup() {
   createCanvas(width, height);
 
   getSocket();
-
-  // await getSongs();
 
   if (!showMap) {
     background(0);
@@ -263,7 +260,7 @@ function changeMap() {
   
 }
 
-function mousePressed() {
+async function mousePressed() {
 
   // only clickable when the emotion map is shown
   if (showMap) {
@@ -281,6 +278,11 @@ function mousePressed() {
             j,
           }
           socket.emit('click', data);
+
+          await getSongs()
+            .then((data) => {
+              console.log(data);
+            });
         }
       }
     }
@@ -313,7 +315,14 @@ function hashURL () {
 async function getSongs() {
 
   const TOKEN = hashURL();
-  const request = await fetch(`/getSongs/${TOKEN}`);
+
+  // Node.js
+  const request = await fetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
+
+  // Python
+  // const request = await fetch(`http://localhost:5000/spotify/${TOKEN}/${valence}/${arousal}`);
+
   const response = await request.json();
-  console.log(response);
+  // console.log(response);
+  return response;
 }

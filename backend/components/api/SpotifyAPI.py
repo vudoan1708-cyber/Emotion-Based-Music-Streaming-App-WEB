@@ -1,13 +1,10 @@
-# random
-import random
-
 # request
 import requests as req
 
-# oauth from Spotify API
-# from oauth import SpotifyAuth
+# random
+import random
 
-def getRandomCharacter():
+def RandomAlphaCharacter():
 
   text = ''
     
@@ -20,7 +17,7 @@ def getRandomCharacter():
 
   return text
 
-def getSong():
+def getSong(TOKEN):
 
   # try to parse the URL
   try:
@@ -31,18 +28,25 @@ def getSong():
     lim = 10
 
     # random character
-    randomChar = getRandomCharacter()
+    randomChar = RandomAlphaCharacter()
 
     # market
     MARKET = 'from_token'
 
     # query params
-    QUERY = f'{randomChar}&type=track&market={MARKET}&limit=${lim}'
+    QUERY = f'{randomChar}&type=track&market={MARKET}&limit={lim}'
 
     # get the url
     FETCH_URL = f'{BASE_URL}q={QUERY}'
 
-    print(FETCH_URL)
+    headers = {
+      'Authorization': 'Bearer ' + str(TOKEN)
+    }
+
+    # print(FETCH_URL)
+    request = req.get(FETCH_URL, headers=headers)
+    json = request.json()
+    return json
   
   except Exception as e:
     return f'An Error Occured: {e}.'

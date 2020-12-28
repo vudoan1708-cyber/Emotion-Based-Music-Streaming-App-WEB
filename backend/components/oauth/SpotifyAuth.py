@@ -124,4 +124,5 @@ def callback():
     res = requests.get(ME_URL, headers=headers)
     res_data = res.json()
 
-    return redirect(f"{FRONTEND_URI}?access_token={session['tokens'].get('access_token')}")
+    # return redirect(f"{FRONTEND_URI}?access_token={session['tokens'].get('access_token')}")
+    return redirect(f"http://localhost:3000?access_token={session['tokens'].get('access_token')}")

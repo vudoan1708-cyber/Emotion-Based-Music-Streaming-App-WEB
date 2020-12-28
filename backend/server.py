@@ -10,7 +10,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, send, emit
 
 # components
-from components import SpotifyAPI
+from components.api import SpotifyAPI
 from components.oauth import SpotifyAuth
 
 # logic
@@ -76,11 +76,16 @@ def Callback():
 ###########################
 # FETCHING ENDPOINTS
 ###########################
-@app.route('/searchspotify', methods=['GET'])
-def SearchSpotifySongs():
-  return jsonify({
-    'status': 'success',
-  })
+@app.route('/spotify', methods=['GET'])
+def SearchSpotifySongs(TOKEN):
+  # get all the query parameters
+  # TOKEN = request.args.get(token)
+  # print(TOKEN)
+  print(TOKEN)
+  # get songs
+  response = SpotifyAPI.getSong(TOKEN)
+  print(response)
+  return response
 
 
 '''

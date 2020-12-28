@@ -1,5 +1,3 @@
-import ChosenEmotion from './components/emotion.js';
-
 // ERROR HANDLING
 function errHandling(err) {
     console.log(err);
@@ -18,7 +16,7 @@ function hashURL () {
 // Set up the Web Playback SDK
 
 // Set token
-const TOKEN = '';
+const TOKEN = 'BQAt2uf-kNo1547Rf856Ncc9jKlswyLzDpsYloin5vbesJuwhbVubY1FOM25PlR1H6qQqnai1e2PmkfQf88armWhBioCcaxvtS95_47YPZWS2q4oC_c5YaRv73b9Ten5yWLMArXR4VjlckM7yA6Ejx0hyYewZneKdXuTC5zfGFYSCkN55qs1zYD8wP87mSVIT_s3yFM4voPBdOyjqj0G3OWtAIUtu6D9gg68UW780nIrLwBy8K8qDw';
 
   
   // Play a specified track on the Web Playback SDK's device ID
@@ -221,14 +219,14 @@ async function getAudioFeature(ids, preview_urls, titles, accessToken, available
     
     // get the url
     const BASE_URL = 'https://api.spotify.com/v1/audio-features/?';
-    let concatedID = '';
+    let concatinatedID = '';
 
     ids.forEach((id, index) => {
         if (index !== ids.length - 1)
-            concatedID += `${id},`;
-        else concatedID += `${id}`;
+            concatinatedID += `${id},`;
+        else concatinatedID += `${id}`;
     })
-    const FETCH_URL = BASE_URL + 'ids=' + concatedID;
+    const FETCH_URL = BASE_URL + 'ids=' + concatinatedID;
     // console.log(FETCH_URL)
 
     // create options object that includes Authorisation header
@@ -546,19 +544,6 @@ async function getSongID(accessToken, tempPlaylist, valence, arousal) {
     getUserPlaylists(accessToken, BASE_URL, tempPlaylist, valence, arousal);
 }
 
-let valence, arousal;
-let ready = false;
-
-async function getUserEmotion() {
-    const request = await fetch('http://localhost:5000/userscore');
-    const response = await request.json();
-
-    valence = response.valence / 10;
-    arousal = response.arousal / 10;
-
-    getEmotion(valence, arousal);
-}
-
 
 // GET A USER'S EMOTION FROM EMOTION.JS FILE
 async function getEmotion(valence, arousal) {
@@ -585,7 +570,6 @@ async function getEmotion(valence, arousal) {
     await getSongID(TOKEN, tempPlaylist, valence, arousal);
     // }
 }
-// getUserEmotion();
-ChosenEmotion();
+getEmotion(0.5, 0.24);
 // getAPI()
 //     .then(() => { console.log(lyricsData.message.body) });
