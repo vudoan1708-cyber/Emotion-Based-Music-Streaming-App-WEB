@@ -8,9 +8,6 @@ let galaxy = [];
 const songDots = [];
 const chosenPoints = [];
 
-// to visualise songs ouside and inside the zone of the accepted
-const unacceptedSongs = [];
-const acceptedSongs = [];
 // const neighbours = [];
 
 
@@ -18,6 +15,7 @@ const stars = Array(360);
 
 let showMap = false;
 let isClicked = false;
+let songLoaded = false;
 
 let socket = null;
 
@@ -32,18 +30,28 @@ function make2dArray(cols, rows) {
 
 function star(x, y, radius1, radius2, npoints) {
 
+  // @ts-ignore
   let angle = TWO_PI / npoints;
   let halfAngle = angle / 2.0;
 
+  // @ts-ignore
   beginShape();
+  // @ts-ignore
   for (let a = 0; a < TWO_PI; a += angle) {
+    // @ts-ignore
     let sx = x + cos(a) * radius2;
+    // @ts-ignore
     let sy = y + sin(a) * radius2;
+    // @ts-ignore
     vertex(sx, sy);
+    // @ts-ignore
     sx = x + cos(a + halfAngle) * radius1;
+    // @ts-ignore
     sy = y + sin(a + halfAngle) * radius1;
+    // @ts-ignore
     vertex(sx, sy);
   }
+  // @ts-ignore
   endShape(CLOSE);
 }
 
@@ -52,26 +60,39 @@ function makeBGStars() {
   let r, g, b;
 
   for (let i = 0; i < stars.length; i++) {
+    // @ts-ignore
     const a = random(45, 100);
     
     if (i < stars.length / 4) {
+      // @ts-ignore
       r = random(200, 255);
+      // @ts-ignore
       g = random(200, 255);
       b = 0;
     } else if (i >= stars.length / 4 && i < stars.length / 2) {
+      // @ts-ignore
       r = random(200, 255);
+      // @ts-ignore
       g = random(20, 40);
+      // @ts-ignore
       b = random(20, 40);
     } else if (i >= stars.length / 2 && i < stars.length / 1.5) {
+      // @ts-ignore
       r = random(20, 40);
+      // @ts-ignore
       g = random(200, 255);
+      // @ts-ignore
       b = random(20, 40);
     } else {
+      // @ts-ignore
       r = random(20, 40);
+      // @ts-ignore
       g = random(20, 40);
+      // @ts-ignore
       b = random(200, 255);
     }
 
+    // @ts-ignore
     galaxy[i] = new GalaxyStars(random(width), random(height), random(1.0, 1.5), random(1.5, 2.5), color(r, g, b, a), random(255));
   }
 }
@@ -88,6 +109,7 @@ function userDataEmit(data) {
 
 function getSocket() {
   const URL = 'http://localhost:5000';
+  // @ts-ignore
   socket = io.connect(URL);
 
   socket.on('connect', () => {
@@ -102,17 +124,21 @@ function getSocket() {
 }
 
 function setup() {
+  // @ts-ignore
   createCanvas(width, height);
 
   getSocket();
 
   if (!showMap) {
+    // @ts-ignore
     background(0);
     makeBGStars();
   }
   
+  // @ts-ignore
   ellipseMode(CENTER);
 
+  // @ts-ignore
   rectMode(CENTER);
 
   // make a 2D array
@@ -122,6 +148,7 @@ function setup() {
   for (let i = 0; i < starDots.length; i++) {
     for (let j = 0; j < starDots[i].length; j++) {
 
+      // @ts-ignore
       starDots[i][j] = new StarDots(i, j, random(5, 12));
     }
   }
@@ -130,15 +157,21 @@ function setup() {
 }
 
 function drawLines(i, j) {
+  // @ts-ignore
   push();
+    // @ts-ignore
     stroke(200, 220);
+    // @ts-ignore
     strokeWeight(4.5);
 
     // VERTICAL LINE
+    // @ts-ignore
     line(starDots[i][j].x, starDots[i][j].y, starDots[i][j].x, starDots[i][Math.floor(starDots[i].length / 2)].y);
 
     // HORIZONTAL LINE
+    // @ts-ignore
     line(starDots[i][j].x, starDots[i][j].y, starDots[Math.floor(starDots.length / 2)][j].x, starDots[i][j].y);
+  // @ts-ignore
   pop();
 }
 
@@ -162,14 +195,18 @@ function drawHighlights(i, j) {
   //   }
   // }
 
+  // @ts-ignore
   push();
+    // @ts-ignore
     fill(255);
     starDots[i][j].show();
+  // @ts-ignore
   pop();
 }
 
 function fillStarsColor(i, j) {
 
+  // @ts-ignore
   push();
     if (starDots[i][j].onHover()) {
       
@@ -179,10 +216,12 @@ function fillStarsColor(i, j) {
       // draw guidlines
       drawLines(i, j);
 
+      // @ts-ignore
       fill(255, 0, 0);
       
     // the centred dot
     } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
+      // @ts-ignore
       fill(0);
 
     // TOP LEFT (ANGRY)
@@ -190,6 +229,7 @@ function fillStarsColor(i, j) {
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
         
         // orange
+        // @ts-ignore
         fill(200, 98, 20, 90);
 
     // BOTTOM LEFT (SAD)
@@ -197,6 +237,7 @@ function fillStarsColor(i, j) {
             && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
 
         // blue
+        // @ts-ignore
         fill(73, 27, 180, 90);
 
     // TOP RIGHT (HAPPY / EXCITED)
@@ -204,6 +245,7 @@ function fillStarsColor(i, j) {
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
         
         // green
+        // @ts-ignore
         fill(176, 220, 90, 90);
 
     // BOTTOM RIGHT (CALM / RELAXED)
@@ -211,21 +253,26 @@ function fillStarsColor(i, j) {
         && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
     
       // pink
+      // @ts-ignore
       fill(180, 83, 250, 90);
 
     // dots on the intersection lines
     } else {
+      // @ts-ignore
       fill(220, 150);
     }
     
     // show all stars with different colours depending on different conditions
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+  // @ts-ignore
   pop();
 }
 
 function drawStarDots() {
   
+  // @ts-ignore
   push();
+    // @ts-ignore
     noStroke();
 
     for (let i = 0; i < starDots.length; i++) {
@@ -234,8 +281,11 @@ function drawStarDots() {
         if (!isClicked) {
               
           // twinkle effects
+          // @ts-ignore
           const c = random(200, 255);
+          // @ts-ignore
           const a = random(20, 255);
+          // @ts-ignore
           fill(c, a);
           
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
@@ -251,13 +301,23 @@ function drawStarDots() {
           starDots[chosenPoints[0]][chosenPoints[1]].showZoneofTheAccepted();
     
           // red star on top
+          // @ts-ignore
           fill(255, 0, 0);
           star(starDots[chosenPoints[0]][chosenPoints[1]].x, starDots[chosenPoints[0]][chosenPoints[1]].y, 
                 starDots[chosenPoints[0]][chosenPoints[1]].size / 2, starDots[chosenPoints[0]][chosenPoints[1]].size / 4, 4);
         }
       }
     }   
+  // @ts-ignore
   pop();
+}
+
+function drawSongDots() {
+  if (songLoaded) {
+    for (let i = 0; i < songDots.length; i++) {
+      songDots[i].show();
+    }
+  }
 }
 
 function changeMap() {
@@ -297,17 +357,34 @@ async function mousePressed() {
   }
 }
 
+function createSongDots(label, valence, arousal) {
+
+  // avoid rounding up decimal values for variant results
+  const i = valence * starDots.length;
+  const j = (1 - arousal) * starDots[Math.floor(i)].length;
+  
+  const x = width / 5 + i * 15.4;
+  const y = height / 5 + j * 15.4;
+  console.log(x, y)
+  songDots.push(new SongDots(label, x, y, 12));
+  songLoaded = true;
+}
+
+
 function draw() {
 
+  // @ts-ignore
   background(10);
   drawGalaxyBG();
   
   if (showMap) {
     drawStarDots();
+    drawSongDots();
   }
 }
 
 function windowResized() {
+  // @ts-ignore
   resizeCanvas(width, height);
 }
 
@@ -326,9 +403,53 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// @ts-ignore
+async function makeATempPlaylist(access_token, id, title, valence, arousal) {
+  
+  if (playlist.length === 0) {
 
-function makeATempPlaylist(access_token, id, title, valence, arousal) {
-
+    // append the song's ids to the array
+    playlist.push(id);
+  } else {
+    for (let i = 0; i < playlist.length; i++) {
+  
+      // check for duplicates
+      if (id === playlist[i]) {
+        
+        await sleep(250);
+  
+        // redo the workflow
+        handlingSongsData(valence, arousal);
+  
+        break;
+      } else {
+          
+        // check the duplicates till the last element of the array
+        if (i === playlist.length - 1) {
+                
+          // append the song's ids to the array
+          playlist.push(id);
+  
+          // preview_urls.push(preview_url);
+  
+          // titles.push(title);
+  
+          // valences.push(song_valence);
+  
+          // arousals.push(song_energy);
+  
+          console.log(`Counter ${Number(playlist.length)}`);
+  
+          // await sleep(250);
+  
+          // accepted songs
+          createSongDots('accepted', valence, arousal);
+  
+          break;
+        }
+      }
+    }
+  }
 }
 
 async function getSongsData() {
@@ -351,34 +472,43 @@ async function handlingSongsData(valence, arousal) {
   // get songs' valence and arousal data 
   const audio_features = await getSongsData();
   
-  console.log(audio_features);
+  // console.log(audio_features);
   for (let i = 0; i < audio_features.length; i++) {
 
     const song_data = audio_features[i];
 
-    console.log(song_data.valence, song_data.arousal);
+    console.log(song_data.valence, song_data.arousal, valence, arousal);
     // console.log(song_data)
 
-    // if playlist array has a length of less requested length (atm 5)
+    // if playlist array has reached its end
     if (playlist.length < 5) {
-      // if i hasn't reached the end of the array
+
+      // if i hasn't reached the end of the audio featiures array's loop
       if (i < audio_features.length - 1) {
 
-        if (valence > song_data.valence - 0.050 && 
-            valence < song_data.valence + 0.050
-        && arousal > song_data.energy - 0.050 && 
-            arousal < song_data.energy + 0.050) {
+        // compare
+        if (valence > song_data.valence - 0.25 && 
+            valence < song_data.valence + 0.25
+        && arousal > song_data.arousal - 0.25 && 
+            arousal < song_data.arousal + 0.25) {
 
             // make a temporary playlist for the mood
-            makeATempPlaylist(song_data.access_token, song_data.id, song_data.title, song_data.valence, song_data.arousal);
+            // @ts-ignore
+            await makeATempPlaylist(song_data.access_token, song_data.id, song_data.title, song_data.valence, song_data.arousal);
+        } else {
+
+          // unaccepted songs
+          createSongDots('unaccepted', valence, arousal);
         }
+
+      // otherwise, redo the loop again until the playlist array condition is satisfied
       } else {
         await sleep(500);
-        
-        // handlingSongsData(valence, arousal);
+        // console.log(playlist.length)
+        handlingSongsData(valence, arousal);
       }
     } else {
-      console.log(playlist.length);
+      console.log(`End The Loop With ${playlist.length} songs`);
       break;
     }
   }

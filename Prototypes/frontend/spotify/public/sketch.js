@@ -275,7 +275,7 @@ async function getAudioFeature(ids, preview_urls, titles, accessToken, available
             // Play a track using our new device ID
             // playSong(accessToken, tempPlaylist);
             console.log(tempPlaylist);
-            plotEmotion(titles, valences, arousals, valence, arousal);
+            // plotEmotion(titles, valences, arousals, valence, arousal);
         }
         
         

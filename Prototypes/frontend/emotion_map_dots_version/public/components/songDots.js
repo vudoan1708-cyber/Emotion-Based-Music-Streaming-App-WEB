@@ -1,14 +1,16 @@
+// @ts-nocheck
 class SongDots {
-  constructor(x, y) {
+  constructor(label, x, y, size) {
+    this.label = label;
     this.x = x;
     this.y = y;
-    this.size = 10;
+    this.size = size;
   }
 
-  show(isCloselyMatched) {
+  show() {
     push();
 
-      if (isCloselyMatched)
+      if (this.label === 'accepted')
         fill(0, 180, 0, 200);
       else fill(150, 200);
       ellipse(this.x, this.y, this.size);

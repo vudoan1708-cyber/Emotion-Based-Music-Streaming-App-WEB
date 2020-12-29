@@ -1,3 +1,4 @@
+// @ts-nocheck
 class StarDots {
   constructor(i, j, size) {
     this.i = i;
