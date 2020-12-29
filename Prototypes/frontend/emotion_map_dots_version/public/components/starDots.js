@@ -23,7 +23,7 @@ class StarDots {
   showZoneofTheAccepted() {
 
     // for animation
-    if (this.subt <= 1) this.update();
+    if (this.subt <= 2) this.update();
     
     // 4 marks on 4 corners relative to the clicked point
     const marks = [this.i - this.subt, this.i + this.subt, this.j - this.subt, this.j + this.subt];

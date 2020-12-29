@@ -360,13 +360,13 @@ async function mousePressed() {
 function createSongDots(label, valence, arousal) {
 
   // avoid rounding up decimal values for variant results
-  const i = valence * starDots.length;
-  const j = (1 - arousal) * starDots[Math.floor(i)].length;
+  const i = Math.floor(valence * starDots.length);
+  const j = Math.floor((1 - arousal) * starDots[i].length);
   
   const x = width / 5 + i * 15.4;
   const y = height / 5 + j * 15.4;
-  console.log(x, y)
-  songDots.push(new SongDots(label, x, y, 12));
+  console.log(valence, arousal)
+  songDots.push(new SongDots(label, x, y, 10));
   songLoaded = true;
 }
 
@@ -477,20 +477,22 @@ async function handlingSongsData(valence, arousal) {
 
     const song_data = audio_features[i];
 
-    console.log(song_data.valence, song_data.arousal, valence, arousal);
+    // console.log(song_data.valence, song_data.arousal, valence, arousal);
     // console.log(song_data)
 
-    // if playlist array has reached its end
+    // if playlist array hasn't reached its end
     if (playlist.length < 5) {
 
       // if i hasn't reached the end of the audio featiures array's loop
       if (i < audio_features.length - 1) {
 
+        // const bounds = [width / 5 + chosenPoints[0] * 15.4, height / 5 + chosenPoints[1] * 15.4];
+        // console.log(`Comparing ${valence} and ${bounds[0]}`);
         // compare
-        if (valence > song_data.valence - 0.25 && 
-            valence < song_data.valence + 0.25
-        && arousal > song_data.arousal - 0.25 && 
-            arousal < song_data.arousal + 0.25) {
+        if (valence > song_data.valence - 0.2 && 
+            valence < song_data.valence + 0.2
+        && arousal > song_data.arousal - 0.2 && 
+            arousal < song_data.arousal + 0.2) {
 
             // make a temporary playlist for the mood
             // @ts-ignore
@@ -498,7 +500,7 @@ async function handlingSongsData(valence, arousal) {
         } else {
 
           // unaccepted songs
-          createSongDots('unaccepted', valence, arousal);
+          createSongDots('unaccepted', song_data.valence, song_data.arousal);
         }
 
       // otherwise, redo the loop again until the playlist array condition is satisfied
