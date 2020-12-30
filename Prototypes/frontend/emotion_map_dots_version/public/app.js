@@ -366,7 +366,7 @@ function createSongDots(label, valence, arousal) {
   
   const x = width / 5 + i * 15.4;
   const y = height / 5 + j * 15.4;
-  console.log(valence, arousal, i, j)
+  console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
   songDots.push(new SongDots(label, x, y, 10));
   songLoaded = true;
 }
@@ -457,15 +457,20 @@ async function getSongsData() {
 
   const TOKEN = hashURL();
 
-  // Node.js
-  const request = await fetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
+  try {
 
-  // Python
-  // const request = await fetch(`http://localhost:5000/spotify/${TOKEN}/${valence}/${arousal}`);
+    // Node.js
+    const request = await fetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
 
-  const response = await request.json();
-  // console.log(response);
-  return response;
+    // Python
+    // const request = await fetch(`http://localhost:5000/spotify/${TOKEN}/${valence}/${arousal}`);
+
+    const response = await request.json();
+    // console.log(response);
+    return response;
+  } catch(err) {
+    console.log(err);
+  }
 }
 
 async function handlingSongsData(valence, arousal) {
@@ -477,9 +482,6 @@ async function handlingSongsData(valence, arousal) {
   for (let i = 0; i < audio_features.length; i++) {
 
     const song_data = audio_features[i];
-
-    // console.log(song_data.valence, song_data.arousal, valence, arousal);
-    // console.log(song_data)
 
     // if playlist array hasn't reached its end
     if (playlist.length < 5) {

@@ -25,9 +25,10 @@ class StarDots {
     if (this.subt <= 2.5) this.update();
     
     // 4 marks on 4 corners relative to the clicked point
-    const marks = [this.i - this.subt, this.i + this.subt, this.j - this.subt, this.j + this.subt];
+    const marks = [this.i - this.subt, this.i + this.subt, 
+                    this.j - this.subt, this.j + this.subt];
 
-    // create new properties from those marks, relatively to the map
+    // create new coordinate properties from those marks
     const newPos = {
       x1: width / 5 + marks[0] * 15.4,
       x2: width / 5 + marks[1] * 15.4,
@@ -54,13 +55,13 @@ class StarDots {
         vertex(newPos.x1 - this.x, newPos.y2 - this.y);
       endShape(CLOSE);
 
-      rotate(PI / 4);
-      beginShape();
-        vertex(newPos.x1 - this.x, newPos.y1 - this.y);
-        vertex(newPos.x2 - this.x, newPos.y1 - this.y);
-        vertex(newPos.x2 - this.x, newPos.y2 - this.y);
-        vertex(newPos.x1 - this.x, newPos.y2 - this.y);
-      endShape(CLOSE);
+      // rotate(PI / 4);
+      // beginShape();
+      //   vertex(newPos.x1 - this.x, newPos.y1 - this.y);
+      //   vertex(newPos.x2 - this.x, newPos.y1 - this.y);
+      //   vertex(newPos.x2 - this.x, newPos.y2 - this.y);
+      //   vertex(newPos.x1 - this.x, newPos.y2 - this.y);
+      // endShape(CLOSE);
     pop();
   }
 

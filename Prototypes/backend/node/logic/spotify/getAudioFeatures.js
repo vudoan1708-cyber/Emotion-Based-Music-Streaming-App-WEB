@@ -48,14 +48,19 @@ module.exports = async function getAudioFeature(data) {
     // and only send what is necessary to the client
     for (let i = 0; i < audio_features.length; i++) {
 
-      // IDs and TITLEs arrays have the same length as audio_features array
-      responses.push({
-        id: IDs[i],
-        title: TITLES[i],
-        valence: audio_features[i].valence,
-        arousal: audio_features[i].energy,
-        access_token: TOKEN,
-      });
+      if (audio_features[i] !== null) {
+
+        // IDs and TITLEs arrays have the same length as audio_features array
+        responses.push({
+          id: IDs[i],
+          title: TITLES[i],
+          valence: audio_features[i].valence,
+          arousal: audio_features[i].energy,
+          access_token: TOKEN,
+        });
+      } else {
+        return {'error': 'TypeError: null property'};
+      }
     }
     return responses;
       
