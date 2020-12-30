@@ -3,8 +3,8 @@ class StarDots {
   constructor(i, j, size) {
     this.i = i;
     this.j = j;
-    this.x = width / 5 + i * 15.4;
-    this.y = height / 5 + j * 15.4;
+    this.x = width / 5 + this.i * 15.4;
+    this.y = height / 5 + this.j * 15.4;
     this.size = size;
 
     this.subt = 0.01;
@@ -20,10 +20,9 @@ class StarDots {
     ellipse(this.x, this.y, 20);
   }
 
-  showZoneofTheAccepted() {
-
+  showBoundaries() {
     // for animation
-    if (this.subt <= 2) this.update();
+    if (this.subt <= 2.5) this.update();
     
     // 4 marks on 4 corners relative to the clicked point
     const marks = [this.i - this.subt, this.i + this.subt, this.j - this.subt, this.j + this.subt];
@@ -35,17 +34,32 @@ class StarDots {
       y1: height / 5 + marks[2] * 15.4,
       y2: height / 5 + marks[3] * 15.4,
     } 
+    return newPos;
+  }
+
+  showZoneofTheAccepted() {
+
+    const newPos = this.showBoundaries();
 
     // create a white rect from those points
     push();
+      translate(this.x, this.y);
       noFill();
       strokeWeight(2.5);
       stroke(0, 180, 0, 100);
       beginShape();
-        vertex(newPos.x1, newPos.y1);
-        vertex(newPos.x2, newPos.y1);
-        vertex(newPos.x2, newPos.y2);
-        vertex(newPos.x1, newPos.y2);
+        vertex(newPos.x1 - this.x, newPos.y1 - this.y);
+        vertex(newPos.x2 - this.x, newPos.y1 - this.y);
+        vertex(newPos.x2 - this.x, newPos.y2 - this.y);
+        vertex(newPos.x1 - this.x, newPos.y2 - this.y);
+      endShape(CLOSE);
+
+      rotate(PI / 4);
+      beginShape();
+        vertex(newPos.x1 - this.x, newPos.y1 - this.y);
+        vertex(newPos.x2 - this.x, newPos.y1 - this.y);
+        vertex(newPos.x2 - this.x, newPos.y2 - this.y);
+        vertex(newPos.x1 - this.x, newPos.y2 - this.y);
       endShape(CLOSE);
     pop();
   }

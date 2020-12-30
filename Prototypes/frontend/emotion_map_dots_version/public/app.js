@@ -334,9 +334,10 @@ async function mousePressed() {
       for (let j = 0; j < starDots[i].length; j++) {
   
         if (starDots[i][j].onHover()) {
-          console.log(i / starDots.length, 1 - j / starDots[i].length);
+          console.log((i / starDots.length).toFixed(3), (1 - j / starDots[i].length).toFixed(3));
           console.log(i, j);
 
+          // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
           const valence = i / starDots.length;
           const arousal = 1 - j / starDots[i].length;
           isClicked = true;
@@ -350,7 +351,7 @@ async function mousePressed() {
           socket.emit('click', data);
 
           // get songs data from Spotify via the server
-          handlingSongsData(valence, arousal);
+          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)));
         }
       }
     }
@@ -359,13 +360,13 @@ async function mousePressed() {
 
 function createSongDots(label, valence, arousal) {
 
-  // avoid rounding up decimal values for variant results
+  // reverse the mapping algorithm to get the location values from valence and arousal
   const i = Math.floor(valence * starDots.length);
   const j = Math.floor((1 - arousal) * starDots[i].length);
   
   const x = width / 5 + i * 15.4;
   const y = height / 5 + j * 15.4;
-  console.log(valence, arousal)
+  console.log(valence, arousal, i, j)
   songDots.push(new SongDots(label, x, y, 10));
   songLoaded = true;
 }
@@ -486,13 +487,22 @@ async function handlingSongsData(valence, arousal) {
       // if i hasn't reached the end of the audio featiures array's loop
       if (i < audio_features.length - 1) {
 
-        // const bounds = [width / 5 + chosenPoints[0] * 15.4, height / 5 + chosenPoints[1] * 15.4];
-        // console.log(`Comparing ${valence} and ${bounds[0]}`);
+        const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
+        console.log(`Bounds: ${bounds.x1}, ${bounds.x2}, ${bounds.y1}, ${bounds.y2}`);
+
+        // map song's affective values to coordinates on the map
+        const song_i = Math.floor(song_data.valence * starDots.length);
+        const song_j = Math.floor((1 - song_data.arousal) * starDots[song_i].length);
+
+        const song_x = width / 5 + song_i * 15.4;
+        const song_y = height / 5 + song_j * 15.4;
+        console.log(`Song's Coordinates: ${song_x}, ${song_y}`);
+
         // compare
-        if (valence > song_data.valence - 0.2 && 
-            valence < song_data.valence + 0.2
-        && arousal > song_data.arousal - 0.2 && 
-            arousal < song_data.arousal + 0.2) {
+        if (song_x > bounds.x1 && 
+            song_x < bounds.x2
+        && song_y > bounds.y1 && 
+            song_y < bounds.y2) {
 
             // make a temporary playlist for the mood
             // @ts-ignore

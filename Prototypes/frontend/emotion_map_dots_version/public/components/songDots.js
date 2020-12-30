@@ -11,16 +11,18 @@ class SongDots {
     push();
 
       // effects
-      fill(200, 225);
+      noStroke();
+      fill(200, 75);
       ellipse(this.x, this.y, this.size + 5);
 
+      stroke(0);
       if (this.label === 'accepted')
         fill(0, 225, 0);
       else fill(150);
       ellipse(this.x, this.y, this.size);
 
       // effects
-      fill(200, 225);
+      fill(200, 75);
       ellipse(this.x, this.y, this.size - 5);
     pop();
   }
