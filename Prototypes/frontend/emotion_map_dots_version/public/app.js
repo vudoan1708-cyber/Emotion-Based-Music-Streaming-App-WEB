@@ -1,3 +1,4 @@
+// @ts-nocheck
 p5.disableFriendlyErrors = true; // disables FES
 
 const width = window.innerWidth,
@@ -8,7 +9,7 @@ let galaxy = [];
 const songDots = [];
 const chosenPoints = [];
 
-// const neighbours = [];
+const neighbours = [];
 
 
 const stars = Array(360);
@@ -92,7 +93,6 @@ function makeBGStars() {
       b = random(200, 255);
     }
 
-    // @ts-ignore
     galaxy[i] = new GalaxyStars(random(width), random(height), random(1.0, 1.5), random(1.5, 2.5), color(r, g, b, a), random(255));
   }
 }
@@ -103,13 +103,76 @@ function drawGalaxyBG() {
   }
 }
 
-function userDataEmit(data) {
-  console.log(data);
+let history = [];
+
+function createNewNeighbours(data) {
+
+  // here I compare new users locations to one that's connecting
+  if (data.i > chosenPoints[0] - 10 && 
+    data.i < chosenPoints[0] + 10
+  && data.j > chosenPoints[1] - 10 &&
+    data.j < chosenPoints[1] + 10) {
+
+      const x = width / 5 + data.i * 15.4;
+      const y = height / 5 + data.j * 15.4;
+
+      // create a new neighbour instance everytime the condition is satisfied
+      neighbours.push(new Neighbours(x, y, data.size));
+    }
+}
+
+function createHistoricalNeighbours() {
+  for (let h = 0; h < history.length; h++) {
+
+    // here I compare old users locations to one that's connecting
+    if (history[h].i > chosenPoints[0] - 10 && 
+      history[h].i < chosenPoints[0] + 10
+    && history[h].j > chosenPoints[1] - 10 &&
+      history[h].j < chosenPoints[1] + 10) {
+        const x = width / 5 + history[h].i * 15.4;
+        const y = height / 5 + history[h].j * 15.4;
+
+        // create a new neighbour instance everytime the condition is satisfied
+        neighbours.push(new Neighbours(x, y, history[h].size));
+      }
+  }
+}
+
+// in one machine, only two types of data emit from this socket connection
+// 1: HISTORICAL DATA (when first open the app)
+// 2: NEW DATA (when other users choose a coordinates closely to others)
+function userDataEmit(curent_data) {
+
+  // check if it is the first HISTORICAL data emit
+  // because a HISTORICAL data emit is in a form of an array (not undefined)
+  // this condition statement is to store the historical data to a global variable
+  if (curent_data.length !== undefined) {
+
+    // check if a user is not the first connection to the system
+    // because first users don't need historical data
+    if (curent_data.length !== 0) {
+
+      // shallow copy the data and assign it to a global array
+      history = [...curent_data];
+      console.log(history);
+    }
+
+  // check if it is a current event
+  } else {
+
+    // receive the NEW data broadcasted by OTHER USERS
+    // and push it to neighbours array
+    createNewNeighbours(curent_data);
+  }
+  console.log(curent_data)
+  console.log(`Other User Data: ${curent_data.i}, ${curent_data.j}`);
+  console.log(`My Data: ${chosenPoints[0]}, ${chosenPoints[1]}`);
+
+  
 }
 
 function getSocket() {
   const URL = 'http://localhost:5000';
-  // @ts-ignore
   socket = io.connect(URL);
 
   socket.on('connect', () => {
@@ -124,21 +187,17 @@ function getSocket() {
 }
 
 function setup() {
-  // @ts-ignore
   createCanvas(width, height);
 
   getSocket();
 
   if (!showMap) {
-    // @ts-ignore
-    background(0);
+    // background(0);
     makeBGStars();
   }
   
-  // @ts-ignore
   ellipseMode(CENTER);
 
-  // @ts-ignore
   rectMode(CENTER);
 
   // make a 2D array
@@ -148,30 +207,21 @@ function setup() {
   for (let i = 0; i < starDots.length; i++) {
     for (let j = 0; j < starDots[i].length; j++) {
 
-      // @ts-ignore
       starDots[i][j] = new StarDots(i, j, random(5, 12));
     }
   }
-
-  // noLoop();
 }
 
 function drawLines(i, j) {
-  // @ts-ignore
   push();
-    // @ts-ignore
     stroke(200, 220);
-    // @ts-ignore
     strokeWeight(4.5);
 
     // VERTICAL LINE
-    // @ts-ignore
     line(starDots[i][j].x, starDots[i][j].y, starDots[i][j].x, starDots[i][Math.floor(starDots[i].length / 2)].y);
 
     // HORIZONTAL LINE
-    // @ts-ignore
     line(starDots[i][j].x, starDots[i][j].y, starDots[Math.floor(starDots.length / 2)][j].x, starDots[i][j].y);
-  // @ts-ignore
   pop();
 }
 
@@ -194,19 +244,14 @@ function drawHighlights(i, j) {
   //     }
   //   }
   // }
-
-  // @ts-ignore
   push();
-    // @ts-ignore
     fill(255);
     starDots[i][j].show();
-  // @ts-ignore
   pop();
 }
 
 function fillStarsColor(i, j) {
 
-  // @ts-ignore
   push();
     if (starDots[i][j].onHover()) {
       
@@ -216,12 +261,10 @@ function fillStarsColor(i, j) {
       // draw guidlines
       drawLines(i, j);
 
-      // @ts-ignore
       fill(255, 0, 0);
       
     // the centred dot
     } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
-      // @ts-ignore
       fill(0);
 
     // TOP LEFT (ANGRY)
@@ -229,7 +272,6 @@ function fillStarsColor(i, j) {
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
         
         // orange
-        // @ts-ignore
         fill(200, 98, 20, 90);
 
     // BOTTOM LEFT (SAD)
@@ -237,7 +279,6 @@ function fillStarsColor(i, j) {
             && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
 
         // blue
-        // @ts-ignore
         fill(73, 27, 180, 90);
 
     // TOP RIGHT (HAPPY / EXCITED)
@@ -245,7 +286,6 @@ function fillStarsColor(i, j) {
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
         
         // green
-        // @ts-ignore
         fill(176, 220, 90, 90);
 
     // BOTTOM RIGHT (CALM / RELAXED)
@@ -253,26 +293,21 @@ function fillStarsColor(i, j) {
         && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
     
       // pink
-      // @ts-ignore
       fill(180, 83, 250, 90);
 
     // dots on the intersection lines
     } else {
-      // @ts-ignore
       fill(220, 150);
     }
     
     // show all stars with different colours depending on different conditions
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-  // @ts-ignore
   pop();
 }
 
 function drawStarDots() {
   
-  // @ts-ignore
   push();
-    // @ts-ignore
     noStroke();
 
     for (let i = 0; i < starDots.length; i++) {
@@ -281,11 +316,8 @@ function drawStarDots() {
         if (!isClicked) {
               
           // twinkle effects
-          // @ts-ignore
           const c = random(200, 255);
-          // @ts-ignore
           const a = random(20, 255);
-          // @ts-ignore
           fill(c, a);
           
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
@@ -301,14 +333,12 @@ function drawStarDots() {
           starDots[chosenPoints[0]][chosenPoints[1]].showZoneofTheAccepted();
     
           // red star on top
-          // @ts-ignore
           fill(255, 0, 0);
           star(starDots[chosenPoints[0]][chosenPoints[1]].x, starDots[chosenPoints[0]][chosenPoints[1]].y, 
                 starDots[chosenPoints[0]][chosenPoints[1]].size / 2, starDots[chosenPoints[0]][chosenPoints[1]].size / 4, 4);
         }
       }
     }   
-  // @ts-ignore
   pop();
 }
 
@@ -321,9 +351,7 @@ function drawSongDots() {
 }
 
 function changeMap() {
-  // loop();
   showMap = true;
-  
 }
 
 async function mousePressed() {
@@ -347,8 +375,14 @@ async function mousePressed() {
           let data = {
             i,
             j,
+            size: starDots[i][j].size,
           }
           socket.emit('click', data);
+
+          // HISTORICAL USERS
+          // use the history array available globally after collecting it the first time
+          // and push it t0 neighbours array as well
+          createHistoricalNeighbours();
 
           // get songs data from Spotify via the server
           handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)));
@@ -366,26 +400,34 @@ function createSongDots(label, valence, arousal) {
   
   const x = width / 5 + i * 15.4;
   const y = height / 5 + j * 15.4;
-  console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
+  // console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
   songDots.push(new SongDots(label, x, y, 10));
   songLoaded = true;
 }
 
+function drawNeighbours() {
+
+  // NEW USERS
+  if (neighbours.length > 0) {
+    for (let i = 0; i < neighbours.length; i++) {
+      neighbours[i].show();
+    }
+  }
+}
 
 function draw() {
 
-  // @ts-ignore
   background(10);
   drawGalaxyBG();
   
   if (showMap) {
     drawStarDots();
     drawSongDots();
+    drawNeighbours();
   }
 }
 
 function windowResized() {
-  // @ts-ignore
   resizeCanvas(width, height);
 }
 
@@ -411,6 +453,9 @@ async function makeATempPlaylist(access_token, id, title, valence, arousal) {
 
     // append the song's ids to the array
     playlist.push(id);
+
+    // accepted songs
+    createSongDots('accepted', valence, arousal);
   } else {
     for (let i = 0; i < playlist.length; i++) {
   
@@ -490,7 +535,7 @@ async function handlingSongsData(valence, arousal) {
       if (i < audio_features.length - 1) {
 
         const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
-        console.log(`Bounds: ${bounds.x1}, ${bounds.x2}, ${bounds.y1}, ${bounds.y2}`);
+        // console.log(`Bounds: ${bounds.x1}, ${bounds.x2}, ${bounds.y1}, ${bounds.y2}`);
 
         // map song's affective values to coordinates on the map
         const song_i = Math.floor(song_data.valence * starDots.length);
@@ -498,7 +543,7 @@ async function handlingSongsData(valence, arousal) {
 
         const song_x = width / 5 + song_i * 15.4;
         const song_y = height / 5 + song_j * 15.4;
-        console.log(`Song's Coordinates: ${song_x}, ${song_y}`);
+        // console.log(`Song's Coordinates: ${song_x}, ${song_y}`);
 
         // compare
         if (song_x > bounds.x1 && 

@@ -42,5 +42,7 @@ module.exports = (server) => {
         // send the message back out to all clients except one that's connecting
         socket.broadcast.emit('click', data);
     });
+
+    // socket.on('disconnect')
   });
 }
