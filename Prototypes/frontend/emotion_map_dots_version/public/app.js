@@ -346,6 +346,11 @@ function drawSongDots() {
   if (songLoaded) {
     for (let i = 0; i < songDots.length; i++) {
       songDots[i].show();
+
+      // for re-collecting songs within The Zone, but aren't included 
+      // because the Zone hasn't spreaded out to its maximum size
+      if (songDots[i].label === 'unaccepted')
+        songDots[i].updateLabels();
     }
   }
 }
@@ -392,7 +397,7 @@ async function mousePressed() {
   }
 }
 
-function createSongDots(label, valence, arousal) {
+function createSongDots(label, valence, arousal, id) {
 
   // reverse the mapping algorithm to get the location values from valence and arousal
   const i = Math.floor(valence * starDots.length);
@@ -401,7 +406,7 @@ function createSongDots(label, valence, arousal) {
   const x = width / 5 + i * 15.4;
   const y = height / 5 + j * 15.4;
   // console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
-  songDots.push(new SongDots(label, x, y, 10));
+  songDots.push(new SongDots(label, id, x, y, 10));
   songLoaded = true;
 }
 
@@ -455,7 +460,7 @@ async function makeATempPlaylist(access_token, id, title, valence, arousal) {
     playlist.push(id);
 
     // accepted songs
-    createSongDots('accepted', valence, arousal);
+    createSongDots('accepted', valence, arousal, id);
   } else {
     for (let i = 0; i < playlist.length; i++) {
   
@@ -489,7 +494,7 @@ async function makeATempPlaylist(access_token, id, title, valence, arousal) {
           // await sleep(250);
   
           // accepted songs
-          createSongDots('accepted', valence, arousal);
+          createSongDots('accepted', valence, arousal, id);
   
           break;
         }
@@ -552,12 +557,11 @@ async function handlingSongsData(valence, arousal) {
             song_y < bounds.y2) {
 
             // make a temporary playlist for the mood
-            // @ts-ignore
             await makeATempPlaylist(song_data.access_token, song_data.id, song_data.title, song_data.valence, song_data.arousal);
         } else {
 
           // unaccepted songs
-          createSongDots('unaccepted', song_data.valence, song_data.arousal);
+          createSongDots('unaccepted', song_data.valence, song_data.arousal, song_data.id);
         }
 
       // otherwise, redo the loop again until the playlist array condition is satisfied

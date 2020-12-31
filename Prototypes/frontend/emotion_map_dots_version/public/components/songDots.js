@@ -1,7 +1,8 @@
 // @ts-nocheck
 class SongDots {
-  constructor(label, x, y, size) {
+  constructor(label, id, x, y, size) {
     this.label = label;
+    this.id = id;
     this.x = x;
     this.y = y;
     this.size = size;
@@ -35,5 +36,23 @@ class SongDots {
         } 
       } return false;
     }
+  }
+
+  updateLabels() {
+
+    const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
+
+    // re-compare
+    if (this.x > bounds.x1 && 
+        this.x < bounds.x2
+    && this.y > bounds.y1 && 
+        this.y < bounds.y2) {
+
+          // change the label to affect the visualisation
+        this.label = 'accepted';
+
+        // push it in the playlist array
+        playlist.push(this.id);
+      }
   }
 }

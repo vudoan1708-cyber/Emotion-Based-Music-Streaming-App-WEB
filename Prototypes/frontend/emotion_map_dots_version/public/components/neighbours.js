@@ -1,4 +1,3 @@
-// @ts-nocheck
 class Neighbours {
   constructor(x, y, size) {
     this.x = x;
