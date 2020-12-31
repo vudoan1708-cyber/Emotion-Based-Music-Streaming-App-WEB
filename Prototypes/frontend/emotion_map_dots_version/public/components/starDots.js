@@ -9,10 +9,14 @@ class StarDots {
 
     this.subt = 0.01;
     this.acc = 0.000125;
+    this.angle = 0;
   }
 
-  update() {
-    this.subt += this.acc;
+  update(categorgy) {
+    if (categorgy === 'spread')
+      this.subt += this.acc;
+    else
+      this.angle += this.acc;
     this.acc += 0.0000000000001;
   }
 
@@ -21,8 +25,8 @@ class StarDots {
   }
 
   showBoundaries() {
-    // for animation
-    if (this.subt <= 2.5) this.update();
+    // for spread animation
+    if (this.subt <= 2.5) this.update('spread');
     
     // 4 marks on 4 corners relative to the clicked point
     const marks = [this.i - this.subt, this.i + this.subt, 
@@ -42,9 +46,13 @@ class StarDots {
 
     const newPos = this.showBoundaries();
 
+    // for orientation animation
+    if (this.angle <= PI / 2) this.update('orientation');
+
     // create a white rect from those points
     push();
       translate(this.x, this.y);
+      rotate(this.angle);
       noFill();
       strokeWeight(2.5);
       stroke(0, 180, 0, 100);
