@@ -30,8 +30,8 @@ class SongDots {
 
   onHover(isSongLoading) {
     if (isSongLoading) {
-      if (mouseX > this.x - this/size / 2 && mouseX < this.x + this.size / 2) {
-        if (mouseY > this.y - this/size / 2 && mouseY < this.y + this.size / 2) {
+      if (mouseX > this.x - this.size / 2 && mouseX < this.x + this.size / 2) {
+        if (mouseY > this.y - this.size / 2 && mouseY < this.y + this.size / 2) {
           return true;
         } 
       } return false;

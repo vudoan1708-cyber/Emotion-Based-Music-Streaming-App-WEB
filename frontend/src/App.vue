@@ -8,6 +8,7 @@
 </template>
 
 <script>
+// @ts-nocheck
 import { onMounted } from 'vue';
 // import SketchP5 from '@/components/SketchP5.vue';
 

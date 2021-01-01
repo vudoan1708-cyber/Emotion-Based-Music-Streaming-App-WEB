@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable no-param-reassign */
 import StarDots from '@/components/Utils/p5/classes/starDots';
-import make2dArray from '@/components/Utils/array';
 import star from '@/components/Utils/p5/star';
+import make2dArray from '@/components/Utils/logic/array';
 
 // scoped functions
 function drawLines(i, j, starDots, p5) {

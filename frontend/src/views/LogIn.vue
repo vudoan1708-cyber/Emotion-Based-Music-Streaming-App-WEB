@@ -11,6 +11,7 @@
 </template>
 
 <script>
+// @ts-nocheck
 /* eslint-disable padded-blocks */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-new */
@@ -19,7 +20,7 @@
 import p5 from 'p5';
 
 // handler for spotify authorisation flow
-import LoginHandlers from '@/handlers/spotify';
+import { LoginHandlers } from '@/handlers/spotify';
 
 // Ultilities
 import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/bg';

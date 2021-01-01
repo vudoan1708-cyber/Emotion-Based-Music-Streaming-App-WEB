@@ -5,6 +5,7 @@
 </template>
 
 <script>
+// @ts-nocheck
 import SketchP5 from '@/components/SketchP5.vue';
 
 export default {

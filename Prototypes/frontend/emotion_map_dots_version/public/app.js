@@ -35,24 +35,15 @@ function star(x, y, radius1, radius2, npoints) {
   let angle = TWO_PI / npoints;
   let halfAngle = angle / 2.0;
 
-  // @ts-ignore
   beginShape();
-  // @ts-ignore
   for (let a = 0; a < TWO_PI; a += angle) {
-    // @ts-ignore
     let sx = x + cos(a) * radius2;
-    // @ts-ignore
     let sy = y + sin(a) * radius2;
-    // @ts-ignore
     vertex(sx, sy);
-    // @ts-ignore
     sx = x + cos(a + halfAngle) * radius1;
-    // @ts-ignore
     sy = y + sin(a + halfAngle) * radius1;
-    // @ts-ignore
     vertex(sx, sy);
   }
-  // @ts-ignore
   endShape(CLOSE);
 }
 
@@ -61,35 +52,23 @@ function makeBGStars() {
   let r, g, b;
 
   for (let i = 0; i < stars.length; i++) {
-    // @ts-ignore
     const a = random(45, 100);
     
     if (i < stars.length / 4) {
-      // @ts-ignore
       r = random(200, 255);
-      // @ts-ignore
       g = random(200, 255);
       b = 0;
     } else if (i >= stars.length / 4 && i < stars.length / 2) {
-      // @ts-ignore
       r = random(200, 255);
-      // @ts-ignore
       g = random(20, 40);
-      // @ts-ignore
       b = random(20, 40);
     } else if (i >= stars.length / 2 && i < stars.length / 1.5) {
-      // @ts-ignore
       r = random(20, 40);
-      // @ts-ignore
       g = random(200, 255);
-      // @ts-ignore
       b = random(20, 40);
     } else {
-      // @ts-ignore
       r = random(20, 40);
-      // @ts-ignore
       g = random(20, 40);
-      // @ts-ignore
       b = random(200, 255);
     }
 
@@ -412,7 +391,6 @@ function createSongDots(label, valence, arousal, id) {
 
 function drawNeighbours() {
 
-  // NEW USERS
   if (neighbours.length > 0) {
     for (let i = 0; i < neighbours.length; i++) {
       neighbours[i].show();
@@ -452,7 +430,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// @ts-ignore
 async function makeATempPlaylist(access_token, id, title, valence, arousal) {
   
   if (playlist.length === 0) {
