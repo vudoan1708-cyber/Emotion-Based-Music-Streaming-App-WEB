@@ -439,6 +439,7 @@ function windowResized() {
 
 // Spotify
 const playlist = [];
+let spotifyPlayerID = null;
 
 function hashURL () {
   const splittedString = window.location.search.split('=');
@@ -572,7 +573,57 @@ async function handlingSongsData(valence, arousal) {
       }
     } else {
       console.log(`End The Loop With ${playlist.length} songs`);
+      playSong(song_data.access_token);
       break;
     }
+  }
+}
+
+// Set up the Web Playback SDK PLAYER
+window.onSpotifyPlayerAPIReady = () => {
+  const TOKEN = hashURL();
+
+  const player = new Spotify.Player({
+    name: 'IAE',
+    getOAuthToken: cb => { cb(TOKEN); }
+  });
+
+  // Error handling
+  player.on('initialization_error', e => console.error(e));
+  player.on('authentication_error', e => console.error(e));
+  player.on('account_error', e => console.error(e));
+  player.on('playback_error', e => console.error(e));
+
+  // Playback status updates
+  player.on('player_state_changed', state => {
+    console.log(state)
+    $('#current-track').attr('src', state.track_window.current_track.album.images[0].url);
+    $('#current-track-name').text(state.track_window.current_track.name);
+  });
+
+  // Player Ready
+  player.on('ready', data => {
+    console.log('Ready with Device ID', data.device_id);
+    
+    // make the player id globally accessible
+    spotifyPlayerID = data.device_id;
+  });
+
+  // Connect to the player!
+  player.connect();
+}
+
+// Play a track using our new device ID
+async function playSong(TOKEN) {
+
+  try {
+
+    // Node.js
+    const request = await fetch(`http://localhost:5000/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`);
+
+    const response = await request.json();
+    console.log(response);
+  } catch(err) {
+    console.log(err);
   }
 }
