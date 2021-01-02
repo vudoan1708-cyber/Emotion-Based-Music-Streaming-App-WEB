@@ -338,7 +338,31 @@ function changeMap() {
   showMap = true;
 }
 
-async function mousePressed() {
+
+// MAPPING ALGORITHMS
+function indicesToMood(i, j) {
+  const valence = i / starDots.length;
+  const arousal = 1 - j / starDots[i].length;
+  return { valence, arousal };
+}
+
+function moodToCoordinates(valence, arousal) {
+  const i = Math.floor(valence * starDots.length);
+  const j = Math.floor((1 - arousal) * starDots[i].length);
+  
+  const x = width / 5 + i * 15.4;
+  const y = height / 5 + j * 15.4;
+  return { x, y };
+}
+
+function coordinatesToIndices() {
+  const i = Math.floor((mouseX - width / 5) / 15.4);
+  const j = Math.floor((mouseY - height / 5) / 15.4);
+  return { i, j };
+}
+//
+
+function mousePressed() {
 
   // only clickable when the emotion map is shown
   if (showMap) {
@@ -350,8 +374,8 @@ async function mousePressed() {
           console.log(i, j);
 
           // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-          const valence = i / starDots.length;
-          const arousal = 1 - j / starDots[i].length;
+          const mood = indicesToMood(i, j);
+
           isClicked = true;
           chosenPoints.push(i, j);
 
@@ -369,23 +393,44 @@ async function mousePressed() {
           createHistoricalNeighbours();
 
           // get songs data from Spotify via the server
-          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)));
+          handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)));
         }
       }
     }
   }
 }
 
+function mouseDragged() {
+  // only draggable when the emotion map is shown
+  if (showMap) {
+
+    // empty the playlist and refill it
+    playlist = [];
+  
+    console.log(`${mouseX}, ${mouseY}`);
+
+    // convert the mapping algorithm to indices
+    // move the chosen point to other locations
+    const indices = coordinatesToIndices();
+    chosenPoints[0] = indices.i;
+    chosenPoints[1] = indices.j;
+
+    // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
+    const mood = indicesToMood(chosenPoints[0], chosenPoints[1]);
+
+    // get songs data from Spotify via the server
+    handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)));
+    console.log(`${chosenPoints[0]}, ${chosenPoints[1]}`);
+  }
+}
+
 function createSongDots(label, valence, arousal, id) {
 
   // reverse the mapping algorithm to get the location values from valence and arousal
-  const i = Math.floor(valence * starDots.length);
-  const j = Math.floor((1 - arousal) * starDots[i].length);
-  
-  const x = width / 5 + i * 15.4;
-  const y = height / 5 + j * 15.4;
+  coordinates = moodToCoordinates(valence, arousal);
+
   // console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
-  songDots.push(new SongDots(label, id, x, y, 10));
+  songDots.push(new SongDots(label, id, coordinates.x, coordinates.y, 10));
   songLoaded = true;
 }
 
@@ -416,7 +461,7 @@ function windowResized() {
 
 
 // Spotify
-const playlist = [];
+let playlist = [];
 let spotifyPlayerID = null;
 
 function hashURL () {

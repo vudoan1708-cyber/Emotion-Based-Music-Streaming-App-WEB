@@ -62,14 +62,6 @@ class StarDots {
         vertex(newPos.x2 - this.x, newPos.y2 - this.y);
         vertex(newPos.x1 - this.x, newPos.y2 - this.y);
       endShape(CLOSE);
-
-      // rotate(PI / 4);
-      // beginShape();
-      //   vertex(newPos.x1 - this.x, newPos.y1 - this.y);
-      //   vertex(newPos.x2 - this.x, newPos.y1 - this.y);
-      //   vertex(newPos.x2 - this.x, newPos.y2 - this.y);
-      //   vertex(newPos.x1 - this.x, newPos.y2 - this.y);
-      // endShape(CLOSE);
     pop();
   }
 
