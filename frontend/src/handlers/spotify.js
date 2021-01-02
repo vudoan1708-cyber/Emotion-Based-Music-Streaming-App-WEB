@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-await-in-loop */
@@ -17,6 +18,7 @@ import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 
 // Spotify
 let spotifyPlayerID = null;
+let playlist = [];
 
 // Set up the Web Playback SDK PLAYER
 window.onSpotifyPlayerAPIReady = () => {
@@ -74,7 +76,22 @@ async function getSongsData() {
   }
 }
 
-async function makeATempPlaylist(id, valence, arousal, starDots, width, height, chosenPoints, playlist, p5) {
+export function removeATempPlaylist() {
+  // empty the playlist and refill it
+  playlist = [];
+}
+
+export function updatePlaylist(id, how) {
+
+  // splice it off the playlist array
+  if (how === 'remove') {
+    for (let i = playlist.length - 1; i >= 0; i -= 1) {
+      if (playlist[i] === id) playlist.splice(id, 1);
+    }
+  } else playlist.push(id);
+}
+
+export async function makeATempPlaylist(id, valence, arousal, starDots, width, height, chosenPoints, p5) {
   
   if (playlist.length === 0) {
 
@@ -83,7 +100,7 @@ async function makeATempPlaylist(id, valence, arousal, starDots, width, height, 
 
     // accepted songs
     createSongDots('accepted', valence, arousal, id, 
-                    starDots, width, height, chosenPoints, playlist, p5);
+                    starDots, width, height, p5);
   } else {
     for (let i = 0; i < playlist.length; i += 1) {
   
@@ -93,7 +110,7 @@ async function makeATempPlaylist(id, valence, arousal, starDots, width, height, 
         await sleep(250);
   
         // redo the workflow
-        handlingSongsData(valence, arousal, playlist, starDots, chosenPoints, width, height, p5);
+        handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5);
   
         break;
       } else {
@@ -118,7 +135,7 @@ async function makeATempPlaylist(id, valence, arousal, starDots, width, height, 
   
           // accepted songs
           createSongDots('accepted', valence, arousal, id, 
-                          starDots, width, height, chosenPoints, playlist, p5);
+                          starDots, width, height, p5);
   
           break;
         }
@@ -128,7 +145,7 @@ async function makeATempPlaylist(id, valence, arousal, starDots, width, height, 
 }
 
 // Play a track using our new device ID
-async function playSong(TOKEN, playlist) {
+async function playSong(TOKEN) {
 
   try {
 
@@ -161,7 +178,7 @@ export async function LoginHandlers() {
   }
 }
 
-export async function handlingSongsData(valence, arousal, playlist, starDots, chosenPoints, width, height, p5) {
+export async function handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5) {
 
   // get songs' valence and arousal data 
   const audio_features = await getSongsData();
@@ -195,19 +212,19 @@ export async function handlingSongsData(valence, arousal, playlist, starDots, ch
             song_y < bounds.y2) {
 
             // make a temporary playlist for the mood
-            await makeATempPlaylist(song_data.id, song_data.valence, song_data.arousal, starDots, width, height, chosenPoints, playlist, p5);
+            await makeATempPlaylist(song_data.id, song_data.valence, song_data.arousal, starDots, width, height, chosenPoints, p5);
         } else {
 
           // unaccepted songs
           createSongDots('unaccepted', song_data.valence, song_data.arousal, song_data.id, 
-                          starDots, width, height, chosenPoints, playlist, p5);
+                          starDots, width, height, p5);
         }
 
       // otherwise, redo the loop again until the playlist array condition is satisfied
       } else {
         await sleep(500);
         // console.log(playlist.length)
-        handlingSongsData(valence, arousal, playlist, starDots, chosenPoints, width, height, p5);
+        handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5);
       }
     } else {
       console.log(`End The Loop With ${playlist.length} songs`);

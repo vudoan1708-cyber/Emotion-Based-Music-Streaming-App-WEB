@@ -1,8 +1,17 @@
+/* eslint-disable max-len */
+/* eslint-disable padded-blocks */
+/* eslint-disable operator-linebreak */
+/* eslint-disable no-trailing-spaces */
 /* eslint-disable consistent-return */
+// eslint-disable-next-line import/no-cycle
+import { updatePlaylist } from '@/handlers/spotify';
+
 export default class SongDots {
-  constructor(label, id, x, y, size, p5) {
+  constructor(label, id, valence, arousal, x, y, size, p5) {
     this.label = label;
     this.id = id;
+    this.valence = valence;
+    this.arousal = arousal;
     this.x = x;
     this.y = y;
     this.size = size;
@@ -38,19 +47,34 @@ export default class SongDots {
     }
   }
 
-  updateLabels(starDots, chosenPoints, playlist) {
+  updateLabels(starDots, chosenPoints) {
     const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
 
     // re-compare
-    if (this.x > bounds.x1
-        && this.x < bounds.x2
-    && this.y > bounds.y1
-        && this.y < bounds.y2) {
-      // change the label to affect the visualisation
-      this.label = 'accepted';
+    if (this.x > bounds.x1 && 
+      this.x < bounds.x2
+  && this.y > bounds.y1 && 
+      this.y < bounds.y2) {
 
-      // push it in the playlist array
-      playlist.push(this.id);
+      if (this.label === 'unaccepted') {
+
+        // change the label to affect the visualisation
+        this.label = 'accepted';
+
+        // push it in the playlist array
+        updatePlaylist(this.id, 'add');
+      }
+
+    } else {
+
+      // eslint-disable-next-line no-lonely-if
+      if (this.label === 'accepted') {
+
+        // change the label to affect the visualisation
+        this.label = 'unaccepted';
+
+        updatePlaylist(this.id, 'remove');
+      }
     }
   }
 }

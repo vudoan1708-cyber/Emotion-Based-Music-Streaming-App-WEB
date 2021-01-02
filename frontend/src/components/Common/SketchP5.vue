@@ -16,7 +16,9 @@ import { createMap, drawMap } from '@/components/Utils/p5/emotionMap';
 import { drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
-import { handlingSongsData } from '@/handlers/spotify';
+import { indicesToMood, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
+
+import { handlingSongsData, removeATempPlaylist } from '@/handlers/spotify';
 
 export default {
   name: 'SketchP5',
@@ -49,8 +51,6 @@ export default {
 
       const galaxy = [];
       const chosenPoints = [];
-
-      const playlist = [];
 
       const stars = Array(360);
 
@@ -125,7 +125,7 @@ export default {
         drawMap(width, height, isClicked, starDots, chosenPoints, p);
 
         // Song Dots
-        drawSongDots(starDots, chosenPoints, playlist);
+        drawSongDots(starDots, chosenPoints, width, height, p5);
 
         // Neighbours
         drawNeighbours(p);
@@ -142,8 +142,8 @@ export default {
               console.log(i, j);
 
               // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-              const valence = i / starDots.length;
-              const arousal = 1 - j / starDots[i].length;
+              const mood = indicesToMood(i, j, starDots);
+
               isClicked = true;
               chosenPoints.push(i, j);
 
@@ -161,10 +161,21 @@ export default {
               createHistoricalNeighbours(history, chosenPoints, width, height);
 
               // get songs data from Spotify via the server
-              handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), playlist, starDots, chosenPoints, width, height, p);
+              handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)), starDots, chosenPoints, width, height, p);
             }
           }
         }
+      }
+
+      p.mouseDragged = () => {
+
+        removeATempPlaylist();
+
+        // convert the mapping algorithm to indices
+        // move the chosen point to other locations
+        const indices = coordinatesToIndices(width, height, p);
+        chosenPoints[0] = indices.i;
+        chosenPoints[1] = indices.j;
       }
 
     };

@@ -323,13 +323,11 @@ function drawStarDots() {
 
 function drawSongDots() {
   if (songLoaded) {
-    for (let i = 0; i < songDots.length; i++) {
+    for (let i = songDots.length - 1; i >= 0; i--) {
       songDots[i].show();
 
-      // for re-collecting songs within The Zone, but aren't included 
-      // because the Zone hasn't spreaded out to its maximum size
-      if (songDots[i].label === 'unaccepted')
-        songDots[i].updateLabels();
+      // live updating every song dots positions
+      songDots[i].updateLabels();
     }
   }
 }
@@ -406,8 +404,6 @@ function mouseDragged() {
 
     // empty the playlist and refill it
     playlist = [];
-  
-    console.log(`${mouseX}, ${mouseY}`);
 
     // convert the mapping algorithm to indices
     // move the chosen point to other locations
@@ -416,18 +412,18 @@ function mouseDragged() {
     chosenPoints[1] = indices.j;
 
     // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-    const mood = indicesToMood(chosenPoints[0], chosenPoints[1]);
+    // const mood = indicesToMood(chosenPoints[0], chosenPoints[1]);
 
-    // get songs data from Spotify via the server
-    handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)));
-    console.log(`${chosenPoints[0]}, ${chosenPoints[1]}`);
+    // // get songs data from Spotify via the server
+    // handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)));
+    // console.log(`${chosenPoints[0]}, ${chosenPoints[1]}`);
   }
 }
 
 function createSongDots(label, valence, arousal, id) {
 
   // reverse the mapping algorithm to get the location values from valence and arousal
-  coordinates = moodToCoordinates(valence, arousal);
+  const coordinates = moodToCoordinates(valence, arousal);
 
   // console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
   songDots.push(new SongDots(label, id, coordinates.x, coordinates.y, 10));

@@ -10,7 +10,7 @@
 <script>
 // @ts-nocheck
 import { onMounted } from 'vue';
-// import SketchP5 from '@/components/SketchP5.vue';
+// import SketchP5 from '@/components/Common/SketchP5.vue';
 
 // import InitialisePlayer from './components/InitialisePlayer.vue';
 

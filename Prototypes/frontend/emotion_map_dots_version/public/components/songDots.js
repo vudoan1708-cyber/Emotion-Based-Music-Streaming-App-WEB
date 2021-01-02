@@ -48,11 +48,28 @@ class SongDots {
     && this.y > bounds.y1 && 
         this.y < bounds.y2) {
 
-          // change the label to affect the visualisation
-        this.label = 'accepted';
+        if (this.label === 'unaccepted') {
 
-        // push it in the playlist array
-        playlist.push(this.id);
+          // change the label to affect the visualisation
+          this.label = 'accepted';
+
+          // push it in the playlist array
+          playlist.push(this.id);
+        }
+        
+      } else {
+
+        if (this.label === 'accepted') {
+
+          // change the label to affect the visualisation
+          this.label = 'unaccepted';
+
+          // splice it off the playlist array
+          playlist.forEach((track, i) => {
+            if (track === this.id)
+              playlist.splice(i, 1);
+          });
+        }
       }
   }
 }
