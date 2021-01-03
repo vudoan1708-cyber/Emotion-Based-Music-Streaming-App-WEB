@@ -6,7 +6,7 @@
 
 <script>
 // @ts-nocheck
-import SketchP5 from '@/components/Common/SketchP5.vue';
+import SketchP5 from '@/components/Sketches/SketchP5.vue';
 
 export default {
   name: 'Home',

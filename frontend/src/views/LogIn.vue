@@ -4,8 +4,11 @@
     </div>
     <div id="button">
 
-      <!-- <img id="logo" src="../assets/logo.png" alt="Vue logo"> -->
-      <button class="loginBtn" @click="login">Login</button>
+      <div id="loginBtn" @click="login">
+        <div class="wrapper" id="header"><h4>CONNECT</h4></div>
+        <div class="wrapper" id="spotify_logo"><img src="@/assets/spotify.png"/></div>
+      </div>
+
     </div>
   </div>
 </template>
