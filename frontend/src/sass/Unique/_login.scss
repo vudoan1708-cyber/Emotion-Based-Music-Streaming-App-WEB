@@ -52,7 +52,7 @@ $hover-color: rgb(170, 180, 170);
           position: absolute;
           top: 50%;
           transform: translateY(-50%);
-          width: 15%;
+          width: 12%;
           height: auto;
           background-color: $spotify-color;
           @include transitionProperties(0.2s);
