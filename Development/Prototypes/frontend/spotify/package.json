@@ -1,0 +1,24 @@
+{
+  "name": "lyrics",
+  "version": "1.0.0",
+  "description": "testing musixmatch api",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/server.js"
+  },
+  "keywords": [
+    "emotion",
+    "music",
+    "api",
+    "test"
+  ],
+  "author": "Vu Doan",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "nedb": "^1.8.0",
+    "query-string": "^6.13.1"
+  }
+}
