@@ -1,13 +1,17 @@
 /* eslint-disable indent */
 /* eslint-disable consistent-return */
+import { indicestoCoordinates } from '@/components/Utils/logic/algorithm';
+
 export default class StarDots {
   constructor(i, j, width, height, size, p5) {
     this.i = i;
     this.j = j;
     this.width = width;
     this.height = height;
-    this.x = width / 5 + this.i * 15.4;
-    this.y = height / 5 + this.j * 15.4;
+
+    const coordinates = indicestoCoordinates(this.i, this.j, this.width, this.height);
+    this.x = coordinates.x;
+    this.y = coordinates.y;
     this.size = size;
 
     this.subt = 0.01;

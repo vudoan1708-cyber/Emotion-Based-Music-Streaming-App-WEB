@@ -20,13 +20,19 @@
 </template>
 
 <script>
+/* eslint-disable object-curly-newline */
 
-import { reactive, watch, computed } from 'vue';
+import { reactive, computed, watchEffect, getCurrentInstance } from 'vue';
 /* eslint-disable no-unused-vars */
 
 export default {
   name: 'BottomPane',
   setup() {
+    // instantiate the app's current instance to get global properties
+    // registered in the main.js file
+    const app = getCurrentInstance();
+    const emitter = app.appContext.config.globalProperties.$emitter;
+
     const appState = reactive({
       map: true,
       loading: false,
@@ -42,12 +48,18 @@ export default {
     });
 
     computed(() => {
-      mapProperties.coords.x += 1;
+
     });
 
-    watch(() => [mapProperties.coords.x, mapProperties.coords.y], ([x, y]) => {
-      // eslint-disable-next-line no-console
-      console.log(x, y);
+    // watch(() => [mapProperties.coords.x, mapProperties.coords.y], ([x, y]) => {
+    //   // eslint-disable-next-line no-console
+    //   console.log(x, y);
+    // });
+    watchEffect(() => {
+      emitter.on('map', (indices) => {
+        mapProperties.coords.x = indices.i;
+        mapProperties.coords.y = indices.j;
+      });
     });
 
     return {

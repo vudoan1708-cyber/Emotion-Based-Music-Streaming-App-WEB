@@ -24,6 +24,8 @@ class GalaxyStars {
 
     if (this.x > width) {
       this.x = 0;
+    } else if (this.x < 0) {
+      this.x = width;
     }
   }
 }

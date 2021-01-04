@@ -25,8 +25,6 @@ export default class GalaxyStars {
   move(mouseX, width) {
     if (mouseX < width / 2) { this.x -= 1.5; } else { this.x += 1.5; }
 
-    if (this.x > width) {
-      this.x = 0;
-    }
+    if (this.x > width) { this.x = 0; } else if (this.x < 0) { this.x = width; }
   }
 }

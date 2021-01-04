@@ -1,4 +1,3 @@
-// @ts-nocheck
 class SongDots {
   constructor(label, id, x, y, size) {
     this.label = label;

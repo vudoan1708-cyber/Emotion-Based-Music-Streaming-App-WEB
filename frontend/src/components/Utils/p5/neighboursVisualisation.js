@@ -1,4 +1,6 @@
+/* eslint-disable padded-blocks */
 import Neighbours from '@/components/Utils/p5/classes/neighbours';
+import { indicestoCoordinates } from '@/components/Utils/logic/algorithm';
 
 const neighbours = [];
 
@@ -8,11 +10,11 @@ export function createNewNeighbours(data, chosenPoints, width, height) {
     && data.i < chosenPoints[0] + 10
   && data.j > chosenPoints[1] - 10
     && data.j < chosenPoints[1] + 10) {
-    const x = width / 5 + data.i * 15.4;
-    const y = height / 5 + data.j * 15.4;
+
+    const coordinates = indicestoCoordinates(data.i, data.j, width, height);
 
     // create a new neighbour instance everytime the condition is satisfied
-    neighbours.push(new Neighbours(x, y, data.size));
+    neighbours.push(new Neighbours(coordinates.x, coordinates.y, data.size));
   }
 }
 
@@ -23,11 +25,11 @@ export function createHistoricalNeighbours(history, chosenPoints, width, height)
       && history[h].i < chosenPoints[0] + 10
     && history[h].j > chosenPoints[1] - 10
       && history[h].j < chosenPoints[1] + 10) {
-      const x = width / 5 + history[h].i * 15.4;
-      const y = height / 5 + history[h].j * 15.4;
+
+      const coordinates = indicestoCoordinates(history[h].i, history[h].j, width, height);
 
       // create a new neighbour instance everytime the condition is satisfied
-      neighbours.push(new Neighbours(x, y, history[h].size));
+      neighbours.push(new Neighbours(coordinates.x, coordinates.y, history[h].size));
     }
   }
 }

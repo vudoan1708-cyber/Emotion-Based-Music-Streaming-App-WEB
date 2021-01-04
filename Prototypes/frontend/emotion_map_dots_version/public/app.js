@@ -95,11 +95,10 @@ function createNewNeighbours(data) {
   && data.j > chosenPoints[1] - 10 &&
     data.j < chosenPoints[1] + 10) {
 
-      const x = width / 5 + data.i * 15.4;
-      const y = height / 5 + data.j * 15.4;
+      const coordinates = indicestoCoordinates(data.i, data.j);
 
       // create a new neighbour instance everytime the condition is satisfied
-      neighbours.push(new Neighbours(x, y, data.size));
+      neighbours.push(new Neighbours(coordinates.x, coordinates.y, data.size));
     }
 }
 
@@ -111,11 +110,11 @@ function createHistoricalNeighbours() {
       history[h].i < chosenPoints[0] + 10
     && history[h].j > chosenPoints[1] - 10 &&
       history[h].j < chosenPoints[1] + 10) {
-        const x = width / 5 + history[h].i * 15.4;
-        const y = height / 5 + history[h].j * 15.4;
+
+        const coordinates = indicestoCoordinates(history[h].i, history[h].j);
 
         // create a new neighbour instance everytime the condition is satisfied
-        neighbours.push(new Neighbours(x, y, history[h].size));
+        neighbours.push(new Neighbours(coordinates.x, coordinates.y, history[h].size));
       }
   }
 }
@@ -356,10 +355,17 @@ function moodToCoordinates(valence, arousal) {
   return { x, y };
 }
 
-function coordinatesToIndices() {
-  const i = Math.floor((mouseX - width / 5) / 15.4);
-  const j = Math.floor((mouseY - height / 5) / 15.4);
+function coordinatesToIndices(x, y) {
+  const i = Math.floor((x - width / 5) / 15.4);
+  const j = Math.floor((y - height / 5) / 15.4);
   return { i, j };
+}
+
+function indicestoCoordinates(i, j) {
+  const x = width / 5 + i * 15.4;
+  const y = height / 5 + j * 15.4;
+
+  return { x, y };
 }
 //
 
@@ -405,14 +411,27 @@ function mouseDragged() {
   // only draggable when the emotion map is shown
   if (showMap) {
 
-    // empty the playlist and refill it
-    playlist = [];
+    const chosenPoints_coordinates = indicestoCoordinates(chosenPoints[0], chosenPoints[1]);
+    console.log(chosenPoints_coordinates)
+    if (chosenPoints_coordinates.x > starDots[0][0].x  - starDots[0][0].size / 2 
+      && chosenPoints_coordinates.x < starDots[starDots.length - 1][0].x  + starDots[starDots.length - 1][0].size / 2) {
+      if (chosenPoints_coordinates.y > starDots[0][0].y  - starDots[0][0].size / 2
+      && chosenPoints_coordinates.y < starDots[0][starDots[0].length - 1].y - starDots[0][starDots[0].length - 1].size / 2) {
+        console.log('DRAGGABLE');
 
-    // convert the mapping algorithm to indices
-    // move the chosen point to other locations
-    const indices = coordinatesToIndices();
-    chosenPoints[0] = indices.i;
-    chosenPoints[1] = indices.j;
+        // empty the playlist and refill it
+        playlist = [];
+
+        // convert the mapping algorithm to indices
+        // move the chosen point to other locations
+        const indices = coordinatesToIndices(mouseX, mouseY);
+        chosenPoints[0] = indices.i;
+        chosenPoints[1] = indices.j;
+      }
+    } else {
+      chosenPoints[0] = starDots[starDots.length - 1][0].i;
+      chosenPoints[1] = starDots[starDots.length - 1][0].j;
+    }
 
     // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
     // const mood = indicesToMood(chosenPoints[0], chosenPoints[1]);

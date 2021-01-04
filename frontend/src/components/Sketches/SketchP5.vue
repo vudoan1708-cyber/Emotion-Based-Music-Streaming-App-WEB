@@ -4,15 +4,14 @@
 </template>
 
 <script>
-// @ts-nocheck
-import { onMounted } from 'vue';
+import { onMounted, reactive, getCurrentInstance } from 'vue';
 
 import p5 from 'p5';
 import io from 'socket.io-client';
 
 // Utilities
 import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/bg';
-import { createMap, drawMap } from '@/components/Utils/p5/emotionMap';
+import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMap';
 import { drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
@@ -37,6 +36,24 @@ export default {
     /* eslint-disable no-plusplus */
     /* eslint-disable new-cap */
     /* eslint-disable camelcase */
+    /* eslint-disable vue/no-mutating-props */
+
+    // instantiate the app's current instance to get global properties
+    // registered in the main.js file
+    const app = getCurrentInstance();
+    const emitter = app.appContext.config.globalProperties.$emitter;
+
+    // indices on map
+    const map_properties = reactive({
+      i: 0,
+      j: 0,
+    });
+
+    function emitEvent() {
+      // socket.io-like package (mitt) for emiting and listening to events
+      // between COMPONENTS
+      emitter.emit('map', map_properties);
+    }
 
     const sketch = (p) => {
       // disables FES
@@ -121,6 +138,12 @@ export default {
         p.background(10);
         drawGalaxyBG(galaxy, p);
 
+        // Keep Track of Indices on The Emotion Map
+        const indices = posOnMap(width, height, starDots, p);
+        map_properties.i = indices.i;
+        map_properties.j = indices.j;
+        emitEvent();
+
         // The Emotion Map
         drawMap(width, height, isClicked, starDots, chosenPoints, p);
 
@@ -142,7 +165,7 @@ export default {
               console.log(i, j);
 
               // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-              const mood = indicesToMood(i, j, starDots);
+              const { valence, arousal } = indicesToMood(i, j, starDots);
 
               isClicked = true;
               chosenPoints.push(i, j);
@@ -161,7 +184,7 @@ export default {
               createHistoricalNeighbours(history, chosenPoints, width, height);
 
               // get songs data from Spotify via the server
-              handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)), starDots, chosenPoints, width, height, p);
+              handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p);
             }
           }
         }
@@ -173,11 +196,10 @@ export default {
 
         // convert the mapping algorithm to indices
         // move the chosen point to other locations
-        const indices = coordinatesToIndices(width, height, p);
-        chosenPoints[0] = indices.i;
-        chosenPoints[1] = indices.j;
+        const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+        chosenPoints[0] = i;
+        chosenPoints[1] = j;
       }
-
     };
 
     onMounted(() => {

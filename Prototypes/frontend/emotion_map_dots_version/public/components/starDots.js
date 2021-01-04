@@ -1,10 +1,11 @@
-// @ts-nocheck
 class StarDots {
   constructor(i, j, size) {
     this.i = i;
     this.j = j;
-    this.x = width / 5 + this.i * 15.4;
-    this.y = height / 5 + this.j * 15.4;
+    
+    const coordinates = indicestoCoordinates(this.i, this.j);
+    this.x = coordinates.x;
+    this.y = coordinates.y;
     this.size = size;
 
     this.subt = 0.01;

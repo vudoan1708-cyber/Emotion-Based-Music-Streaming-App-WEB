@@ -1,8 +1,11 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 /* eslint-disable no-param-reassign */
 import StarDots from '@/components/Utils/p5/classes/starDots';
 import star from '@/components/Utils/p5/star';
 import make2dArray from '@/components/Utils/logic/array';
+
+import { coordinatesToIndices } from '@/components/Utils/logic/algorithm';
 
 // scoped functions
 function drawLines(i, j, starDots, p5) {
@@ -121,4 +124,16 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, p5) {
     }
   }
   p5.pop();
+}
+
+export function posOnMap(width, height, starDots, p5) {
+  const indices = coordinatesToIndices(p5.mouseX, p5.mouseY, width, height);
+
+  if (indices.i > 0 && indices.i < starDots[starDots.length - 1][0].i) {
+    if (indices.j > 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
+      const { i, j } = indices;
+      return { i, j };
+    }
+  // eslint-disable-next-line no-dupe-keys
+  } return { NaN, NaN };
 }

@@ -13,11 +13,14 @@ import RightPane from '@/components/Common/RightPane.vue';
 
 export default {
   name: 'Home',
+  components: {
+    SketchP5,
+    BottomPane,
+    RightPane,
+  },
   setup() {
     return {
-      SketchP5,
-      BottomPane,
-      RightPane,
+
     };
   },
 };
