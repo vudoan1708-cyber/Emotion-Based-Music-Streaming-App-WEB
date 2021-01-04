@@ -18,4 +18,12 @@ class GalaxyStars {
       star(this.x, this.y, this.s1 / 1.25, this.s2 / 1.25, 4);
     pop();
   }
+
+  move() {
+    if (mouseX < width / 2) { this.x -= 1.5; } else { this.x += 1.5; }
+
+    if (this.x > width) {
+      this.x = 0;
+    }
+  }
 }

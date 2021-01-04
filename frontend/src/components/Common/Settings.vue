@@ -1,14 +1,29 @@
 <template>
   <div id="settings">
-    <div id="settings_img">
+
+    <!-- Icon -->
+    <div id="settings_img" @click="showSettingsBoard">
       <img src="@/assets/settings.png"/>
+    </div>
+
+    <!-- Settings Board -->
+    <div id="board">
     </div>
   </div>
 </template>
 
 <script>
 export default {
-
+  name: 'Settings',
+  setup() {
+    function showSettingsBoard() {
+      // eslint-disable-next-line no-console
+      console.log('clicked');
+    }
+    return {
+      showSettingsBoard,
+    };
+  },
 };
 </script>
 

@@ -18,11 +18,16 @@
       height: auto;
       background-color: rgb(88, 88, 88);
       border: 2px solid rgb(48, 48, 28);
+      cursor: pointer;
       @include transitionProperties(0.2s);
 
       &:hover {
         background-color: rgb(145, 231, 145);
       }
     }
+  }
+
+  #board {
+    display: none;
   }
 }

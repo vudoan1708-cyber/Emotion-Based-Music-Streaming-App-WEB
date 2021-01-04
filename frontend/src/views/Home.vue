@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <SketchP5 />
-    <Settings />
+    <RightPane />
     <BottomPane />
   </div>
 </template>
@@ -9,7 +9,7 @@
 <script>
 import SketchP5 from '@/components/Sketches/SketchP5.vue';
 import BottomPane from '@/components/Common/BottomPane.vue';
-import Settings from '@/components/Common/Settings.vue';
+import RightPane from '@/components/Common/RightPane.vue';
 
 export default {
   name: 'Home',
@@ -17,7 +17,7 @@ export default {
     return {
       SketchP5,
       BottomPane,
-      Settings,
+      RightPane,
     };
   },
 };

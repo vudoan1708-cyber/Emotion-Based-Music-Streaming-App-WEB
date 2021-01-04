@@ -79,6 +79,9 @@ function makeBGStars() {
 function drawGalaxyBG() {
   for (let i = 0; i < galaxy.length; i++) {
     galaxy[i].show();
+
+    if (!showMap)
+      galaxy[i].move();
   }
 }
 

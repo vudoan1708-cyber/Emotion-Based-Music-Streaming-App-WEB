@@ -35,3 +35,9 @@ export function drawGalaxyBG(galaxy, p) {
     galaxy[i].show(p);
   }
 }
+
+export function moveGalaxyBG(galaxy, mouseX, width) {
+  for (let i = 0; i < galaxy.length; i += 1) {
+    galaxy[i].move(mouseX, width);
+  }
+}

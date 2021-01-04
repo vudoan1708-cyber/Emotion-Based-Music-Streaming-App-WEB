@@ -1,10 +1,19 @@
 <template>
-  <div id="right_pane"></div>
+  <div id="right_pane">
+  </div>
+  <Settings />
 </template>
 
 <script>
-export default {
+import Settings from '@/components/Common/Settings.vue';
 
+export default {
+  name: 'RightPane',
+  setup() {
+    return {
+      Settings,
+    };
+  },
 };
 </script>
 

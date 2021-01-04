@@ -21,4 +21,12 @@ export default class GalaxyStars {
     star(this.x, this.y, this.s1 / 1.25, this.s2 / 1.25, 4, p5);
     p5.pop();
   }
+
+  move(mouseX, width) {
+    if (mouseX < width / 2) { this.x -= 1.5; } else { this.x += 1.5; }
+
+    if (this.x > width) {
+      this.x = 0;
+    }
+  }
 }

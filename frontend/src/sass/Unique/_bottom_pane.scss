@@ -22,12 +22,14 @@
       }
 
       #coord_img {
-        width: 25%;
-        img {
-          background-color: white;
-          width: 5%;
-          height: 5%;
-        }
+        display: inline-block;
+        margin-right: 15px;
+        width: 2.5%;
+        background-color: white;
+      }
+
+      h5 {
+        display: inline-block;
       }
     }
   }

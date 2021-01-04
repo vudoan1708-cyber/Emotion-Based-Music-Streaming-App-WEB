@@ -7,11 +7,8 @@
         <h2>{{mapProperties.land}}</h2>
       </div>
       <div class="map_info" id="coordinates">
-        <div class="display" id="coord_img">
-          <img src="@/assets/coordinates.png"/>
-        </div>
-
-        <div class="display">
+        <div id="display">
+          <img id="coord_img" src="@/assets/coordinates.png"/>
           <h5>{{mapProperties.coords.x}}, {{mapProperties.coords.y}}</h5>
         </div>
       </div>
@@ -49,6 +46,7 @@ export default {
     });
 
     watch(() => [mapProperties.coords.x, mapProperties.coords.y], ([x, y]) => {
+      // eslint-disable-next-line no-console
       console.log(x, y);
     });
 

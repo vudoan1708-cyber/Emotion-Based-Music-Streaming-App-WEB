@@ -26,7 +26,7 @@ import p5 from 'p5';
 import { LoginHandlers } from '@/handlers/spotify';
 
 // Ultilities
-import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/bg';
+import { createBGStars, drawGalaxyBG, moveGalaxyBG } from '@/components/Utils/p5/bg';
 
 import { onMounted } from 'vue';
 
@@ -60,6 +60,7 @@ export default {
       p.draw = () => {
         p.background(10);
         drawGalaxyBG(galaxy, p);
+        moveGalaxyBG(galaxy, p.mouseX, width);
       };
     };
 
