@@ -14,11 +14,18 @@ const neighbours = [];
 
 const stars = Array(360);
 
-let showMap = false;
+let showMap = 0;
 let isClicked = false;
 let songLoaded = false;
 
 let socket = null;
+
+
+// DOM
+const top_left = document.getElementById('top_left');
+const top_right = document.getElementById('top_right');
+const bottom_left = document.getElementById('bottom_left');
+const bottom_right = document.getElementById('bottom_right');
 
 function make2dArray(cols, rows) {
   const arr = new Array(cols);
@@ -172,7 +179,7 @@ function setup() {
 
   getSocket();
 
-  if (!showMap) {
+  if (showMap === 0) {
     // background(0);
     makeBGStars();
   }
@@ -182,7 +189,7 @@ function setup() {
   rectMode(CENTER);
 
   // make a 2D array
-  starDots = make2dArray(Math.floor(width / 25), Math.floor(height / 25));
+  starDots = make2dArray(Math.floor(width / 40), Math.floor(height / 40));
 
   // instantiate the starDots object
   for (let i = 0; i < starDots.length; i++) {
@@ -231,58 +238,148 @@ function drawHighlights(i, j) {
   pop();
 }
 
+function twinkleEffects(i, j) {
+  // twinkle effects
+  const c = random(200, 255);
+  const a = random(20, 255);
+  fill(c, a);
+  
+  star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
+}
+
 function fillStarsColor(i, j) {
 
   push();
-    if (starDots[i][j].onHover()) {
-      
-      // draw highlighted dot
-      drawHighlights(i, j);
-      
-      // draw guidlines
-      drawLines(i, j);
-
-      fill(255, 0, 0);
-      
+    
     // the centred dot
-    } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
+    if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
+
+      if (starDots[i][j].onHover()) {
+      
+        // draw highlighted dot
+        drawHighlights(i, j);
+        
+        // draw guidlines
+        drawLines(i, j);
+  
+        fill(255, 0, 0);
+  
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+      }
+      twinkleEffects(i, j);
+
       fill(0);
 
+      // show all stars with different colours depending on different conditions
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+
     // TOP LEFT (ANGRY)
-    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+    } else if (showMap === 1 &&
+          i >= 0 && i < Math.floor(starDots.length / 2)
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+
+        if (starDots[i][j].onHover()) {
+
+          // draw highlighted dot
+          drawHighlights(i, j);
+          
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
+    
+          // show all stars with different colours depending on different conditions
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        }
+        twinkleEffects(i, j);
         
         // orange
         fill(200, 98, 20, 90);
 
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+
     // BOTTOM LEFT (SAD)
-    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+    } else if (showMap === 3 &&
+          i >= 0 && i < Math.floor(starDots.length / 2)
             && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+        
+        if (starDots[i][j].onHover()) {
+
+          // draw highlighted dot
+          drawHighlights(i, j);
+          
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
+    
+          // show all stars with different colours depending on different conditions
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        }
+        twinkleEffects(i, j);
 
         // blue
         fill(73, 27, 180, 90);
 
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+
     // TOP RIGHT (HAPPY / EXCITED)
-    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+    } else if (showMap === 2 &&
+          i > Math.floor(starDots.length / 2) && i < starDots.length
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+
+        if (starDots[i][j].onHover()) {
+
+          // draw highlighted dot
+          drawHighlights(i, j);
+          
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
+    
+          // show all stars with different colours depending on different conditions
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        }
+        twinkleEffects(i, j);
         
         // green
         fill(176, 220, 90, 90);
 
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+
     // BOTTOM RIGHT (CALM / RELAXED)
-    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+    } else if (showMap === 4 &&
+        i > Math.floor(starDots.length / 2) && i < starDots.length
         && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+
+        if (starDots[i][j].onHover()) {
     
-      // pink
-      fill(180, 83, 250, 90);
+          // draw highlighted dot
+          drawHighlights(i, j);
+          
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
+    
+          // show all stars with different colours depending on different conditions
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        }
+        twinkleEffects(i, j);
+    
+        // pink
+        fill(180, 83, 250, 90);
+
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
 
     // dots on the intersection lines
-    } else {
-      fill(220, 150);
     }
-    
-    // show all stars with different colours depending on different conditions
-    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
   pop();
 }
 
@@ -294,14 +391,7 @@ function drawStarDots() {
     for (let i = 0; i < starDots.length; i++) {
       for (let j = 0; j < starDots[i].length; j++) {
   
-        if (!isClicked) {
-              
-          // twinkle effects
-          const c = random(200, 255);
-          const a = random(20, 255);
-          fill(c, a);
-          
-          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
+        if (!isClicked) {    
 
           fillStarsColor(i, j);
         } else {
@@ -334,12 +424,36 @@ function drawSongDots() {
   }
 }
 
-function changeMap() {
-  showMap = true;
+function changeMap(num) {
+  showMap = num;
+  console.log((top_left.style.opacity))
+  if (showMap === 1 && top_left.style.opacity === '1') {
+    console.log(showMap)
+    top_left.style.opacity = '0';
+    top_right.style.opacity = '1';
+    bottom_left.style.opacity = '1';
+    bottom_right.style.opacity = '1';
+  } else if (showMap === 2 && top_right.style.opacity === '1') {
+    top_left.style.opacity = '1';
+    top_right.style.opacity = '0';
+    bottom_left.style.opacity = '1';
+    bottom_right.style.opacity = '1';
+  }  else if (showMap === 3 && bottom_left.style.opacity === '1') {
+    top_left.style.opacity = '1';
+    top_right.style.opacity = '1';
+    bottom_left.style.opacity = '0';
+    bottom_right.style.opacity = '1';
+  }  else if (showMap === 4 && bottom_right.style.opacity === '1') {
+    top_left.style.opacity = '1';
+    top_right.style.opacity = '1';
+    bottom_left.style.opacity = '1';
+    bottom_right.style.opacity = '0';
+  }
 }
 
 
 // MAPPING ALGORITHMS
+const OFFSET = 18;
 function indicesToMood(i, j) {
   const valence = i / starDots.length;
   const arousal = 1 - j / starDots[i].length;
@@ -350,20 +464,20 @@ function moodToCoordinates(valence, arousal) {
   const i = Math.floor(valence * starDots.length);
   const j = Math.floor((1 - arousal) * starDots[i].length);
   
-  const x = width / 5 + i * 15.4;
-  const y = height / 5 + j * 15.4;
+  const x = width / 3.6 + i * OFFSET;
+  const y = height / 3.4 + j * OFFSET;
   return { x, y };
 }
 
 function coordinatesToIndices(x, y) {
-  const i = Math.floor((x - width / 5) / 15.4);
-  const j = Math.floor((y - height / 5) / 15.4);
+  const i = Math.floor((x - width / 3.6) / OFFSET);
+  const j = Math.floor((y - height / 3.4) / OFFSET);
   return { i, j };
 }
 
 function indicestoCoordinates(i, j) {
-  const x = width / 5 + i * 15.4;
-  const y = height / 5 + j * 15.4;
+  const x = width / 3.6 + i * OFFSET;
+  const y = height / 3.4 + j * OFFSET;
 
   return { x, y };
 }
@@ -372,7 +486,7 @@ function indicestoCoordinates(i, j) {
 function mousePressed() {
 
   // only clickable when the emotion map is shown
-  if (showMap) {
+  if (showMap !== 0) {
     for (let i = 0; i < starDots.length; i++) {
       for (let j = 0; j < starDots[i].length; j++) {
   
@@ -409,7 +523,7 @@ function mousePressed() {
 
 function mouseDragged() {
   // only draggable when the emotion map is shown
-  if (showMap) {
+  if (showMap !== 0) {
 
     const chosenPoints_coordinates = indicestoCoordinates(chosenPoints[0], chosenPoints[1]);
     console.log(chosenPoints_coordinates)
@@ -466,7 +580,7 @@ function draw() {
   background(10);
   drawGalaxyBG();
   
-  if (showMap) {
+  if (showMap !== 0) {
     drawStarDots();
     drawSongDots();
     drawNeighbours();
@@ -587,8 +701,8 @@ async function handlingSongsData(valence, arousal) {
         const song_i = Math.floor(song_data.valence * starDots.length);
         const song_j = Math.floor((1 - song_data.arousal) * starDots[song_i].length);
 
-        const song_x = width / 5 + song_i * 15.4;
-        const song_y = height / 5 + song_j * 15.4;
+        const song_x = width / 3.6 + song_i * OFFSET;
+        const song_y = height / 3.4 + song_j * OFFSET;
         // console.log(`Song's Coordinates: ${song_x}, ${song_y}`);
 
         // compare

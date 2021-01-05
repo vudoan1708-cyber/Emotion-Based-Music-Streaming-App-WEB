@@ -6,6 +6,11 @@
       <img src="@/assets/settings.png"/>
     </div>
 
+    <!-- Text Animation -->
+    <div id="settings_text_anim">
+      <h3>Settings</h3>
+    </div>
+
     <!-- Settings Board -->
     <div id="board">
     </div>

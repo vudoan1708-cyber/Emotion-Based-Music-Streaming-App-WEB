@@ -15,26 +15,99 @@
         min-height: 100%;
         overflow: hidden;
       }
-      
-      #test_btn {
+
+      #map_cover {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 100vh;
         position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 0;
       }
 
-      #test_btn  button {
-        background-color: rgb(199, 117, 117);
-        padding: 10px 20px;
-        border-radius: 5px;
-        outline: none;
+      ul {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-gap: 20px;
+        /* background-color: #2196F3; */
+        padding: 10px;
+      }
+
+      ul li {
+        display: block;
+        list-style: none;
+        padding: 45px 55px;
+        background-color: rgb(68, 68, 68);
+        transition: all 0.25s ease-in-out;
+      }
+
+      ul li#top_left {
+        border-top-left-radius: 100px;
+        border-top: 4px solid rgb(245, 45, 45);
+        border-left: 4px solid rgb(245, 45, 45);
+        color: rgb(245, 45, 45);
+      }
+
+      ul li#top_left:hover {
+        box-shadow: -5px -5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
+      }
+
+
+      ul li#top_right {
+        border-top-right-radius: 100px;
+        border-top: 4px solid rgb(45, 245, 62);
+        border-right: 4px solid rgb(45, 245, 62);
+        color: rgb(45, 245, 62);
+      }
+
+      ul li#top_right:hover {
+        box-shadow: 5px -5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
+      }
+ 
+ 
+      ul li#bottom_left {
+        border-bottom-left-radius: 100px;
+        border-bottom: 4px solid rgb(45, 92, 245);
+        border-left: 4px solid rgb(45, 92, 245);
+        color: rgb(45, 92, 245);
+      }
+
+      ul li#bottom_left:hover {
+        box-shadow: -5px 5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
+      }
+
+
+      ul li#bottom_right {
+        border-bottom-right-radius: 100px;
+        border-bottom: 4px solid rgb(122, 45, 245);
+        border-right: 4px solid rgb(122, 45, 245);
+        color: rgb(122, 45, 245);
+      }
+
+      ul li#bottom_right:hover {
+        box-shadow: 5px 5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
       }
     </style>
   </head>
   <body>
-    <div id="test_btn">
-      <button onclick=changeMap()>Map</button>
+
+    <div id="map_cover">
+      <ul>
+        <li id="top_left" style="opacity: 1;" onclick=changeMap(1)>Angry</li>
+        <li id="top_right" style="opacity: 1;" onclick=changeMap(2)>Happy</li>
+        <li id="bottom_left" style="opacity: 1;" onclick=changeMap(3)>Sad</li>
+        <li id="bottom_right" style="opacity: 1;" onclick=changeMap(4)>Calm</li>
+      </ul>
     </div>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>

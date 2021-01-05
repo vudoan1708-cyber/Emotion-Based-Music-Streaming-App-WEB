@@ -1,17 +1,21 @@
 @import '../Mixin/transition';
 
+$hover-color: rgb(145, 231, 145);
+
 #settings {
   position: fixed;
-  width: 25%;
+  width: 12%;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
 
   #settings_img {
-    width: 30px;
+    width: 40px;
     margin-right: 5px;
     float: right;
     clear: both;
+    border-left: 4px double rgb(207, 207, 207);
+    @include transitionProperties(0.2s);
 
     img {
       width: 100%;
@@ -20,10 +24,29 @@
       border: 2px solid rgb(48, 48, 28);
       cursor: pointer;
       @include transitionProperties(0.2s);
+    }
 
-      &:hover {
-        background-color: rgb(145, 231, 145);
+    &:hover {
+      // border-left: none;
+      border-left: 1px double $hover-color;
+
+      img {
+        background-color: $hover-color;
       }
+    }
+  }
+
+  #settings_text_anim {
+    position: absolute;
+    left: 0;
+    // display: none;
+    @include transitionProperties(0.2s);
+
+    h3 {
+      position: absolute;
+      color: rgba(177, 175, 175, 0.733);
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 

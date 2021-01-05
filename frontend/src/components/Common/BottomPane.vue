@@ -4,7 +4,7 @@
     <!-- The Emotion Map -->
     <div id="map" v-if="appState.map">
       <div class="map_info" id="land_name">
-        <h2>{{mapProperties.land}}</h2>
+        <h1>{{mapProperties.name}}</h1>
       </div>
       <div class="map_info" id="coordinates">
         <div id="display">
@@ -15,14 +15,14 @@
     </div>
 
     <!-- Loading -->
-    <div id="loading" v-else></div>
+    <div id="loading" v-else>Loading Bar Here</div>
   </div>
 </template>
 
 <script>
 /* eslint-disable object-curly-newline */
 
-import { reactive, computed, watchEffect, getCurrentInstance } from 'vue';
+import { reactive, watchEffect, getCurrentInstance } from 'vue';
 /* eslint-disable no-unused-vars */
 
 export default {
@@ -35,7 +35,6 @@ export default {
 
     const appState = reactive({
       map: true,
-      loading: false,
     });
 
     const mapProperties = reactive({
@@ -43,12 +42,8 @@ export default {
         x: 0,
         y: 0,
       },
-      land: 'Land of Happiness',
+      name: 'Land of Happiness',
       img: '',
-    });
-
-    computed(() => {
-
     });
 
     // watch(() => [mapProperties.coords.x, mapProperties.coords.y], ([x, y]) => {
@@ -56,9 +51,10 @@ export default {
     //   console.log(x, y);
     // });
     watchEffect(() => {
-      emitter.on('map', (indices) => {
-        mapProperties.coords.x = indices.i;
-        mapProperties.coords.y = indices.j;
+      emitter.on('map', (map) => {
+        mapProperties.coords.x = map.i;
+        mapProperties.coords.y = map.j;
+        appState.map = map.status;
       });
     });
 

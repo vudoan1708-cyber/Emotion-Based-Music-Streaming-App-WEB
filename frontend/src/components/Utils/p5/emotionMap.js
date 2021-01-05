@@ -129,8 +129,8 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, p5) {
 export function posOnMap(width, height, starDots, p5) {
   const indices = coordinatesToIndices(p5.mouseX, p5.mouseY, width, height);
 
-  if (indices.i > 0 && indices.i < starDots[starDots.length - 1][0].i) {
-    if (indices.j > 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
+  if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
+    if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
       const { i, j } = indices;
       return { i, j };
     }

@@ -3,8 +3,10 @@
   bottom: 0;
   width: 100%;
   height: 18%;
-  background-color: rgba(20, 26, 18, 0.514);
+  background-color: rgba(20, 26, 18, 0.384);
+  border-top: 5px double rgb(207, 207, 207); 
   text-align: center;
+  cursor: context-menu;
 
   #map {
     position: relative;
@@ -13,6 +15,14 @@
     .map_info {
       display: block;
       margin: 10px;
+    }
+
+    #land_name {
+      padding: 10px;
+
+      h1 {
+        color: rgb(141, 150, 142);
+      }
     }
 
     #coordinates {
@@ -30,6 +40,7 @@
 
       h5 {
         display: inline-block;
+        // color: rgb(192, 191, 191);
       }
     }
   }

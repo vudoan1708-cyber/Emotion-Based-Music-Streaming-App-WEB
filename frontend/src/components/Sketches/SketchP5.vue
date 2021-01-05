@@ -47,6 +47,9 @@ export default {
     const map_properties = reactive({
       i: 0,
       j: 0,
+      img: '#',
+      name: '',
+      status: true,
     });
 
     function emitEvent() {
@@ -177,6 +180,9 @@ export default {
                 size: starDots[i][j].size,
               }
               socket.emit('click', data);
+
+              // manipulate data to be sent to another component file
+              map_properties.status = false;
 
               // HISTORICAL USERS
               // use the history array available globally after collecting it the first time
