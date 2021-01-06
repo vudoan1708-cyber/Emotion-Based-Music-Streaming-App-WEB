@@ -1,0 +1,7 @@
+@mixin positionProperties($value, $left, $right, $top, $bottom) {
+  position: $value;
+  left: $left;
+  right: $right;
+  top: $top;
+  bottom: $bottom;
+}
