@@ -1,10 +1,37 @@
 <template>
   <div class="d-flex justify-content-center" id="p5Canvas">
   </div>
+
+  <div id="map_cover">
+    <ul>
+      <li id="top_left" style="opacity: 1;" @click=instantiateMap(1) ref="angryBtn">Angry</li>
+      <li id="top_right" style="opacity: 1;" @click=instantiateMap(2) ref="happyBtn">Happy</li>
+      <li id="bottom_left" style="opacity: 1;" @click=instantiateMap(3) ref="sadBtn">Sad</li>
+      <li id="bottom_right" style="opacity: 1;" @click=instantiateMap(4) ref="calmBtn">Calm</li>
+    </ul>
+  </div>
 </template>
 
 <script>
-import { onMounted, reactive, getCurrentInstance } from 'vue';
+/* eslint-disable no-console */
+/* eslint-disable padded-blocks */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable-next-line linebreak-style */
+/* eslint-disable no-multiple-empty-lines */
+/* eslint-disable semi */
+/* eslint-disable indent */
+/* eslint-disable no-unused-vars */
+/* eslint-disable max-len */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-new */
+/* eslint-disable no-plusplus */
+/* eslint-disable new-cap */
+/* eslint-disable camelcase */
+/* eslint-disable vue/no-mutating-props */
+
+import {
+ onMounted, reactive, ref, getCurrentInstance,
+} from 'vue';
 
 import p5 from 'p5';
 import io from 'socket.io-client';
@@ -16,27 +43,13 @@ import { drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
 import { indicesToMood, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
+import changeMap from '@/components/Utils/dom/changeMap';
 
 import { handlingSongsData, removeATempPlaylist } from '@/handlers/spotify';
 
 export default {
   name: 'SketchP5',
   setup() {
-    /* eslint-disable no-console */
-    /* eslint-disable padded-blocks */
-    /* eslint-disable no-trailing-spaces */
-    /* eslint-disable-next-line linebreak-style */
-    /* eslint-disable no-multiple-empty-lines */
-    /* eslint-disable semi */
-    /* eslint-disable indent */
-    /* eslint-disable no-unused-vars */
-    /* eslint-disable max-len */
-    /* eslint-disable no-param-reassign */
-    /* eslint-disable no-new */
-    /* eslint-disable no-plusplus */
-    /* eslint-disable new-cap */
-    /* eslint-disable camelcase */
-    /* eslint-disable vue/no-mutating-props */
 
     // instantiate the app's current instance to get global properties
     // registered in the main.js file
@@ -52,10 +65,26 @@ export default {
       status: true,
     });
 
+    // triggering event to open the map
+    const showMap = reactive({
+      index: 0,
+    });
+
+    // DOM
+    const angryBtn = ref(null);
+    const happyBtn = ref(null);
+    const sadBtn = ref(null);
+    const calmBtn = ref(null);
+
     function emitEvent() {
       // socket.io-like package (mitt) for emiting and listening to events
       // between COMPONENTS
       emitter.emit('map', map_properties);
+    }
+
+    // listen to click event from the dom elements
+    function instantiateMap(num) {
+      showMap.index = changeMap(num, showMap.index, angryBtn.value, happyBtn.value, sadBtn.value, calmBtn.value);
     }
 
     const sketch = (p) => {
@@ -74,7 +103,6 @@ export default {
 
       const stars = Array(360);
 
-      const showMap = false;
       let isClicked = false;
 
       let socket = null;
@@ -147,50 +175,55 @@ export default {
         map_properties.j = indices.j;
         emitEvent();
 
-        // The Emotion Map
-        drawMap(width, height, isClicked, starDots, chosenPoints, p);
+        if (showMap.index !== 0) {
 
-        // Song Dots
-        drawSongDots(starDots, chosenPoints, width, height, p5);
+          // The Emotion Map
+          drawMap(width, height, isClicked, starDots, chosenPoints, p);
 
-        // Neighbours
-        drawNeighbours(p);
+          // Song Dots
+          drawSongDots(starDots, chosenPoints, width, height, p5);
+
+          // Neighbours
+          drawNeighbours(p);
+        }
       };
 
       p.mousePressed = () => {
 
         // only clickable when the emotion map is shown
-        for (let i = 0; i < starDots.length; i++) {
-          for (let j = 0; j < starDots[i].length; j++) {
+        if (showMap.index !== 0) {
+          for (let i = 0; i < starDots.length; i++) {
+            for (let j = 0; j < starDots[i].length; j++) {
 
-            if (starDots[i][j].onHover()) {
-              console.log(i / starDots.length, 1 - j / starDots[i].length);
-              console.log(i, j);
+              if (starDots[i][j].onHover()) {
+                console.log(i / starDots.length, 1 - j / starDots[i].length);
+                console.log(i, j);
 
-              // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-              const { valence, arousal } = indicesToMood(i, j, starDots);
+                // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
+                const { valence, arousal } = indicesToMood(i, j, starDots);
 
-              isClicked = true;
-              chosenPoints.push(i, j);
+                isClicked = true;
+                chosenPoints.push(i, j);
 
-              // send data to the server via socket
-              const data = {
-                i,
-                j,
-                size: starDots[i][j].size,
+                // send data to the server via socket
+                const data = {
+                  i,
+                  j,
+                  size: starDots[i][j].size,
+                }
+                socket.emit('click', data);
+
+                // manipulate data to be sent to another component file
+                map_properties.status = false;
+
+                // HISTORICAL USERS
+                // use the history array available globally after collecting it the first time
+                // and push it t0 neighbours array as well
+                createHistoricalNeighbours(history, chosenPoints, width, height);
+
+                // get songs data from Spotify via the server
+                handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p);
               }
-              socket.emit('click', data);
-
-              // manipulate data to be sent to another component file
-              map_properties.status = false;
-
-              // HISTORICAL USERS
-              // use the history array available globally after collecting it the first time
-              // and push it t0 neighbours array as well
-              createHistoricalNeighbours(history, chosenPoints, width, height);
-
-              // get songs data from Spotify via the server
-              handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p);
             }
           }
         }
@@ -198,23 +231,35 @@ export default {
 
       p.mouseDragged = () => {
 
-        removeATempPlaylist();
+        // only draggable when the emotion map is shown
+        if (showMap.index !== 0) {
+          removeATempPlaylist();
 
-        // convert the mapping algorithm to indices
-        // move the chosen point to other locations
-        const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-        chosenPoints[0] = i;
-        chosenPoints[1] = j;
+          // convert the mapping algorithm to indices
+          // move the chosen point to other locations
+          const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+          chosenPoints[0] = i;
+          chosenPoints[1] = j;
+        }
       }
     };
 
     onMounted(() => {
       new p5(sketch);
     });
+
+    return {
+      angryBtn,
+      happyBtn,
+      sadBtn,
+      calmBtn,
+      instantiateMap,
+    };
   },
 };
 </script>
 
 <style scoped lang="scss">
-@import '@/sass/Unique/_bg';
+@import '@/sass/Unique/_sketch';
+@import '@/sass/Unique/_map_cover';
 </style>

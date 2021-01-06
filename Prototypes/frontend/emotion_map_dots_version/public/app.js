@@ -26,6 +26,7 @@ const top_left = document.getElementById('top_left');
 const top_right = document.getElementById('top_right');
 const bottom_left = document.getElementById('bottom_left');
 const bottom_right = document.getElementById('bottom_right');
+const map_cover = document.getElementById('map_cover');
 
 function make2dArray(cols, rows) {
   const arr = new Array(cols);
@@ -97,10 +98,10 @@ let history = [];
 function createNewNeighbours(data) {
 
   // here I compare new users locations to one that's connecting
-  if (data.i > chosenPoints[0] - 10 && 
-    data.i < chosenPoints[0] + 10
-  && data.j > chosenPoints[1] - 10 &&
-    data.j < chosenPoints[1] + 10) {
+  if (data.i > chosenPoints[0] - 5 && 
+    data.i < chosenPoints[0] + 5
+  && data.j > chosenPoints[1] - 5 &&
+    data.j < chosenPoints[1] + 5) {
 
       const coordinates = indicestoCoordinates(data.i, data.j);
 
@@ -113,10 +114,10 @@ function createHistoricalNeighbours() {
   for (let h = 0; h < history.length; h++) {
 
     // here I compare old users locations to one that's connecting
-    if (history[h].i > chosenPoints[0] - 10 && 
-      history[h].i < chosenPoints[0] + 10
-    && history[h].j > chosenPoints[1] - 10 &&
-      history[h].j < chosenPoints[1] + 10) {
+    if (history[h].i > chosenPoints[0] - 5 && 
+      history[h].i < chosenPoints[0] + 5
+    && history[h].j > chosenPoints[1] - 5 &&
+      history[h].j < chosenPoints[1] + 5) {
 
         const coordinates = indicestoCoordinates(history[h].i, history[h].j);
 
@@ -275,109 +276,116 @@ function fillStarsColor(i, j) {
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
 
     // TOP LEFT (ANGRY)
-    } else if (showMap === 1 &&
-          i >= 0 && i < Math.floor(starDots.length / 2)
+    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
 
-        if (starDots[i][j].onHover()) {
+        // only draggable when the emotion map is shown
+        if (showMap === 1) {
+          if (starDots[i][j].onHover()) {
 
-          // draw highlighted dot
-          drawHighlights(i, j);
+            // draw highlighted dot
+            drawHighlights(i, j);
+            
+            // draw guidlines
+            drawLines(i, j);
+      
+            fill(255, 0, 0);
+
+            // show all stars with different colours depending on different conditions
+            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
+          twinkleEffects(i, j);
           
-          // draw guidlines
-          drawLines(i, j);
-    
-          fill(255, 0, 0);
-    
+          // orange
+          fill(200, 98, 20, 90);
+
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
         }
-        twinkleEffects(i, j);
-        
-        // orange
-        fill(200, 98, 20, 90);
-
-        // show all stars with different colours depending on different conditions
-        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
 
     // BOTTOM LEFT (SAD)
-    } else if (showMap === 3 &&
-          i >= 0 && i < Math.floor(starDots.length / 2)
+    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
             && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
         
-        if (starDots[i][j].onHover()) {
+        if (showMap === 3) {
 
-          // draw highlighted dot
-          drawHighlights(i, j);
-          
-          // draw guidlines
-          drawLines(i, j);
-    
-          fill(255, 0, 0);
-    
+          if (starDots[i][j].onHover()) {
+
+            // draw highlighted dot
+            drawHighlights(i, j);
+            
+            // draw guidlines
+            drawLines(i, j);
+      
+            fill(255, 0, 0);
+      
+            // show all stars with different colours depending on different conditions
+            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
+          twinkleEffects(i, j);
+
+          // blue
+          fill(73, 27, 180, 90);
+
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
         }
-        twinkleEffects(i, j);
-
-        // blue
-        fill(73, 27, 180, 90);
-
-        // show all stars with different colours depending on different conditions
-        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
 
     // TOP RIGHT (HAPPY / EXCITED)
-    } else if (showMap === 2 &&
-          i > Math.floor(starDots.length / 2) && i < starDots.length
+    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
             && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
 
-        if (starDots[i][j].onHover()) {
+        if (showMap === 2) {
+        
+          if (starDots[i][j].onHover()) {
 
-          // draw highlighted dot
-          drawHighlights(i, j);
+            // draw highlighted dot
+            drawHighlights(i, j);
+            
+            // draw guidlines
+            drawLines(i, j);
+      
+            fill(255, 0, 0);
+      
+            // show all stars with different colours depending on different conditions
+            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
+          twinkleEffects(i, j);
           
-          // draw guidlines
-          drawLines(i, j);
-    
-          fill(255, 0, 0);
-    
+          // green
+          fill(176, 220, 90, 90);
+
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
         }
-        twinkleEffects(i, j);
-        
-        // green
-        fill(176, 220, 90, 90);
-
-        // show all stars with different colours depending on different conditions
-        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
 
     // BOTTOM RIGHT (CALM / RELAXED)
-    } else if (showMap === 4 &&
-        i > Math.floor(starDots.length / 2) && i < starDots.length
+    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
         && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
-
-        if (starDots[i][j].onHover()) {
-    
-          // draw highlighted dot
-          drawHighlights(i, j);
           
-          // draw guidlines
-          drawLines(i, j);
-    
-          fill(255, 0, 0);
-    
+        if (showMap === 4) {
+
+          if (starDots[i][j].onHover()) {
+      
+            // draw highlighted dot
+            drawHighlights(i, j);
+            
+            // draw guidlines
+            drawLines(i, j);
+      
+            fill(255, 0, 0);
+      
+            // show all stars with different colours depending on different conditions
+            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
+          twinkleEffects(i, j);
+      
+          // pink
+          fill(180, 83, 250, 90);
+
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
         }
-        twinkleEffects(i, j);
-    
-        // pink
-        fill(180, 83, 250, 90);
-
-        // show all stars with different colours depending on different conditions
-        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-
     // dots on the intersection lines
     }
   pop();
@@ -493,6 +501,8 @@ function mousePressed() {
         if (starDots[i][j].onHover()) {
           console.log((i / starDots.length).toFixed(3), (1 - j / starDots[i].length).toFixed(3));
           console.log(i, j);
+
+          map_cover.style.display = 'none';
 
           // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
           const mood = indicesToMood(i, j);

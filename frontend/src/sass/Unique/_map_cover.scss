@@ -1,0 +1,83 @@
+@import '../Mixin/transition';
+
+#map_cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+
+  ul {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 20px;
+    /* background-color: #2196F3; */
+    padding: 10px;
+
+    li {
+      list-style: none;
+      padding: 45px 55px;
+      background-color: rgb(68, 68, 68);
+      cursor: pointer;
+      @include transitionProperties(0.25s);
+    }
+
+    #top_left {
+      border-top-left-radius: 100px;
+      border-top: 4px solid rgb(245, 45, 45);
+      border-left: 4px solid rgb(245, 45, 45);
+      color: rgb(245, 45, 45);
+
+      &:hover {
+        box-shadow: -5px -5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
+      }
+    }
+    
+    
+    #top_right {
+      border-top-right-radius: 100px;
+      border-top: 4px solid rgb(45, 245, 62);
+      border-right: 4px solid rgb(45, 245, 62);
+      color: rgb(45, 245, 62);
+
+      &:hover {
+        box-shadow: 5px -5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
+      }
+    }
+    
+    
+    #bottom_left {
+      border-bottom-left-radius: 100px;
+      border-bottom: 4px solid rgb(45, 92, 245);
+      border-left: 4px solid rgb(45, 92, 245);
+      color: rgb(45, 92, 245);
+
+      &:hover {
+        box-shadow: -5px 5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
+      }
+    }
+    
+    
+    #bottom_right {
+      border-bottom-right-radius: 100px;
+      border-bottom: 4px solid rgb(122, 45, 245);
+      border-right: 4px solid rgb(122, 45, 245);
+      color: rgb(122, 45, 245);
+
+      &:hover {
+        box-shadow: 5px 5px 20px rgb(70, 70, 70);
+        background-color: rgb(26, 25, 25);
+        color: rgb(196, 196, 196);
+      }
+    }
+  }
+}
