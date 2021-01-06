@@ -248,12 +248,40 @@ function twinkleEffects(i, j) {
   star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4);
 }
 
+function mapRegions(i, j, star_i) {
+  // the centred dot
+  if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[star_i].length / 2)) {
+    return 0;
+
+  // TOP LEFT (ANGRY)
+  } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+    && j >= 0 && j < Math.floor(starDots[star_i].length / 2)) {
+    return 1;
+  
+  // TOP RIGHT (HAPPY / EXCITED)
+  } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+    && j >= 0 && j < Math.floor(starDots[star_i].length / 2)) {
+    return 2;
+
+  // BOTTOM LEFT (SAD)
+  } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+    && j > Math.floor(starDots[star_i].length / 2) && j < starDots[star_i].length) {
+    return 3;
+
+  // BOTTOM RIGHT (CALM / RELAXED)
+  } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+    && j > Math.floor(starDots[star_i].length / 2) && j < starDots[star_i].length) {
+    return 4;
+  }
+}
+
 function fillStarsColor(i, j) {
+  const region = mapRegions(i, j, i);
 
   push();
     
     // the centred dot
-    if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
+    if (region === 0) {
 
       if (starDots[i][j].onHover()) {
       
@@ -268,16 +296,18 @@ function fillStarsColor(i, j) {
         // show all stars with different colours depending on different conditions
         star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
       }
-      twinkleEffects(i, j);
 
-      fill(0);
+      if (!isClicked) {
+        twinkleEffects(i, j);
 
-      // show all stars with different colours depending on different conditions
-      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        fill(0);
+
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+      }
 
     // TOP LEFT (ANGRY)
-    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-            && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+    } else if (region === 1) {
 
         // only draggable when the emotion map is shown
         if (showMap === 1) {
@@ -294,18 +324,20 @@ function fillStarsColor(i, j) {
             // show all stars with different colours depending on different conditions
             star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
           }
-          twinkleEffects(i, j);
-          
-          // orange
-          fill(200, 98, 20, 90);
 
-          // show all stars with different colours depending on different conditions
-          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          if (!isClicked) {
+            twinkleEffects(i, j);
+            
+            // orange
+            fill(200, 98, 20, 90);
+
+            // show all stars with different colours depending on different conditions
+            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
         }
 
     // BOTTOM LEFT (SAD)
-    } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-            && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+    } else if (region === 3) {
         
         if (showMap === 3) {
 
@@ -322,18 +354,20 @@ function fillStarsColor(i, j) {
             // show all stars with different colours depending on different conditions
             star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
           }
-          twinkleEffects(i, j);
 
-          // blue
-          fill(73, 27, 180, 90);
+          if (!isClicked) {
+            twinkleEffects(i, j);
 
-          // show all stars with different colours depending on different conditions
-          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+            // blue
+            fill(73, 27, 180, 90);
+
+            // show all stars with different colours depending on different conditions
+            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
         }
 
     // TOP RIGHT (HAPPY / EXCITED)
-    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-            && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+    } else if (region === 2) {
 
         if (showMap === 2) {
         
@@ -350,6 +384,8 @@ function fillStarsColor(i, j) {
             // show all stars with different colours depending on different conditions
             star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
           }
+
+          if (!isClicked) {
           twinkleEffects(i, j);
           
           // green
@@ -357,11 +393,11 @@ function fillStarsColor(i, j) {
 
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
         }
 
     // BOTTOM RIGHT (CALM / RELAXED)
-    } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-        && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+    } else if (region === 4) {
           
         if (showMap === 4) {
 
@@ -378,15 +414,34 @@ function fillStarsColor(i, j) {
             // show all stars with different colours depending on different conditions
             star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
           }
-          twinkleEffects(i, j);
-      
-          // pink
-          fill(180, 83, 250, 90);
 
-          // show all stars with different colours depending on different conditions
-          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          if (!isClicked) {
+            twinkleEffects(i, j);
+        
+            // pink
+            fill(180, 83, 250, 90);
+
+            // show all stars with different colours depending on different conditions
+            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+          }
         }
     // dots on the intersection lines
+    } else {
+      if (starDots[i][j].onHover()) {
+      
+        // draw highlighted dot
+        drawHighlights(i, j);
+        
+        // draw guidlines
+        drawLines(i, j);
+  
+        fill(255, 0, 0);
+  
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+      }
+      fill(180, 180);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
     }
   pop();
 }
@@ -491,40 +546,56 @@ function indicestoCoordinates(i, j) {
 }
 //
 
+function afterClick(i, j) {
+  if (starDots[i][j].onHover()) {
+    console.log((i / starDots.length).toFixed(3), (1 - j / starDots[i].length).toFixed(3));
+    console.log(i, j);
+
+    map_cover.style.display = 'none';
+
+    // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
+    const mood = indicesToMood(i, j);
+
+    isClicked = true;
+    chosenPoints.push(i, j);
+
+    // send data to the server via socket
+    let data = {
+      i,
+      j,
+      size: starDots[i][j].size,
+    }
+    socket.emit('click', data);
+
+    // HISTORICAL USERS
+    // use the history array available globally after collecting it the first time
+    // and push it t0 neighbours array as well
+    createHistoricalNeighbours();
+
+    // get songs data from Spotify via the server
+    handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)));
+  }
+}
+
 function mousePressed() {
 
   // only clickable when the emotion map is shown
   if (showMap !== 0) {
+
+    const mouseIndices = coordinatesToIndices(mouseX, mouseY);
+
     for (let i = 0; i < starDots.length; i++) {
       for (let j = 0; j < starDots[i].length; j++) {
+        const region = mapRegions(mouseIndices.i, mouseIndices.j, i);
   
-        if (starDots[i][j].onHover()) {
-          console.log((i / starDots.length).toFixed(3), (1 - j / starDots[i].length).toFixed(3));
-          console.log(i, j);
-
-          map_cover.style.display = 'none';
-
-          // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-          const mood = indicesToMood(i, j);
-
-          isClicked = true;
-          chosenPoints.push(i, j);
-
-          // send data to the server via socket
-          let data = {
-            i,
-            j,
-            size: starDots[i][j].size,
-          }
-          socket.emit('click', data);
-
-          // HISTORICAL USERS
-          // use the history array available globally after collecting it the first time
-          // and push it t0 neighbours array as well
-          createHistoricalNeighbours();
-
-          // get songs data from Spotify via the server
-          handlingSongsData(Number(mood.valence.toFixed(3)), Number(mood.arousal.toFixed(3)));
+        if (region === 1 && showMap === 1) {
+          afterClick(i, j);
+        } else if (region === 2 && showMap === 2) {
+          afterClick(i, j);
+        } else if (region === 3 && showMap === 3) {
+          afterClick(i, j);
+        } else if (region === 4 && showMap === 4) {
+          afterClick(i, j);
         }
       }
     }
