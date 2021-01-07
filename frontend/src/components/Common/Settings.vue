@@ -11,9 +11,6 @@
       <h3>Settings</h3>
     </div>
 
-    <!-- Settings Board -->
-    <div id="board">
-    </div>
   </div>
 </template>
 

@@ -1,5 +1,8 @@
 <template>
   <div id="right_pane">
+    <!-- Settings Board -->
+    <div id="board">
+    </div>
   </div>
   <Settings />
 </template>
@@ -18,5 +21,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+@import '@/sass/Unique/_right_pane.scss';
 </style>

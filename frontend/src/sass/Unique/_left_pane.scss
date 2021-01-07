@@ -1,0 +1,8 @@
+@import '../Mixin/position';
+
+#left_pane {
+  @include positionProperties(absolute, 0, '0', 0, '0');
+  width: 15%;
+  height: 82%;
+  background-color: rgba(15, 15, 15, 0.527)
+}

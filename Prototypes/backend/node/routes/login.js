@@ -17,6 +17,7 @@ module.exports = (app) => {
       client_id: process.env.SPOTIFY_CLIENT_ID,
       redirect_uri: process.env.REDIRECT_URI,
       state: AUTH_ID,
+      show_dialog: true,
     });
 
     // set cookie for authenticating correct redirecting

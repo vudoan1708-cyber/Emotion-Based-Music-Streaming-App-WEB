@@ -2,8 +2,9 @@
   <div id="home">
     <SketchP5 />
     <TopPane />
-    <RightPane />
+    <LeftPane />
     <BottomPane />
+    <RightPane />
   </div>
 </template>
 
@@ -11,6 +12,7 @@
 import SketchP5 from '@/components/Sketches/SketchP5.vue';
 import TopPane from '@/components/Common/TopPane.vue';
 import BottomPane from '@/components/Common/BottomPane.vue';
+import LeftPane from '@/components/Common/LeftPane.vue';
 import RightPane from '@/components/Common/RightPane.vue';
 
 export default {
@@ -19,6 +21,7 @@ export default {
     SketchP5,
     TopPane,
     BottomPane,
+    LeftPane,
     RightPane,
   },
   setup() {

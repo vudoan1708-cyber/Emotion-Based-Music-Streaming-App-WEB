@@ -2,12 +2,14 @@
 
 #right_pane {
   position: fixed;
-  // display: none;
+  display: none;
   right: 0;
   width: 25%;
   height: 82%;
   background-color: rgba(20, 26, 18, 0.514);
   text-align: center;
 
-  @include settings;
+  #board {
+    display: none;
+  }
 }
