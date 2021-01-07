@@ -281,7 +281,7 @@ function fillStarsColor(i, j) {
   push();
     
     // the centred dot
-    if (region === 0) {
+    if (region === 0 && showMap !== 0) {
 
       if (starDots[i][j].onHover()) {
       
@@ -297,134 +297,122 @@ function fillStarsColor(i, j) {
         star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
       }
 
-      if (!isClicked) {
-        twinkleEffects(i, j);
 
-        fill(0);
+      fill(0);
 
-        // show all stars with different colours depending on different conditions
-        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-      }
+      // show all stars with different colours depending on different conditions
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
 
     // TOP LEFT (ANGRY)
-    } else if (region === 1) {
-
-        // only draggable when the emotion map is shown
-        if (showMap === 1) {
-          if (starDots[i][j].onHover()) {
-
-            // draw highlighted dot
-            drawHighlights(i, j);
-            
-            // draw guidlines
-            drawLines(i, j);
+    } else if (region === 1 && showMap === 1) {
       
-            fill(255, 0, 0);
+        if (starDots[i][j].onHover()) {
 
-            // show all stars with different colours depending on different conditions
-            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
-
-          if (!isClicked) {
-            twinkleEffects(i, j);
-            
-            // orange
-            fill(200, 98, 20, 90);
-
-            // show all stars with different colours depending on different conditions
-            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
-        }
-
-    // BOTTOM LEFT (SAD)
-    } else if (region === 3) {
-        
-        if (showMap === 3) {
-
-          if (starDots[i][j].onHover()) {
-
-            // draw highlighted dot
-            drawHighlights(i, j);
-            
-            // draw guidlines
-            drawLines(i, j);
-      
-            fill(255, 0, 0);
-      
-            // show all stars with different colours depending on different conditions
-            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
-
-          if (!isClicked) {
-            twinkleEffects(i, j);
-
-            // blue
-            fill(73, 27, 180, 90);
-
-            // show all stars with different colours depending on different conditions
-            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
-        }
-
-    // TOP RIGHT (HAPPY / EXCITED)
-    } else if (region === 2) {
-
-        if (showMap === 2) {
-        
-          if (starDots[i][j].onHover()) {
-
-            // draw highlighted dot
-            drawHighlights(i, j);
-            
-            // draw guidlines
-            drawLines(i, j);
-      
-            fill(255, 0, 0);
-      
-            // show all stars with different colours depending on different conditions
-            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
-
-          if (!isClicked) {
-          twinkleEffects(i, j);
+          // draw highlighted dot
+          drawHighlights(i, j);
           
-          // green
-          fill(176, 220, 90, 90);
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
 
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
         }
+
+        if (!isClicked) {
+          twinkleEffects(i, j);
+        }
+
+        // orange
+        fill(200, 98, 20, 90);
+
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+
+    // BOTTOM LEFT (SAD)
+    } else if (region === 3 && showMap === 3) {
+
+        if (starDots[i][j].onHover()) {
+
+          // draw highlighted dot
+          drawHighlights(i, j);
+          
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
+    
+          // show all stars with different colours depending on different conditions
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        }
+
+        if (!isClicked) {
+          twinkleEffects(i, j);
+        }
+
+        // blue
+        fill(73, 27, 180, 90);
+
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+
+    // TOP RIGHT (HAPPY / EXCITED)
+    } else if (region === 2 && showMap === 2) {
+        
+        if (starDots[i][j].onHover()) {
+
+          // draw highlighted dot
+          drawHighlights(i, j);
+          
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
+    
+          // show all stars with different colours depending on different conditions
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+        }
+
+        if (!isClicked) {
+        twinkleEffects(i, j);
+        
+        }
+
+        // green
+        fill(176, 220, 90, 90);
+
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
 
     // BOTTOM RIGHT (CALM / RELAXED)
-    } else if (region === 4) {
+    } else if (region === 4 && showMap === 4) {
+
+        if (starDots[i][j].onHover()) {
+    
+          // draw highlighted dot
+          drawHighlights(i, j);
           
-        if (showMap === 4) {
-
-          if (starDots[i][j].onHover()) {
-      
-            // draw highlighted dot
-            drawHighlights(i, j);
-            
-            // draw guidlines
-            drawLines(i, j);
-      
-            fill(255, 0, 0);
-      
-            // show all stars with different colours depending on different conditions
-            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
-
-          if (!isClicked) {
-            twinkleEffects(i, j);
-        
-            // pink
-            fill(180, 83, 250, 90);
-
-            // show all stars with different colours depending on different conditions
-            star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-          }
+          // draw guidlines
+          drawLines(i, j);
+    
+          fill(255, 0, 0);
+    
+          // show all stars with different colours depending on different conditions
+          star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
         }
+
+        if (!isClicked) {
+          twinkleEffects(i, j);
+      
+        }
+
+        // pink
+        fill(180, 83, 250, 90);
+
+        // show all stars with different colours depending on different conditions
+        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
+
     // dots on the intersection lines
     } else {
       if (starDots[i][j].onHover()) {
@@ -588,6 +576,8 @@ function mousePressed() {
       for (let j = 0; j < starDots[i].length; j++) {
         const region = mapRegions(mouseIndices.i, mouseIndices.j, i);
   
+        // to prevent click event happens globally for all regions
+        // on clickable on one selected region
         if (region === 1 && showMap === 1) {
           afterClick(i, j);
         } else if (region === 2 && showMap === 2) {
@@ -602,12 +592,19 @@ function mousePressed() {
   }
 }
 
+// function mouseReleased() {
+//   if (isClicked)
+//   map_cover.style.display = 'none';
+// }
+
 function mouseDragged() {
   // only draggable when the emotion map is shown
   if (showMap !== 0) {
 
     const chosenPoints_coordinates = indicestoCoordinates(chosenPoints[0], chosenPoints[1]);
     console.log(chosenPoints_coordinates)
+    // map_cover.style.display = 'flex';
+
     if (chosenPoints_coordinates.x > starDots[0][0].x  - starDots[0][0].size / 2 
       && chosenPoints_coordinates.x < starDots[starDots.length - 1][0].x  + starDots[starDots.length - 1][0].size / 2) {
       if (chosenPoints_coordinates.y > starDots[0][0].y  - starDots[0][0].size / 2

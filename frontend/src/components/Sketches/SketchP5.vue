@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-center" id="p5Canvas">
   </div>
 
-  <div id="map_cover">
+  <div id="map_cover" v-if="map_properties.status">
     <ul>
       <li id="top_left" style="opacity: 1;" @click=instantiateMap(1) ref="angryBtn">Angry</li>
       <li id="top_right" style="opacity: 1;" @click=instantiateMap(2) ref="happyBtn">Happy</li>
@@ -178,7 +178,7 @@ export default {
         if (showMap.index !== 0) {
 
           // The Emotion Map
-          drawMap(width, height, isClicked, starDots, chosenPoints, p);
+          drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, p);
 
           // Song Dots
           drawSongDots(starDots, chosenPoints, width, height, p5);
@@ -254,6 +254,7 @@ export default {
       sadBtn,
       calmBtn,
       instantiateMap,
+      map_properties,
     };
   },
 };

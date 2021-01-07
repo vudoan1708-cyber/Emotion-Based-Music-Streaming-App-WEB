@@ -1,4 +1,5 @@
 @import '../Mixin/transition';
+@import '../Mixin/user_select';
 
 #map_cover {
   display: flex;
@@ -22,7 +23,8 @@
       padding: 45px 55px;
       background-color: rgb(68, 68, 68);
       cursor: pointer;
-      @include transitionProperties(0.25s);
+      @include transitionProperties(all, 0.25s);
+      @include userSelect(none);
     }
 
     #top_left {

@@ -1,5 +1,5 @@
 <template>
-  <div id="login">
+  <div id="login" v-if="!isLoggedIn.value">
     <div id="bg">
     </div>
     <div id="button">
@@ -28,14 +28,17 @@ import { LoginHandlers } from '@/handlers/spotify';
 // Ultilities
 import { createBGStars, drawGalaxyBG, moveGalaxyBG } from '@/components/Utils/p5/bg';
 
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 export default {
   name: 'LogIn',
   setup() {
 
+    const isLoggedIn = ref(false);
+
     // binded function to a button
     async function login() {
+      isLoggedIn.value = true;
       LoginHandlers();
     }
 
@@ -69,6 +72,7 @@ export default {
     });
 
     return {
+      isLoggedIn,
       login,
     };
   },

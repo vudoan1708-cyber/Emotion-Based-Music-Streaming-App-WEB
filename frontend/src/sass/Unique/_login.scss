@@ -31,7 +31,7 @@ $hover-color: rgb(170, 180, 170);
       color: snow;
       cursor: pointer;
       text-align: center;
-      @include transitionProperties(0.2s);
+      @include transitionProperties(all, 0.2s);
 
       .wrapper {
         display: inline-block;
@@ -55,7 +55,7 @@ $hover-color: rgb(170, 180, 170);
           width: 12%;
           height: auto;
           background-color: $spotify-color;
-          @include transitionProperties(0.2s);
+          @include transitionProperties(all, 0.2s);
         }
       }
 

@@ -1,6 +1,6 @@
-@mixin transitionProperties($sec) {
-  transition: $sec ease-in-out;
-  -moz-transition: $sec ease-in-out;
-  -ms-transition: $sec ease-in-out;
-  -o-transition: $sec ease-in-out;
+@mixin transitionProperties($prop, $sec) {
+  transition: $prop $sec ease-in-out;
+  -moz-transition: $prop $sec ease-in-out;
+  -ms-transition: $prop $sec ease-in-out;
+  -o-transition: $prop $sec ease-in-out;
 }

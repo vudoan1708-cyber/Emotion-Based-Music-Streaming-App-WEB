@@ -1,8 +1,12 @@
+/* eslint-disable padded-blocks */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 /* eslint-disable no-param-reassign */
 import StarDots from '@/components/Utils/p5/classes/starDots';
 import star from '@/components/Utils/p5/star';
+import mapRegions from '@/components/Utils/p5/mapRegions';
+import twinkleEffects from '@/components/Utils/p5/twinkleEffects';
+
 import make2dArray from '@/components/Utils/logic/array';
 
 import { coordinatesToIndices } from '@/components/Utils/logic/algorithm';
@@ -28,52 +32,128 @@ function drawHighlights(i, j, starDots, p5) {
   p5.pop();
 }
 
-function fillStarsColor(i, j, isClicked, starDots, p5) {
+function fillStarsColor(i, j, isClicked, starDots, showMap, p5) {
+  // effects for separate regions
+  // hovering only affects one selected region
+  const region = mapRegions(i, j, i, starDots);
+
   p5.push();
-  if (starDots[i][j].onHover(isClicked)) {
-    // draw highlighted dot
-    drawHighlights(i, j, starDots, p5);
 
-    // draw guidlines
-    drawLines(i, j, starDots, p5);
+  // the centred dot
+  if (region === 0) {
 
-    p5.fill(255, 0, 0);
+    if (starDots[i][j].onHover(isClicked)) {
 
-    // the centred dot
-  } else if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[i].length / 2)) {
+      // draw highlighted dot
+      drawHighlights(i, j, starDots, p5);
+
+      // draw guidlines
+      drawLines(i, j, starDots, p5);
+
+      p5.fill(255, 0, 0);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+    }
     p5.fill(0);
+    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // TOP LEFT (ANGRY)
-  } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-            && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+  } else if (region === 1 && showMap === 1) {
+
+    if (starDots[i][j].onHover(isClicked)) {
+
+      // draw highlighted dot
+      drawHighlights(i, j, starDots, p5);
+
+      // draw guidlines
+      drawLines(i, j, starDots, p5);
+
+      p5.fill(255, 0, 0);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+    }
+    if (!isClicked) twinkleEffects(i, j, starDots, p5);
+
     // orange
     p5.fill(200, 98, 20, 90);
+    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // BOTTOM LEFT (SAD)
-  } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-            && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+  } else if (region === 3 && showMap === 3) {
+
+    if (starDots[i][j].onHover(isClicked)) {
+
+      // draw highlighted dot
+      drawHighlights(i, j, starDots, p5);
+
+      // draw guidlines
+      drawLines(i, j, starDots, p5);
+
+      p5.fill(255, 0, 0);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+    }
+    if (!isClicked) twinkleEffects(i, j, starDots, p5);
+
     // blue
     p5.fill(73, 27, 180, 90);
+    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // TOP RIGHT (HAPPY / EXCITED)
-  } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-            && j >= 0 && j < Math.floor(starDots[i].length / 2)) {
+  } else if (region === 2 && showMap === 2) {
+
+    if (starDots[i][j].onHover(isClicked)) {
+
+      // draw highlighted dot
+      drawHighlights(i, j, starDots, p5);
+
+      // draw guidlines
+      drawLines(i, j, starDots, p5);
+
+      p5.fill(255, 0, 0);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+    }
+    if (!isClicked) twinkleEffects(i, j, starDots, p5);
+
     // green
     p5.fill(176, 220, 90, 90);
+    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // BOTTOM RIGHT (CALM / RELAXED)
-  } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-        && j > Math.floor(starDots[i].length / 2) && j < starDots[i].length) {
+  } else if (region === 4 && showMap === 4) {
+
+    if (starDots[i][j].onHover(isClicked)) {
+
+      // draw highlighted dot
+      drawHighlights(i, j, starDots, p5);
+
+      // draw guidlines
+      drawLines(i, j, starDots, p5);
+
+      p5.fill(255, 0, 0);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+    }
+    if (!isClicked) twinkleEffects(i, j, starDots, p5);
+
     // pink
     p5.fill(180, 83, 250, 90);
+    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // dots on the intersection lines
   } else {
-    p5.fill(220, 150);
+
+    if (starDots[i][j].onHover(isClicked)) {
+
+      // draw highlighted dot
+      drawHighlights(i, j, starDots, p5);
+
+      // draw guidlines
+      drawLines(i, j, starDots, p5);
+
+      p5.fill(255, 0, 0);
+      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+    }
+    p5.fill(90, 150);
+    star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
   }
 
-  // show all stars with different colours depending on different conditions
-  star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
   p5.pop();
 }
 
@@ -92,7 +172,7 @@ export function createMap(width, height, starDots, p5) {
   return starDots;
 }
 
-export function drawMap(width, height, isClicked, starDots, chosenPoints, p5) {
+export function drawMap(width, height, isClicked, starDots, chosenPoints, showMap, p5) {
   p5.push();
   p5.noStroke();
 
@@ -106,9 +186,9 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, p5) {
 
         star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4, p5);
 
-        fillStarsColor(i, j, isClicked, starDots, p5);
+        fillStarsColor(i, j, isClicked, starDots, showMap, p5);
       } else {
-        fillStarsColor(i, j, isClicked, starDots, p5);
+        fillStarsColor(i, j, isClicked, starDots, showMap, p5);
 
         // a circle represents a chosen dot
         drawHighlights(chosenPoints[0], chosenPoints[1], starDots, p5);

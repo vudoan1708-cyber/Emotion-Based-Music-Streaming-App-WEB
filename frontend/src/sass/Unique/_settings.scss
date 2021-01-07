@@ -15,7 +15,7 @@ $hover-color: rgb(204, 204, 204);
     float: right;
     clear: both;
     z-index: 2;
-    @include transitionProperties(0.2s);
+    @include transitionProperties(all, 0.2s);
 
     img {
       width: 100%;
@@ -23,7 +23,7 @@ $hover-color: rgb(204, 204, 204);
       background-color: rgb(88, 88, 88);
       border-left: 4px double rgb(207, 207, 207);
       cursor: pointer;
-      @include transitionProperties(0.2s);
+      @include transitionProperties(all, 0.2s);
     }
 
     &:hover {
@@ -32,27 +32,28 @@ $hover-color: rgb(204, 204, 204);
       img {
         border-left: 1px double $hover-color;
         background-color: $hover-color;
+        box-shadow: 5px 0px 15px rgb(102, 102, 102);
       }
 
       ~ #settings_text_anim {
+        right: -30px;
         opacity: 1;
-        left: 0;
-        box-shadow: 5px 0px 15px rgb(102, 102, 102);
       }
     }
   }
 
   #settings_text_anim {
-    @include positionProperties(absolute, 200%, '0', 50%, '0');
+    @include positionProperties(absolute, '0', -200%, 50%, '0');
     width: 100%;
     height: 100%;
     transform: translate(-50%, -50%);
     border: 4px double rgb(207, 207, 207);
     border-top-left-radius: 100px;
     border-bottom-left-radius: 100px;
-    z-index: 1;
+    z-index: 0;
+    pointer-events: none;
     @include userSelect(none);
-    @include transitionProperties(0.2s);
+    @include transitionProperties(all, 0.2s);
 
     h3 {
       position: absolute;
