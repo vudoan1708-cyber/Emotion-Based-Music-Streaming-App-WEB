@@ -1,4 +1,3 @@
-// @ts-nocheck
 p5.disableFriendlyErrors = true; // disables FES
 
 const width = window.innerWidth,
@@ -6,7 +5,7 @@ const width = window.innerWidth,
 
 let starDots = [];
 let galaxy = [];
-const songDots = [];
+let songDots = [];
 const chosenPoints = [];
 
 const neighbours = [];
@@ -188,6 +187,9 @@ function setup() {
   ellipseMode(CENTER);
 
   rectMode(CENTER);
+
+  textSize(15);
+  textAlign(CENTER);
 
   // make a 2D array
   starDots = make2dArray(Math.floor(width / 40), Math.floor(height / 40));
@@ -471,15 +473,22 @@ function drawSongDots() {
 
       // live updating every song dots positions
       songDots[i].updateLabels();
+
+      onSongHover = songDots[i].onHover(songLoaded);
+
+      if (onSongHover) {
+        push();
+        fill(200);
+        text(songDots[i].title, songDots[i].x, songDots[i].y - 10);
+        pop();
+      }
     }
   }
 }
 
 function changeMap(num) {
   showMap = num;
-  console.log((top_left.style.opacity))
   if (showMap === 1 && top_left.style.opacity === '1') {
-    console.log(showMap)
     top_left.style.opacity = '0';
     top_right.style.opacity = '1';
     bottom_left.style.opacity = '1';
@@ -613,6 +622,7 @@ function mouseDragged() {
 
         // empty the playlist and refill it
         playlist = [];
+        songDots = [];
 
         // convert the mapping algorithm to indices
         // move the chosen point to other locations
@@ -634,13 +644,13 @@ function mouseDragged() {
   }
 }
 
-function createSongDots(label, valence, arousal, id) {
+function createSongDots(label, valence, arousal, id, title) {
 
   // reverse the mapping algorithm to get the location values from valence and arousal
   const coordinates = moodToCoordinates(valence, arousal);
 
   // console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
-  songDots.push(new SongDots(label, id, coordinates.x, coordinates.y, 10));
+  songDots.push(new SongDots(label, id, coordinates.x, coordinates.y, 10, title));
   songLoaded = true;
 }
 
@@ -693,7 +703,7 @@ async function makeATempPlaylist(access_token, id, title, valence, arousal) {
     playlist.push(id);
 
     // accepted songs
-    createSongDots('accepted', valence, arousal, id);
+    createSongDots('accepted', valence, arousal, id, title);
   } else {
     for (let i = 0; i < playlist.length; i++) {
   
@@ -727,7 +737,7 @@ async function makeATempPlaylist(access_token, id, title, valence, arousal) {
           // await sleep(250);
   
           // accepted songs
-          createSongDots('accepted', valence, arousal, id);
+          createSongDots('accepted', valence, arousal, id, title);
   
           break;
         }
@@ -765,7 +775,6 @@ async function handlingSongsData(valence, arousal) {
   for (let i = 0; i < audio_features.length; i++) {
 
     const song_data = audio_features[i];
-
     // if playlist array hasn't reached its end
     if (playlist.length < 5) {
 
@@ -794,7 +803,7 @@ async function handlingSongsData(valence, arousal) {
         } else {
 
           // unaccepted songs
-          createSongDots('unaccepted', song_data.valence, song_data.arousal, song_data.id);
+          createSongDots('unaccepted', song_data.valence, song_data.arousal, song_data.id, song_data.title);
         }
 
       // otherwise, redo the loop again until the playlist array condition is satisfied

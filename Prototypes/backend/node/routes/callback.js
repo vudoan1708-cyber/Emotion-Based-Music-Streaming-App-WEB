@@ -38,7 +38,7 @@ module.exports = (app) => {
         if (!error && res.statusCode === 200) {
           const access_token = body.access_token,
                 refresh_token = body.refresh_token;
-
+          
           let uri = process.env.FRONTEND_URI || 'http://localhost:3000';
 
           const options = {

@@ -13,6 +13,7 @@
 // logic
 import hashURL from '@/components/Utils/logic/hashURL';
 import sleep from '@/components/Utils/logic/sleep';
+import isEmpty from '@/components/Utils/logic/object';
 
 import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 
@@ -67,8 +68,11 @@ async function getSongsData() {
     // const request = await fetch(`http://localhost:5000/spotify/${TOKEN}/${valence}/${arousal}`);
 
     const response = await request.json();
-    // console.log(response);
-    return response;
+    const isObjEmpty = isEmpty(response);
+    console.log(isObjEmpty);
+
+    if (!isObjEmpty) return response;
+    return null;
 
   } catch (err) {
     console.log(err);
@@ -182,6 +186,8 @@ export async function handlingSongsData(valence, arousal, starDots, chosenPoints
 
   // get songs' valence and arousal data 
   const audio_features = await getSongsData();
+
+  if (audio_features === null) LoginHandlers();
 
   // console.log(audio_features);
   for (let i = 0; i < audio_features.length; i += 1) {

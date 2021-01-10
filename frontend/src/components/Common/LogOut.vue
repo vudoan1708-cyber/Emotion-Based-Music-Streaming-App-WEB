@@ -1,14 +1,10 @@
 <template>
   <div id="logOut">
-    <!-- Icon -->
-    <div id="logOut_img" @click="logOut">
-      <img src="@/assets/logOut.png"/>
-    </div>
 
-    <!-- Text Animation -->
-    <div id="text_anim">
-      <h3>Log Off</h3>
-    </div>
+    <ul>
+      <!-- Icon -->
+      <li id="text_anim"><h3>Log Out</h3></li>
+    </ul>
   </div>
 </template>
 

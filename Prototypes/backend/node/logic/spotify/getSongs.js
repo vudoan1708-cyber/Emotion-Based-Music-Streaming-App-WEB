@@ -39,13 +39,19 @@ module.exports = async function getSongs(TOKEN) {
       const ids = [];
       const preview_urls = [];
       const titles = [];
-      for (let i = 0; i < lim; i++) {
-          ids.push(json.tracks.items[i].id);
-          preview_urls.push(json.tracks.items[i].preview_url);
-          titles.push(json.tracks.items[i].name);
-      }
 
-      return {ids, preview_urls, titles, TOKEN};
+      // check if an access token is still valid through JSON response
+      if (json.tracks !== undefined) {
+        for (let i = 0; i < lim; i++) {
+            ids.push(json.tracks.items[i].id);
+            preview_urls.push(json.tracks.items[i].preview_url);
+            titles.push(json.tracks.items[i].name);
+        }
+        return {ids, preview_urls, titles, TOKEN};
+
+      } else {
+        return null;
+      }
   } catch(err) {
       console.warn(err);
       return err;

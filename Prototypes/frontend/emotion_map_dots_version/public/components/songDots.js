@@ -1,10 +1,11 @@
 class SongDots {
-  constructor(label, id, x, y, size) {
+  constructor(label, id, x, y, size, title) {
     this.label = label;
     this.id = id;
     this.x = x;
     this.y = y;
     this.size = size;
+    this.title = title;
   }
 
   show() {
