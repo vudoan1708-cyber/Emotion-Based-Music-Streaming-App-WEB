@@ -1,69 +1,86 @@
+<!-- eslint-disable max-len -->
 <template>
   <div id="nav">
     <ul>
-      <li>
-        <div class="home">
+      <!-- Home -->
+      <li ref="homeBtn" :class="{ 'home': homeElement }" @click="onClickNav(1)">
+        <div class="nav_el">
           <img src="#"/>
         </div>
-        <div class="home">
+        <div class="nav_el">
           <p>Home</p>
         </div>
       </li>
-      <li>
-        <div class="search">
+
+      <!-- Search -->
+      <li ref="searchBtn" :class="{ 'search': searchElement }" @click="onClickNav(2)">
+        <div class="nav_el">
           <img src="#"/>
         </div>
-        <div class="search">
+        <div class="nav_el">
           <p>Search</p>
         </div>
       </li>
-      <li>
-        <div class="records">
+
+      <!-- Records -->
+      <li ref="recordsBtn" :class="{ 'records': recordsElement }" @click="onClickNav(3)">
+        <div class="nav_el">
           <img src="#"/>
         </div>
-        <div class="records">
+        <div class="nav_el">
           <p>Records</p>
         </div>
-        </li>
+      </li>
+
+      <!-- Portfolio -->
+      <li ref="portfolioBtn" :class="{ 'portfolio': portfolioElement }" @click="onClickNav(4)">
+        <div class="nav_el">
+          <img src="#"/>
+        </div>
+        <div class="nav_el">
+          <p>Portfolio</p>
+        </div>
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
-export default {
+import { ref } from 'vue';
 
+export default {
+  name: 'Navigation',
+  setup() {
+    // set active state for elements
+    const homeElement = ref(true);
+    const searchElement = ref(false);
+    const recordsElement = ref(false);
+    const portfolioElement = ref(false);
+
+    const whichElements = ref([homeElement, searchElement, recordsElement, portfolioElement]);
+
+    // when a nav button is clicked
+    function onClickNav(num) {
+      for (let i = 0; i < whichElements.value.length; i += 1) {
+        if (i === num - 1) {
+          whichElements.value[i].value = true;
+        } else {
+          whichElements.value[i].value = false;
+        }
+      }
+    }
+
+    return {
+      homeElement,
+      searchElement,
+      recordsElement,
+      portfolioElement,
+      onClickNav,
+    };
+  },
 };
 </script>
 
 <style scoped lang="scss">
-#nav {
-  position: relative;
-  width: 100%;
-  text-align: center;
-
-  ul {
-    display: block;
-
-    li {
-      margin-bottom: 20px;
-      cursor: pointer;
-      text-align: left;
-      color: rgb(82, 82, 82);
-
-      .home {
-        display: inline-block;
-        margin: 10px;
-      }
-
-      .search,
-      .records {
-        @extend .home;
-      }
-
-      &:hover {
-        color: rgb(145, 145, 145);
-      }
-    }
-  }
-}
+@import '@/sass/Unique/_nav.scss';
 </style>

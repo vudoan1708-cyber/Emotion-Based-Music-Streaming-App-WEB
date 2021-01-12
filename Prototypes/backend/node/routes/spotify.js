@@ -18,9 +18,9 @@ module.exports = (app) => {
 
   app.get('/play', async(req, res) => {
     const TOKEN = req.query.token;
-    const PLAYLIST = req.query.playlist;
+    const PLAYLIST = req.query.playlist.split(',');
     const PLAYER_ID = req.query.player_id;
-    
+
     try {
       const songPlay = await getSongPlay(TOKEN, PLAYLIST, PLAYER_ID);
       res.json(songPlay);

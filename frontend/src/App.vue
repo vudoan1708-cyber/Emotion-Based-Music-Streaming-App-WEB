@@ -4,14 +4,8 @@
 </template>
 
 <script>
-import { onMounted } from 'vue';
 
 export default {
-  setup() {
-    onMounted(() => {
-      window.onSpotifyPlayerAPIReady = () => {};
-    });
-  },
 };
 </script>
 

@@ -22,7 +22,7 @@ let spotifyPlayerID = null;
 let playlist = [];
 
 // Set up the Web Playback SDK PLAYER
-window.onSpotifyPlayerAPIReady = () => {
+window.onSpotifyWebPlaybackSDKReady = () => {
   const TOKEN = hashURL();
 
   // eslint-disable-next-line no-undef
@@ -69,7 +69,6 @@ async function getSongsData() {
 
     const response = await request.json();
     const isObjEmpty = isEmpty(response);
-    console.log(isObjEmpty);
 
     if (!isObjEmpty) return response;
     return null;
@@ -96,7 +95,10 @@ export function updatePlaylist(id, how) {
 }
 
 export async function makeATempPlaylist(id, valence, arousal, starDots, width, height, chosenPoints, p5) {
-  
+  // re-format the id
+  // eslint-disable-next-line no-param-reassign
+  id = `spotify:track:${id}`;
+
   if (playlist.length === 0) {
 
     // append the song's ids to the array
@@ -148,9 +150,8 @@ export async function makeATempPlaylist(id, valence, arousal, starDots, width, h
   }
 }
 
-// Play a track using our new device ID
+// Play a track using the new device ID
 async function playSong(TOKEN) {
-
   try {
 
     // Node.js
@@ -221,8 +222,10 @@ export async function handlingSongsData(valence, arousal, starDots, chosenPoints
             await makeATempPlaylist(song_data.id, song_data.valence, song_data.arousal, starDots, width, height, chosenPoints, p5);
         } else {
 
+          const id = `spotify:track:${song_data.id}`;
+
           // unaccepted songs
-          createSongDots('unaccepted', song_data.valence, song_data.arousal, song_data.id, 
+          createSongDots('unaccepted', song_data.valence, song_data.arousal, id, 
                           starDots, width, height, p5);
         }
 

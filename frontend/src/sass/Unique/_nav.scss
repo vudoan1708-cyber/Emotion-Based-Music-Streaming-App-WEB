@@ -1,0 +1,42 @@
+@import '../Mixin/transition';
+@import '../Mixin/user_select';
+
+#nav {
+  position: relative;
+  width: 100%;
+  text-align: center;
+
+  ul {
+    display: block;
+
+    li {
+      margin-bottom: 20px;
+      cursor: pointer;
+      text-align: left;
+      color: rgb(82, 82, 82);
+      @include userSelect(none);
+      @include transitionProperties(all, 0.2s);
+
+      .nav_el {
+        display: inline-block;
+        margin: 10px;
+      }
+
+      &:hover {
+        color: rgb(145, 145, 145);
+      }
+    }
+
+    // only effective when is clicked
+    .home,
+    .search,
+    .records,
+    .portfolio {
+      background-color: rgba(50, 50, 50, 0.5);
+
+      p {
+        color: rgb(145, 145, 145);
+      }
+    }
+  }
+}
