@@ -21,5 +21,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/sass/Unique/_right_pane.scss';
+@import '@/sass/Unique/_right_pane';
 </style>

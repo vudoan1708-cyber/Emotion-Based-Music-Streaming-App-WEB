@@ -94,7 +94,7 @@ export function updatePlaylist(id, how) {
   } else playlist.push(id);
 }
 
-export async function makeATempPlaylist(id, valence, arousal, starDots, width, height, chosenPoints, p5) {
+export async function makeATempPlaylist(id, title, valence, arousal, starDots, width, height, chosenPoints, p5, emitter) {
   // re-format the id
   // eslint-disable-next-line no-param-reassign
   id = `spotify:track:${id}`;
@@ -105,8 +105,8 @@ export async function makeATempPlaylist(id, valence, arousal, starDots, width, h
     playlist.push(id);
 
     // accepted songs
-    createSongDots('accepted', valence, arousal, id, 
-                    starDots, width, height, p5);
+    createSongDots('accepted', title, valence, arousal, id, 
+                    starDots, width, height, p5, emitter);
   } else {
     for (let i = 0; i < playlist.length; i += 1) {
   
@@ -116,7 +116,7 @@ export async function makeATempPlaylist(id, valence, arousal, starDots, width, h
         await sleep(250);
   
         // redo the workflow
-        handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5);
+        handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5, emitter);
   
         break;
       } else {
@@ -140,8 +140,8 @@ export async function makeATempPlaylist(id, valence, arousal, starDots, width, h
           // await sleep(250);
   
           // accepted songs
-          createSongDots('accepted', valence, arousal, id, 
-                          starDots, width, height, p5);
+          createSongDots('accepted', title, valence, arousal, id, 
+                          starDots, width, height, p5, emitter);
   
           break;
         }
@@ -183,7 +183,7 @@ export async function LoginHandlers() {
   }
 }
 
-export async function handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5) {
+export async function handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5, emitter) {
 
   // get songs' valence and arousal data 
   const audio_features = await getSongsData();
@@ -219,21 +219,21 @@ export async function handlingSongsData(valence, arousal, starDots, chosenPoints
             song_y < bounds.y2) {
 
             // make a temporary playlist for the mood
-            await makeATempPlaylist(song_data.id, song_data.valence, song_data.arousal, starDots, width, height, chosenPoints, p5);
+            await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal, starDots, width, height, chosenPoints, p5, emitter);
         } else {
 
           const id = `spotify:track:${song_data.id}`;
 
           // unaccepted songs
-          createSongDots('unaccepted', song_data.valence, song_data.arousal, id, 
-                          starDots, width, height, p5);
+          createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id, 
+                          starDots, width, height, p5, emitter);
         }
 
       // otherwise, redo the loop again until the playlist array condition is satisfied
       } else {
         await sleep(500);
         // console.log(playlist.length)
-        handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5);
+        handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5, emitter);
       }
     } else {
       console.log(`End The Loop With ${playlist.length} songs`);

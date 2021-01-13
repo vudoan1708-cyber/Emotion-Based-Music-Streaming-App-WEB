@@ -1,7 +1,10 @@
 <template>
+
+  <!-- p5 canvas -->
   <div class="d-flex justify-content-center" id="p5Canvas">
   </div>
 
+  <!-- map cover -->
   <div id="map_cover" v-if="map_properties.status">
     <ul>
       <li id="top_left" style="opacity: 1;" @click=instantiateMap(1) ref="angryBtn">Angry</li>
@@ -10,6 +13,10 @@
       <li id="bottom_right" style="opacity: 1;" @click=instantiateMap(4) ref="calmBtn">Calm</li>
     </ul>
   </div>
+
+  <!-- song data -->
+  <SongData />
+
 </template>
 
 <script>
@@ -47,6 +54,9 @@ import changeMap from '@/components/Utils/dom/changeMap';
 
 import { handlingSongsData, removeATempPlaylist } from '@/handlers/spotify';
 
+// Vue component
+import SongData from '@/components/Common/SongData.vue';
+
 export default {
   name: 'SketchP5',
   setup() {
@@ -77,7 +87,7 @@ export default {
     const calmBtn = ref(null);
 
     function emitEvent() {
-      // socket.io-like package (mitt) for emiting and listening to events
+      // socket.io-like package (mitt) for emitting and listening to events
       // between COMPONENTS
       emitter.emit('map', map_properties);
     }
@@ -222,7 +232,7 @@ export default {
                 createHistoricalNeighbours(history, chosenPoints, width, height);
 
                 // get songs data from Spotify via the server
-                handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p);
+                handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p, emitter);
               }
             }
           }
@@ -255,6 +265,7 @@ export default {
       calmBtn,
       instantiateMap,
       map_properties,
+      SongData,
     };
   },
 };

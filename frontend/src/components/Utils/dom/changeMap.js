@@ -10,7 +10,6 @@
 export default function changeMap(num, showMap, top_left, top_right, bottom_left, bottom_right) {
   showMap = num;
   if (showMap === 1 && top_left.style.opacity === '1') {
-    console.log(showMap);
     top_left.style.opacity = '0';
     top_right.style.opacity = '1';
     bottom_left.style.opacity = '1';

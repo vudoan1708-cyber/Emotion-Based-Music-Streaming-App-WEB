@@ -22,7 +22,7 @@
 <script>
 /* eslint-disable object-curly-newline */
 
-import { reactive, watchEffect, getCurrentInstance } from 'vue';
+import { reactive, getCurrentInstance } from 'vue';
 /* eslint-disable no-unused-vars */
 
 export default {
@@ -46,16 +46,11 @@ export default {
       img: '',
     });
 
-    // watch(() => [mapProperties.coords.x, mapProperties.coords.y], ([x, y]) => {
-    //   // eslint-disable-next-line no-console
-    //   console.log(x, y);
-    // });
-    watchEffect(() => {
-      emitter.on('map', (map) => {
-        mapProperties.coords.x = map.i;
-        mapProperties.coords.y = map.j;
-        appState.map = map.status;
-      });
+    // subscribe on the 'map' event
+    emitter.on('map', (map) => {
+      mapProperties.coords.x = map.i;
+      mapProperties.coords.y = map.j;
+      appState.map = map.status;
     });
 
     return {
@@ -67,5 +62,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import '@/sass/Unique/_bottom_pane';
+@import '@/sass/Unique/_bottom_pane';
 </style>

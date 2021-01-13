@@ -33,5 +33,5 @@ export default {
 </script>
 
 <style scoped lang="sass">
-@import '@/sass/Unique/_logout.scss';
+@import '@/sass/Unique/_logout';
 </style>

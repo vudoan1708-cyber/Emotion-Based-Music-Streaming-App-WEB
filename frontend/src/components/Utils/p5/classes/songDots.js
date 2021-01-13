@@ -7,8 +7,9 @@
 import { updatePlaylist } from '@/handlers/spotify';
 
 export default class SongDots {
-  constructor(label, id, valence, arousal, x, y, size, p5) {
+  constructor(label, title, id, valence, arousal, x, y, size, p5) {
     this.label = label;
+    this.title = title;
     this.id = id;
     this.valence = valence;
     this.arousal = arousal;
