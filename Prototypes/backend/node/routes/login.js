@@ -1,7 +1,7 @@
 const querystring = require('querystring');
 
 module.exports = (app) => {
-  const SCOPE = 'user-read-private user-read-email user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private streaming';
+  const SCOPE = 'user-read-private user-read-email user-modify-playback-state user-read-playback-state playlist-modify-public playlist-modify-private user-top-read streaming';
 
   const auth = () => Math.random().toString(36).slice(5, 11).toUpperCase()
 

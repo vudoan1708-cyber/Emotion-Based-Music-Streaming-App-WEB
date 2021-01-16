@@ -1,6 +1,9 @@
 <template>
   <div id="right_pane">
 
+    <!-- User Account -->
+    <UserAccount />
+
     <!-- Playlist Display -->
     <Playlist />
 
@@ -14,6 +17,7 @@
 <script>
 import Settings from '@/components/Common/Settings.vue';
 import Playlist from '@/components/Common/Playlist.vue';
+import UserAccount from '@/components/Common/UserAccount.vue';
 
 export default {
   name: 'RightPane',
@@ -21,6 +25,7 @@ export default {
     return {
       Playlist,
       Settings,
+      UserAccount,
     };
   },
 };

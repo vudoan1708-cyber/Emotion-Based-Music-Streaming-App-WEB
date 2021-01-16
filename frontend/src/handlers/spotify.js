@@ -14,6 +14,7 @@
 import hashURL from '@/components/Utils/logic/hashURL';
 import sleep from '@/components/Utils/logic/sleep';
 import isEmpty from '@/components/Utils/logic/object';
+import useFetch from '@/components/Utils/logic/useFetch';
 
 import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 
@@ -21,9 +22,10 @@ import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 let spotifyPlayerID = null;
 let playlist = [];
 
+const TOKEN = hashURL();
+
 // Set up the Web Playback SDK PLAYER
 window.onSpotifyWebPlaybackSDKReady = () => {
-  const TOKEN = hashURL();
 
   // eslint-disable-next-line no-undef
   const player = new Spotify.Player({
@@ -57,17 +59,11 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 };
 
 async function getSongsData() {
-  const TOKEN = hashURL();
 
   try {
     // https://muserfly.herokuapp.com/
-    // Node.js
-    const request = await fetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
 
-    // Python
-    // const request = await fetch(`http://localhost:5000/spotify/${TOKEN}/${valence}/${arousal}`);
-
-    const response = await request.json();
+    const response = await useFetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
     const isObjEmpty = isEmpty(response);
 
     if (!isObjEmpty) return response;
@@ -79,19 +75,32 @@ async function getSongsData() {
   }
 }
 
-export function removeATempPlaylist() {
+export function removeATempPlaylist(emitter) {
   // empty the playlist and refill it
   playlist = [];
+
+  // create an event for playlist of collected songs
+  emitter.emit('playlist', playlist);
 }
 
-export function updatePlaylist(id, how) {
+export function updatePlaylist(id, how, emitter) {
 
   // splice it off the playlist array
   if (how === 'remove') {
     for (let i = playlist.length - 1; i >= 0; i -= 1) {
-      if (playlist[i] === id) playlist.splice(id, 1);
+      if (playlist[i] === id) {
+        playlist.splice(id, 1);
+
+        // create an event for playlist of collected songs
+        emitter.emit('playlist', playlist);
+      }
     }
-  } else playlist.push(id);
+  } else {
+    playlist.push(id);
+    
+    // create an event for playlist of collected songs
+    emitter.emit('playlist', playlist);
+  }
 }
 
 export async function makeATempPlaylist(id, title, valence, arousal, 
@@ -105,6 +114,9 @@ export async function makeATempPlaylist(id, title, valence, arousal,
 
     // append the song's ids to the array
     playlist.push(id);
+
+    // create an event for playlist of collected songs
+    emitter.emit('playlist', playlist);
 
     // accepted songs
     createSongDots('accepted', title, valence, arousal, id,
@@ -130,15 +142,8 @@ export async function makeATempPlaylist(id, title, valence, arousal,
           // append the song's ids to the array
           playlist.push(id);
   
-          // preview_urls.push(preview_url);
-  
-          // titles.push(title);
-  
-          // valences.push(song_valence);
-  
-          // arousals.push(song_energy);
-  
-          console.log(`Counter ${Number(playlist.length)}`);
+          // create an event for playlist of collected songs
+          emitter.emit('playlist', playlist);
   
           // await sleep(250);
   
@@ -155,13 +160,11 @@ export async function makeATempPlaylist(id, title, valence, arousal,
 }
 
 // Play a track using the new device ID
-async function playSong(TOKEN) {
+async function playSong() {
   try {
 
     // Node.js
-    const request = await fetch(`http://localhost:5000/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`);
-
-    const response = await request.json();
+    const response = await useFetch(`http://localhost:5000/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`);
     console.log(response);
   } catch (err) {
     console.log(err);
@@ -184,6 +187,15 @@ export async function LoginHandlers() {
   } catch (e) {
     window.location.href = '/';
     console.log(e);
+  }
+}
+
+export async function getUserProfile() {
+  try {
+    const response = await useFetch(`http://localhost:5000/user/?token=${TOKEN}`);
+    return response;
+  } catch (err) {
+    return err;
   }
 }
 

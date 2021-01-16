@@ -2,7 +2,11 @@ const getSongs = require('../logic/spotify/getSongs');
 const getAudioFeatures = require('../logic/spotify/getAudioFeatures');
 const getSongPlay = require('../logic/spotify/getSongPlay');
 
+const getUser = require('../logic/spotify/getUser');
+
 module.exports = (app) => {
+
+  // songs
   app.get('/spotify', async(req, res) => {
     const TOKEN = req.query.token;
     
@@ -24,6 +28,19 @@ module.exports = (app) => {
     try {
       const songPlay = await getSongPlay(TOKEN, PLAYLIST, PLAYER_ID);
       res.json(songPlay);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  // users
+  app.get('/user', async(req, res) => {
+    const TOKEN = req.query.token;
+    
+    try {
+      const user_data = await getUser(TOKEN);
+
+      res.json(user_data);
     } catch(err) {
       res.json(err);
     }

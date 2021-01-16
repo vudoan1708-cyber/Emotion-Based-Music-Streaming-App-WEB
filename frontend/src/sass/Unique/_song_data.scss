@@ -1,6 +1,7 @@
 @import '../Mixin/transition';
 
 .song_data_container {
+  display: none;
   position: absolute;
   transform: translateX(-50%);
   padding: 5px;

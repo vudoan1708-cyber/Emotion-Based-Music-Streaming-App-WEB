@@ -15,18 +15,23 @@
     </div>
 
     <!-- Loading -->
-    <div id="loading" v-else>Loading Bar Here</div>
+    <div id="loading" v-else>
+      <LoadingBar />
+    </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable object-curly-newline */
-
-import { reactive, getCurrentInstance } from 'vue';
 /* eslint-disable no-unused-vars */
+import { reactive, getCurrentInstance } from 'vue';
+import LoadingBar from '@/components/Common/LoadingBar.vue';
 
 export default {
   name: 'BottomPane',
+  components: {
+    LoadingBar,
+  },
   setup() {
     // instantiate the app's current instance to get global properties
     // registered in the main.js file

@@ -1,4 +1,3 @@
-// @ts-nocheck
 const fetch = require('node-fetch');
 
 module.exports = async function getAudioFeature(data) {

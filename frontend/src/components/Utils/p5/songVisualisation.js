@@ -28,13 +28,13 @@ export function createSongDots(label, title, valence, arousal, id,
   emitter.emit('song_data', song);
 }
 
-export function drawSongDots(starDots, chosenPoints) {
+export function drawSongDots(starDots, chosenPoints, emitter) {
   if (songLoaded) {
     for (let i = 0; i < songDots.length; i += 1) {
       songDots[i].show();
 
       // live updating every song dots positions
-      songDots[i].updateLabels(starDots, chosenPoints);
+      songDots[i].updateLabels(starDots, chosenPoints, emitter);
     }
   }
 }

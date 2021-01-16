@@ -1,0 +1,35 @@
+@import '../Mixin/transition';
+
+#user_account {
+  position: relative;
+  margin: 20px 5px;
+  text-align: right;
+
+  ul {
+    position: relative;
+    list-style: none;
+    border-radius: 25px;
+    border: 2.5px solid rgb(10, 10, 10);
+    padding: 3px;
+    transform: translateX(100%);
+    right: 0;
+    width: 50%;
+    cursor: pointer;
+    @include transitionProperties(border, 0.2s);
+
+    li {
+      display: inline-block;
+      margin-right: 15px;
+      color: rgb(82, 82, 82);
+      @include transitionProperties(color, 0.2s);
+    }
+
+    &:hover {
+      border: 2.5px solid rgb(179, 179, 179);
+
+      li {
+        color: rgb(179, 179, 179);
+      }
+    }
+  }
+}

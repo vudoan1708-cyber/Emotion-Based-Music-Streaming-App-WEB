@@ -1,9 +1,8 @@
-<!-- eslint-disable max-len -->
 <template>
   <div id="nav">
     <ul>
       <!-- Home -->
-      <li ref="homeBtn" :class="{ 'home': homeElement }" @click="onClickNav(1)">
+      <li :class="{ 'home': homeElement }" @click="onClickNav(1)">
         <div class="nav_el">
           <img src="#"/>
         </div>
@@ -13,7 +12,7 @@
       </li>
 
       <!-- Search -->
-      <li ref="searchBtn" :class="{ 'search': searchElement }" @click="onClickNav(2)">
+      <li :class="{ 'search': searchElement }" @click="onClickNav(2)">
         <div class="nav_el">
           <img src="#"/>
         </div>
@@ -23,7 +22,7 @@
       </li>
 
       <!-- Records -->
-      <li ref="recordsBtn" :class="{ 'records': recordsElement }" @click="onClickNav(3)">
+      <li :class="{ 'records': recordsElement }" @click="onClickNav(3)">
         <div class="nav_el">
           <img src="#"/>
         </div>
@@ -33,7 +32,7 @@
       </li>
 
       <!-- Portfolio -->
-      <li ref="portfolioBtn" :class="{ 'portfolio': portfolioElement }" @click="onClickNav(4)">
+      <li :class="{ 'portfolio': portfolioElement }" @click="onClickNav(4)">
         <div class="nav_el">
           <img src="#"/>
         </div>

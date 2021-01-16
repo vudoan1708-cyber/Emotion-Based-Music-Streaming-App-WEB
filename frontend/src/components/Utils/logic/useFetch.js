@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-export default async function userFetch(URL) {
+export default async function useFetch(URL) {
   const options = {
     method: 'GET',
     headers: {
