@@ -8,7 +8,7 @@
   <div id="map_cover" v-if="map_properties.status">
     <ul>
       <li id="top_left" style="opacity: 1;" @click=instantiateMap(1) ref="angryBtn">Aggressive</li>
-      <li id="top_right" style="opacity: 1;" @click=instantiateMap(2) ref="happyBtn">Excited</li>
+      <li id="top_right" style="opacity: 1;" @click=instantiateMap(2) ref="happyBtn">Exciting</li>
       <li id="bottom_left" style="opacity: 1;" @click=instantiateMap(3) ref="sadBtn">Sad</li>
       <li id="bottom_right" style="opacity: 1;" @click=instantiateMap(4) ref="calmBtn">Calm</li>
     </ul>
