@@ -60,7 +60,7 @@ async function getSongsData() {
   const TOKEN = hashURL();
 
   try {
-
+    // https://muserfly.herokuapp.com/
     // Node.js
     const request = await fetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
 
@@ -94,7 +94,9 @@ export function updatePlaylist(id, how) {
   } else playlist.push(id);
 }
 
-export async function makeATempPlaylist(id, title, valence, arousal, starDots, width, height, chosenPoints, p5, emitter) {
+export async function makeATempPlaylist(id, title, valence, arousal, 
+                  album_imgs, artist_details, artist_names, external_urls,
+                  starDots, width, height, chosenPoints, p5, emitter) {
   // re-format the id
   // eslint-disable-next-line no-param-reassign
   id = `spotify:track:${id}`;
@@ -105,7 +107,8 @@ export async function makeATempPlaylist(id, title, valence, arousal, starDots, w
     playlist.push(id);
 
     // accepted songs
-    createSongDots('accepted', title, valence, arousal, id, 
+    createSongDots('accepted', title, valence, arousal, id,
+                    album_imgs, artist_details, artist_names, external_urls,
                     starDots, width, height, p5, emitter);
   } else {
     for (let i = 0; i < playlist.length; i += 1) {
@@ -140,7 +143,8 @@ export async function makeATempPlaylist(id, title, valence, arousal, starDots, w
           // await sleep(250);
   
           // accepted songs
-          createSongDots('accepted', title, valence, arousal, id, 
+          createSongDots('accepted', title, valence, arousal, id,
+                          album_imgs, artist_details, artist_names, external_urls,
                           starDots, width, height, p5, emitter);
   
           break;
@@ -219,13 +223,16 @@ export async function handlingSongsData(valence, arousal, starDots, chosenPoints
             song_y < bounds.y2) {
 
             // make a temporary playlist for the mood
-            await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal, starDots, width, height, chosenPoints, p5, emitter);
+            await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal,
+                              song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
+                              starDots, width, height, chosenPoints, p5, emitter);
         } else {
 
           const id = `spotify:track:${song_data.id}`;
 
           // unaccepted songs
-          createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id, 
+          createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
+                          song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
                           starDots, width, height, p5, emitter);
         }
 

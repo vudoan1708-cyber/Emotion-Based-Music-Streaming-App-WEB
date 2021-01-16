@@ -111,7 +111,7 @@ export default {
       const galaxy = [];
       const chosenPoints = [];
 
-      const stars = Array(360);
+      const stars = Array(160);
 
       let isClicked = false;
 

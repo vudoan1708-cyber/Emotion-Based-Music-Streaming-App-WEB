@@ -12,5 +12,4 @@ export default function star(x, y, radius1, radius2, npoints, p5) {
     p5.vertex(sx, sy);
   }
   p5.endShape(p5.CLOSE);
-  p5.endShape(p5.CLOSE);
 }

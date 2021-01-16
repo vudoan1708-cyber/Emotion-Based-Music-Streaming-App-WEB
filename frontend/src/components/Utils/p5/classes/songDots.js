@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable indent */
 /* eslint-disable max-len */
 /* eslint-disable padded-blocks */
 /* eslint-disable operator-linebreak */
@@ -7,12 +9,18 @@
 import { updatePlaylist } from '@/handlers/spotify';
 
 export default class SongDots {
-  constructor(label, title, id, valence, arousal, x, y, size, p5) {
+  constructor(label, title, id, valence, arousal,
+              album_imgs, artist_details, artist_names, external_urls,
+              x, y, size, p5) {
     this.label = label;
     this.title = title;
     this.id = id;
     this.valence = valence;
     this.arousal = arousal;
+    this.album_imgs = album_imgs;
+    this.artist_details = artist_details;
+    this.artist_names = artist_names;
+    this.external_urls = external_urls;
     this.x = x;
     this.y = y;
     this.size = size;

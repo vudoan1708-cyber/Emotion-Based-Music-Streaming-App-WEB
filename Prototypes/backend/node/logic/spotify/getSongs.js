@@ -39,15 +39,24 @@ module.exports = async function getSongs(TOKEN) {
       const ids = [];
       const preview_urls = [];
       const titles = [];
+      const external_urls = [];
+      const artist_names = [];
+      const artist_details = [];
+      const album_imgs = [];
 
       // check if an access token is still valid through JSON response
       if (json.tracks !== undefined) {
         for (let i = 0; i < lim; i++) {
-            ids.push(json.tracks.items[i].id);
-            preview_urls.push(json.tracks.items[i].preview_url);
-            titles.push(json.tracks.items[i].name);
+          ids.push(json.tracks.items[i].id);
+          preview_urls.push(json.tracks.items[i].preview_url);
+          titles.push(json.tracks.items[i].name);
+          external_urls.push(json.tracks.items[i].external_urls.spotify);
+          artist_names.push(json.tracks.items[i].artists[0].name);
+          artist_details.push(json.tracks.items[i].artists[0].uri);
+          album_imgs.push(json.tracks.items[i].album.images[0]);
         }
-        return {ids, preview_urls, titles, TOKEN};
+        return {ids, preview_urls, titles, external_urls, 
+                artist_names, artist_details, album_imgs, TOKEN};
 
       } else {
         return null;

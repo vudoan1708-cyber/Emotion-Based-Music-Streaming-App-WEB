@@ -24,3 +24,39 @@ body {
     color: #2c3e50;
   }
 }
+
+/* width of the entire scrollbar */
+::-webkit-scrollbar,
+::-webkit-scrollbar { /* Chrome/Opera/Safari */
+    width: 5px;
+}
+::-moz-scrollbar,
+::-webkit-scrollbar { /* Firefox 19+ */
+    width: 5px;
+}
+
+/* color of the tracking area */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: #6cf1a3f1;
+}
+::-moz-scrollbar-track,
+::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: #6cf1a3f1;
+}
+
+/* scrollbar thumb */
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+    background-color: rgba(50, 50, 50, 0.5);    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+    border: 2px solid rgb(41, 39, 39);  /* creates padding around scroll thumb */
+}
+::-moz-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+    background-color: rgba(50, 50, 50, 0.5);    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+    border: 2px solid rgb(41, 39, 39);  /* creates padding around scroll thumb */
+}

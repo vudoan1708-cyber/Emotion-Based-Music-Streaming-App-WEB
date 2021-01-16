@@ -1,11 +1,11 @@
 #right_pane {
   position: fixed;
-  display: none;
   right: 0;
-  width: 25%;
+  width: 20%;
   height: 82%;
-  background-color: rgba(20, 26, 18, 0.514);
+  background-color: rgb(34, 36, 34);
   text-align: center;
+  z-index: 2;
 
   #board {
     display: none;

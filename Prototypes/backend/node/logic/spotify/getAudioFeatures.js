@@ -7,6 +7,10 @@ module.exports = async function getAudioFeature(data) {
   const IDs = data.ids;
   const PREVIEW_URLS = data.preview_urls;
   const TITLES = data.titles;
+  const EXTERNAL_URLS = data.external_urls;
+  const ARTIST_NAMES = data.artist_names;
+  const ARTIST_DETAILS = data.artist_details;
+  const ALBUM_IMGS = data.album_imgs;
 
   const responses = [];
   
@@ -50,16 +54,20 @@ module.exports = async function getAudioFeature(data) {
 
       if (audio_features[i] !== null) {
 
-        // IDs and TITLEs arrays have the same length as audio_features array
+        // IDs and TITLEs and other arrays have the same length as audio_features array
         responses.push({
           id: IDs[i],
           title: TITLES[i],
           valence: audio_features[i].valence,
           arousal: audio_features[i].energy,
+          artist_names: ARTIST_NAMES[i],
+          artist_details: ARTIST_DETAILS[i],
+          album_imgs: ALBUM_IMGS[i],
+          external_urls: EXTERNAL_URLS[i],
           access_token: TOKEN,
         });
       } else {
-        return {'error': 'TypeError: null property'};
+        responses.push({'error': 'TypeError: null property'});
       }
     }
     return responses;
