@@ -179,10 +179,11 @@ export default {
         p.background(10);
         drawGalaxyBG(galaxy, p);
 
-        // Keep Track of Indices on The Emotion Map
-        const indices = posOnMap(width, height, starDots, p);
-        map_properties.i = indices.i;
-        map_properties.j = indices.j;
+        // Keep Track of Affective Values on The Emotion Map
+        const mood = posOnMap(width, height, starDots, p);
+        // eslint-disable-next-line valid-typeof
+        map_properties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
+        map_properties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
         emitEvent();
 
         if (showMap.index !== 0) {

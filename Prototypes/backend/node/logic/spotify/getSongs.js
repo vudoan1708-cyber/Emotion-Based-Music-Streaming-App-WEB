@@ -55,8 +55,8 @@ module.exports = async function getSongs(TOKEN) {
         artist_details.push(json.tracks.items[i].artists[0].uri);
         album_imgs.push(json.tracks.items[i].album.images[0]);
       }
-      return {ids, preview_urls, titles, external_urls, 
-              artist_names, artist_details, album_imgs, TOKEN};
+      return { ids, preview_urls, titles, external_urls, 
+              artist_names, artist_details, album_imgs, TOKEN };
 
     } else {
       return null;

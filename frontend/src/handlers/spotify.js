@@ -22,6 +22,8 @@ import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 let spotifyPlayerID = null;
 let playlist = [];
 
+// handling production and development mode
+const PRODUCTION = process.env.NODE_ENV;
 const TOKEN = hashURL();
 
 // Set up the Web Playback SDK PLAYER
@@ -62,8 +64,11 @@ async function getSongsData() {
 
   try {
     // https://muserfly.herokuapp.com/
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/spotify/?token=${TOKEN}` 
+              : `http://localhost:5000/spotify/?token=${TOKEN}`;
 
-    const response = await useFetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
+    const response = await useFetch(URL);
     const isObjEmpty = isEmpty(response);
 
     if (!isObjEmpty) return response;
@@ -163,8 +168,13 @@ export async function makeATempPlaylist(id, title, valence, arousal,
 async function playSong() {
   try {
 
+    // https://muserfly.herokuapp.com/
+    const URL = (PRODUCTION === 'production') 
+              ? `https://muserfly.herokuapp.com/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}` 
+              : `http://localhost:5000/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
+
     // Node.js
-    const response = await useFetch(`http://localhost:5000/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`);
+    const response = await useFetch(URL);
     console.log(response);
   } catch (err) {
     console.log(err);
@@ -173,8 +183,6 @@ async function playSong() {
 
 // GLOBALLY ACCESSIBLE FUNCTIONS
 export async function LoginHandlers() {
-  // handling production and development mode
-  const PRODUCTION = process.env.NODE_ENV;
 
   // if it's production mode, get rid of the proxied server,
   // because, the client will be built on top of Python then,
@@ -191,8 +199,11 @@ export async function LoginHandlers() {
 }
 
 export async function getUserProfile() {
+  const URL = (PRODUCTION === 'production') 
+            ? `https://muserfly.herokuapp.com/user/?token=${TOKEN}` 
+            : `http://localhost:5000/user/?token=${TOKEN}`;
   try {
-    const response = await useFetch(`http://localhost:5000/user/?token=${TOKEN}`);
+    const response = await useFetch(URL);
     return response;
   } catch (err) {
     return err;

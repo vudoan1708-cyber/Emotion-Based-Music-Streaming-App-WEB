@@ -15,7 +15,7 @@ module.exports = (app) => {
       response_type: 'code',
       scope: SCOPE,
       client_id: process.env.SPOTIFY_CLIENT_ID,
-      redirect_uri: process.env.REDIRECT_URI,
+      redirect_uri: process.env.REDIRECT_URI || 'http://localhost:5000/callback',
       state: AUTH_ID,
       show_dialog: true,
     });
