@@ -253,6 +253,10 @@ export default {
           chosenPoints[1] = j;
         }
       }
+
+      p.windowResized = () => {
+        p.resizeCanvas(width, height);
+      }
     };
 
     onMounted(() => {

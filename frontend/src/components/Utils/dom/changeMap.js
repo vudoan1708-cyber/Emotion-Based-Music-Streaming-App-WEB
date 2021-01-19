@@ -2,10 +2,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable camelcase */
 // DOM
-// const top_left = document.getElementById('top_left');
-// const top_right = document.getElementById('top_right');
-// const bottom_left = document.getElementById('bottom_left');
-// const bottom_right = document.getElementById('bottom_right');
 
 export default function changeMap(num, showMap, top_left, top_right, bottom_left, bottom_right) {
   showMap = num;

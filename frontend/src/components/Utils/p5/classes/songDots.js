@@ -71,7 +71,7 @@ export default class SongDots {
         this.label = 'accepted';
 
         // push it in the playlist array
-        updatePlaylist(this.id, 'add', emitter);
+        updatePlaylist(this, 'add', emitter);
       }
 
     } else {
@@ -82,7 +82,7 @@ export default class SongDots {
         // change the label to affect the visualisation
         this.label = 'unaccepted';
 
-        updatePlaylist(this.id, 'remove', emitter);
+        updatePlaylist(this, 'remove', emitter);
       }
     }
   }

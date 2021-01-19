@@ -16,6 +16,8 @@ import sleep from '@/components/Utils/logic/sleep';
 import isEmpty from '@/components/Utils/logic/object';
 import useFetch from '@/components/Utils/logic/useFetch';
 
+import errorHandler from '@/components/Utils/dom/error';
+
 import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 
 // Spotify
@@ -31,7 +33,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
   // eslint-disable-next-line no-undef
   const player = new Spotify.Player({
-    name: 'IAE',
+    name: 'Muserfly',
     getOAuthToken: (cb) => { cb(TOKEN); },
   });
 
@@ -54,6 +56,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     
     // make the player id globally accessible
     spotifyPlayerID = data.device_id;
+  });
+
+  player.on('not_ready', (data) => {
+    console.log('Device ID is not ready', data.device_id);
   });
 
   // Connect to the player!
@@ -84,27 +90,44 @@ export function removeATempPlaylist(emitter) {
   // empty the playlist and refill it
   playlist = [];
 
-  // create an event for playlist of collected songs
-  emitter.emit('playlist', playlist);
+  // create an object to remove all songs from the DOM
+  const data = {
+    playlist,
+    how: 'removeAll',
+  };
+
+  emitter.emit('song_data', data);
 }
 
-export function updatePlaylist(id, how, emitter) {
+export function updatePlaylist(song, how, emitter) {
+  // create an object to remove this song from the DOM
+  let data = {};
 
-  // splice it off the playlist array
+  // splice the duplicates off the playlist array
   if (how === 'remove') {
     for (let i = playlist.length - 1; i >= 0; i -= 1) {
-      if (playlist[i] === id) {
-        playlist.splice(id, 1);
+      if (playlist[i] === song.id) {
+        playlist.splice(song.id, 1);
 
-        // create an event for playlist of collected songs
-        emitter.emit('playlist', playlist);
+        // create an object to remove this song from the DOM
+        data = {
+          song,
+          how,
+        };
+
+        emitter.emit('song_data', data);
       }
     }
   } else {
-    playlist.push(id);
-    
-    // create an event for playlist of collected songs
-    emitter.emit('playlist', playlist);
+    playlist.push(song.id);
+
+    // create an object to add this song to the DOM
+    data = {
+      song,
+      how,
+    };
+
+    emitter.emit('song_data', data);
   }
 }
 
@@ -119,9 +142,6 @@ export async function makeATempPlaylist(id, title, valence, arousal,
 
     // append the song's ids to the array
     playlist.push(id);
-
-    // create an event for playlist of collected songs
-    emitter.emit('playlist', playlist);
 
     // accepted songs
     createSongDots('accepted', title, valence, arousal, id,
@@ -146,9 +166,6 @@ export async function makeATempPlaylist(id, title, valence, arousal,
                 
           // append the song's ids to the array
           playlist.push(id);
-  
-          // create an event for playlist of collected songs
-          emitter.emit('playlist', playlist);
   
           // await sleep(250);
   
@@ -175,9 +192,17 @@ async function playSong() {
 
     // Node.js
     const response = await useFetch(URL);
+    const errorStatus = response.error !== undefined 
+                        ? response.error.status
+                        : undefined;
     console.log(response);
+    if (errorStatus === 404) {
+      const errorDiv = document.createElement('div');
+      errorHandler(response.error.message, errorDiv);
+    }
   } catch (err) {
-    console.log(err);
+    const errorDiv = document.createElement('div');
+    errorHandler(err, errorDiv);
   }
 }
 

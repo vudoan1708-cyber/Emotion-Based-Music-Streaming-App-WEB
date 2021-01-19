@@ -52,14 +52,30 @@ export default {
 
     // subscribe to the 'song_data' event
     emitter.on('song_data', (data) => {
-      // push received data to the array
-      songData.value.push(data);
-      if (allTracks.value.style.minHeight === '40%') allTracks.value.style.minHeight = '';
+      // if a new song is added
+      if (data.how === 'add') {
+        // push received data to the array
+        songData.value.push(data.song);
+        if (allTracks.value.style.minHeight === '40%') allTracks.value.style.minHeight = '';
 
-      // handle collected tracks
-      if (data.label === 'accepted') {
-        acceptedSongData.value.push(data);
-        if (collectedTracks.value.style.minHeight === '30%') collectedTracks.value.style.minHeight = '';
+        // handle collected tracks
+        if (data.song.label === 'accepted') {
+          acceptedSongData.value.push(data.song);
+          if (collectedTracks.value.style.minHeight === '30%') collectedTracks.value.style.minHeight = '';
+        }
+
+      // if a song is removed
+      } else if (data.how === 'remove') {
+        for (let i = acceptedSongData.value.length - 1; i >= 0; i -= 1) {
+          // check for removing songs
+          if (data.song.id === acceptedSongData.value[i].id) acceptedSongData.value.splice(i, 1);
+        }
+
+      // if all songs are removed
+      } else {
+        // reset
+        collectedTracks.value.style.minHeight = '30%';
+        acceptedSongData.value = [...data.playlist];
       }
     });
 

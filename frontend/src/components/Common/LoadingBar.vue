@@ -21,12 +21,25 @@ export default {
 
     const progressBar = ref(null);
     const barWidth = ref(0);
+    const tracks = ref([]);
 
     onMounted(() => {
       // subscribe to the 'song_data' event
-      emitter.on('playlist', (data) => {
-        if (progressBar.value.style.width !== '100%') {
-          barWidth.value = (data.length / 5) * 100;
+      emitter.on('song_data', (data) => {
+        // handle removeAll label
+        if (data.song !== undefined) {
+          if (data.song.label === 'accepted') {
+            tracks.value.push(data.song);
+            if (progressBar.value.style.width !== '100%') {
+              barWidth.value = (tracks.value.length / 5) * 100;
+              progressBar.value.style.width = `${barWidth.value}%`;
+            }
+          }
+
+        // reset loading bar
+        } else {
+          tracks.value = [];
+          barWidth.value = (tracks.value.length / 5) * 100;
           progressBar.value.style.width = `${barWidth.value}%`;
         }
       });

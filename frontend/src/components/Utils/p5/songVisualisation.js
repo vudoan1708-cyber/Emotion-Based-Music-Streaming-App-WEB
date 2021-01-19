@@ -24,8 +24,13 @@ export function createSongDots(label, title, valence, arousal, id,
   songDots.push(song);
   songLoaded = true;
 
+  const emitData = {
+    song,
+    how: 'add',
+  };
+
   // emit the songDots instances one at a time
-  emitter.emit('song_data', song);
+  emitter.emit('song_data', emitData);
 }
 
 export function drawSongDots(starDots, chosenPoints, emitter) {
