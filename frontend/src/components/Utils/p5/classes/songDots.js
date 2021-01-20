@@ -46,6 +46,10 @@ export default class SongDots {
     this.p5.pop();
   }
 
+  showFavPlaylist() {
+    this.p5.ellipse(this.x, this.y, this.size + 5);
+  }
+
   onHover(isSongLoading) {
     if (isSongLoading) {
       if (this.p5.mouseX > this.x - this.size / 2 && this.p5.mouseX < this.x + this.size / 2) {

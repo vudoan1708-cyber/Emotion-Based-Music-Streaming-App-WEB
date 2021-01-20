@@ -2,9 +2,9 @@
 
 #left_pane {
   @include positionProperties(absolute, 0, '0', 0, '0');
-  width: 15%;
+  width: 200px;
   height: 82%;
   background-color: rgba(44, 44, 44, 0.397);
   box-shadow: 2px 2px 5px rgb(66, 66, 66);
-  z-index: 2;
+  z-index: 3;
 }

@@ -16,6 +16,9 @@
 </template>
 
 <script>
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+
 import { getUserProfile } from '@/handlers/spotify';
 import { reactive, onBeforeMount } from 'vue';
 
@@ -25,7 +28,7 @@ export default {
     const user = reactive({
       name: '',
       email: 'no email provided',
-      img: '#',
+      img: require('@/assets/user.png'),
     });
 
     async function getUser() {
@@ -33,7 +36,7 @@ export default {
 
       // re-aasign responded data to the reactive object
       user.name = data.NAME;
-      user.img = data.IMAGES[0] ? data.IMAGES.length > 0 : user.img;
+      user.img = data.IMAGES.length > 0 ? require(data.IMAGES[0]) : user.img;
     }
     onBeforeMount(async () => {
       getUser();

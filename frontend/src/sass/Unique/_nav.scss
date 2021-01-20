@@ -1,4 +1,5 @@
 @import '../Mixin/transition';
+@import '../Mixin/position';
 @import '../Mixin/user_select';
 
 #nav {
@@ -20,10 +21,22 @@
       .nav_el {
         display: inline-block;
         margin: 10px;
+        width: 25px;
+        vertical-align: middle;
+
+        img {
+          width: 100%;
+          height: auto;
+          @include transitionProperties(all, 0.2s);
+        }
       }
 
       &:hover {
         color: rgb(145, 145, 145);
+
+        img {
+          filter: invert(100%);
+        }
       }
     }
 
@@ -36,6 +49,10 @@
 
       p {
         color: rgb(145, 145, 145);
+      }
+
+      img {
+        filter: invert(100%);
       }
     }
   }

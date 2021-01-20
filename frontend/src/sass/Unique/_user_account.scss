@@ -10,10 +10,12 @@
     list-style: none;
     border-radius: 25px;
     border: 2.5px solid rgb(10, 10, 10);
-    padding: 3px;
-    transform: translateX(100%);
-    right: 0;
-    width: 50%;
+    padding: 2px;
+    margin: 0 10px 15px 0;
+    // transform: translateX(100%);
+    // right: 0;
+    float: right;
+    width: 55%;
     cursor: pointer;
     @include transitionProperties(border, 0.2s);
 
@@ -21,7 +23,17 @@
       display: inline-block;
       margin-right: 15px;
       color: rgb(82, 82, 82);
+      vertical-align: middle;
       @include transitionProperties(color, 0.2s);
+    }
+
+    #user_img {
+      width: 20%;
+      img {
+        width: 100%;
+        height: auto;
+        @include transitionProperties(filter, 0.2s);
+      }
     }
 
     &:hover {
@@ -29,6 +41,10 @@
 
       li {
         color: rgb(179, 179, 179);
+
+        img {
+          filter: invert(100%);
+        }
       }
     }
   }

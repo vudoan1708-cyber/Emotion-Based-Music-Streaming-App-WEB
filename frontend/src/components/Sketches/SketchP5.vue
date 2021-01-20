@@ -207,8 +207,6 @@ export default {
             for (let j = 0; j < starDots[i].length; j++) {
 
               if (starDots[i][j].onHover()) {
-                console.log(i / starDots.length, 1 - j / starDots[i].length);
-                console.log(i, j);
 
                 // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
                 const { valence, arousal } = indicesToMood(i, j, starDots);
@@ -244,13 +242,19 @@ export default {
 
         // only draggable when the emotion map is shown
         if (showMap.index !== 0) {
-          removeATempPlaylist(emitter);
+          for (let a = 0; a < starDots.length; a++) {
+            for (let b = 0; b < starDots[a].length; b++) {
+              if (starDots[a][b].onHover()) {
+                removeATempPlaylist(emitter);
 
-          // convert the mapping algorithm to indices
-          // move the chosen point to other locations
-          const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-          chosenPoints[0] = i;
-          chosenPoints[1] = j;
+                // convert the mapping algorithm to indices
+                // move the chosen point to other locations
+                const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+                chosenPoints[0] = i;
+                chosenPoints[1] = j;
+              }
+            }
+          }
         }
       }
 

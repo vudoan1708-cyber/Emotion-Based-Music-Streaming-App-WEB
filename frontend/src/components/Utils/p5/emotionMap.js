@@ -32,10 +32,15 @@ function drawHighlights(i, j, starDots, p5) {
   p5.pop();
 }
 
-function fillStarsColor(i, j, isClicked, starDots, showMap, p5) {
+function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5) {
   // effects for separate regions
   // hovering only affects one selected region
   const region = mapRegions(i, j, i, starDots);
+
+  let green = ((i + j) * 2.5);
+  let blue = ((i + j) * 2.5);
+  let red = ((i + j) * 2.5);
+  let alpha = 255 - ((i + j) * 2.5);
 
   p5.push();
 
@@ -66,14 +71,13 @@ function fillStarsColor(i, j, isClicked, starDots, showMap, p5) {
 
       // draw guidlines
       drawLines(i, j, starDots, p5);
-
       p5.fill(255, 0, 0);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
     }
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
-    // orange
-    p5.fill(200, 98, 20, 90);
+    // red
+    p5.fill(225, green, blue, alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // BOTTOM LEFT (SAD)
@@ -93,7 +97,9 @@ function fillStarsColor(i, j, isClicked, starDots, showMap, p5) {
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // blue
-    p5.fill(73, 27, 180, 90);
+    red = (100 * i) / j;
+    green = (100 * i) / j;
+    p5.fill(red, green, 255, alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // TOP RIGHT (HAPPY / EXCITED)
@@ -113,7 +119,10 @@ function fillStarsColor(i, j, isClicked, starDots, showMap, p5) {
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // green
-    p5.fill(176, 220, 90, 90);
+    red = (255 * (j + 5)) / i;
+    blue = (255 * (j + 5)) / i;
+    alpha = (i / (j + 5)) * 50;
+    p5.fill(red, 255, blue, alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // BOTTOM RIGHT (CALM / RELAXED)
@@ -133,7 +142,7 @@ function fillStarsColor(i, j, isClicked, starDots, showMap, p5) {
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // pink
-    p5.fill(180, 83, 250, 90);
+    p5.fill(180, 250 - green, 250, 255 - alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // dots on the intersection lines
@@ -186,9 +195,9 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, showMa
 
         star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4, p5);
 
-        fillStarsColor(i, j, isClicked, starDots, showMap, p5);
+        fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5);
       } else {
-        fillStarsColor(i, j, isClicked, starDots, showMap, p5);
+        fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5);
 
         // a circle represents a chosen dot
         drawHighlights(chosenPoints[0], chosenPoints[1], starDots, p5);
