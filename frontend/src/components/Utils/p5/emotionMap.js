@@ -108,6 +108,7 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
 
     // red
     p5.fill(225, green, blue, alpha);
+
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // BOTTOM LEFT (SAD)
@@ -156,7 +157,8 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
     red = (255 * (j + 5)) / i;
     blue = (255 * (j + 5)) / i;
     alpha = (i / (j + 5)) * 50;
-    p5.fill(red, 255, blue, alpha);
+
+    p5.fill(red + 30, 255, blue + 30, alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // BOTTOM RIGHT (CALM / RELAXED)
@@ -178,7 +180,7 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // pink
-    p5.fill(180, 250 - green, 250, 255 - alpha);
+    p5.fill(220, 300 - green, 250, 300 - alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // dots on the intersection lines

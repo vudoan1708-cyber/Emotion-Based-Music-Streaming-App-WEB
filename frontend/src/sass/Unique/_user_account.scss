@@ -12,19 +12,18 @@
     border: 2.5px solid rgb(10, 10, 10);
     padding: 2px;
     margin: 0 10px 15px 0;
-    // transform: translateX(100%);
-    // right: 0;
+    background-color: rgb(10, 10, 10);
     float: right;
     width: 55%;
     cursor: pointer;
-    @include transitionProperties(border, 0.2s);
+    @include transitionProperties(border, 0.1s);
 
     li {
       display: inline-block;
       margin-right: 15px;
       color: rgb(82, 82, 82);
       vertical-align: middle;
-      @include transitionProperties(color, 0.2s);
+      @include transitionProperties(color, 0.1s);
     }
 
     #user_img {
@@ -32,7 +31,34 @@
       img {
         width: 100%;
         height: auto;
-        @include transitionProperties(filter, 0.2s);
+        @include transitionProperties(filter, 0.1s);
+      }
+    }
+
+    // Drop-down Menu
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgb(29, 29, 29);
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(109, 109, 109, 0.2);
+      z-index: 1;
+      margin-top: 10px;
+      text-align: left;
+      border-radius: 5px;
+      @include transitionProperties(display, 0.1s);
+
+      .content {
+        color: rgb(122, 122, 122);
+        margin: 5px;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+
+        &:hover {
+          color: rgb(233, 233, 233);
+          background-color: rgb(121, 121, 121);
+        }
       }
     }
 
@@ -41,11 +67,20 @@
 
       li {
         color: rgb(179, 179, 179);
-
-        img {
-          filter: invert(100%);
-        }
       }
+    }
+  }
+
+  .section_active {
+
+    border: 2.5px solid rgb(179, 179, 179);
+
+    // show drop-down menu
+    .dropdown-content {
+      display: block;
+    }
+    li {
+      color: rgb(179, 179, 179);
     }
   }
 }

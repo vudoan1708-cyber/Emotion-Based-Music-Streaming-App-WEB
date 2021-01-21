@@ -74,7 +74,7 @@ async function getSongsData() {
               ? `https://muserfly.herokuapp.com/spotify/?token=${TOKEN}` 
               : `http://localhost:5000/spotify/?token=${TOKEN}`;
 
-    const response = await useFetch(URL);
+    const response = await useFetch(URL, 'GET');
     const isObjEmpty = isEmpty(response);
 
     if (!isObjEmpty) return response;
@@ -191,7 +191,7 @@ async function playSong() {
               : `http://localhost:5000/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
 
     // Node.js
-    const response = await useFetch(URL);
+    const response = await useFetch(URL, 'GET');
     const errorStatus = response.error !== undefined 
                         ? response.error.status
                         : undefined;
@@ -228,7 +228,7 @@ export async function getUserProfile() {
             ? `https://muserfly.herokuapp.com/user/?token=${TOKEN}` 
             : `http://localhost:5000/user/?token=${TOKEN}`;
   try {
-    const response = await useFetch(URL);
+    const response = await useFetch(URL, 'GET');
     return response;
   } catch (err) {
     return err;

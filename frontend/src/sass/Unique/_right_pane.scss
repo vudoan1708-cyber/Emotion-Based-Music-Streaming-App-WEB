@@ -1,13 +1,10 @@
+@import '../Mixin/position';
+
 #right_pane {
-  position: fixed;
-  right: 0;
+  @include positionProperties(absolute, '', 0, 0, '');
   width: 20%;
   height: 82%;
   background-color: rgb(34, 36, 34);
   text-align: center;
   z-index: 2;
-
-  #board {
-    display: none;
-  }
 }

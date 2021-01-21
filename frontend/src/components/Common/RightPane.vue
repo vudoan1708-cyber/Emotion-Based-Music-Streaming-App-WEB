@@ -8,25 +8,23 @@
     <Playlist />
 
     <!-- Settings Board -->
-    <div id="board">
-    </div>
+    <SettingsBoard />
   </div>
-  <Settings />
 </template>
 
 <script>
-import Settings from '@/components/Common/Settings.vue';
 import Playlist from '@/components/Common/Playlist.vue';
 import UserAccount from '@/components/Common/UserAccount.vue';
+import SettingsBoard from '@/components/Common/SettingsBoard.vue';
 
 export default {
   name: 'RightPane',
+  components: {
+    SettingsBoard,
+    Playlist,
+    UserAccount,
+  },
   setup() {
-    return {
-      Playlist,
-      Settings,
-      UserAccount,
-    };
   },
 };
 </script>

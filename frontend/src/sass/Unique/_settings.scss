@@ -1,67 +1,53 @@
-@import '../Mixin/transition';
-@import '../Mixin/position';
-@import '../Mixin/user_select';
+#board {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(172, 172, 172);
+  text-align: center;
+  z-index: 2;
 
-$hover-color: rgb(204, 204, 204);
-
-#settings {
-  @include positionProperties(fixed, '0', 0, 50%, '0');
-  width: 10%;
-  transform: translateY(-50%);
-
-  #settings_img {
-    width: 40px;
-    margin-right: 5px;
-    float: right;
-    clear: both;
-    z-index: 2;
-    @include transitionProperties(all, 0.2s);
-
-    img {
-      width: 100%;
-      height: auto;
-      background-color: rgb(88, 88, 88);
-      border-left: 4px double rgb(207, 207, 207);
-      cursor: pointer;
-      @include transitionProperties(all, 0.2s);
-    }
+  #closeBtn {
+    margin: 10px;
+    padding: 5px;
+    text-align: left;
+    color: black;
+    cursor: pointer;
 
     &:hover {
-      // border-left: none;
-
-      img {
-        border-left: 1px double $hover-color;
-        background-color: $hover-color;
-        box-shadow: 5px 0px 15px rgb(102, 102, 102);
-      }
-
-      ~ #settings_text_anim {
-        right: -30px;
-        opacity: 1;
-        box-shadow: 5px 0px 15px rgb(102, 102, 102);
+      h3 {
+        color: rgb(199, 199, 199);
       }
     }
   }
 
-  #settings_text_anim {
-    @include positionProperties(absolute, '0', -200%, 50%, '0');
-    width: 100%;
-    height: 100%;
-    transform: translate(-50%, -50%);
-    border: 4px double rgb(207, 207, 207);
-    border-top-left-radius: 100px;
-    border-bottom-left-radius: 100px;
-    z-index: 0;
-    pointer-events: none;
-    @include userSelect(none);
-    @include transitionProperties(all, 0.2s);
+  li {
+    position: relative;
+    list-style: none;
 
-    h3 {
-      position: absolute;
-      color: rgba(177, 175, 175, 0.733);
-      top: 50%;
-      transform: translateY(-50%);
-      margin-left: 10px;
+    .content {
+      margin: 10px;
+      display: inline-block;
     }
+
+    h4 {
+      float: left;
+      clear: left;
+      text-align: left;
+    }
+
+    p {
+      float: right;
+      clear: right;
+      text-align: right;
+    }
+  }
+
+  hr {
+    clear: both;
+    margin: 10px;
+    border-color: black;
   }
 }
