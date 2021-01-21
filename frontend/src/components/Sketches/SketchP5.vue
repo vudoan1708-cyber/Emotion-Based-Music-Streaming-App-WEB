@@ -70,8 +70,7 @@ export default {
     const map_properties = reactive({
       i: 0,
       j: 0,
-      img: '#',
-      name: '',
+      name: 'Regions on The Map',
       status: true,
     });
 
@@ -86,10 +85,11 @@ export default {
     const sadBtn = ref(null);
     const calmBtn = ref(null);
 
-    function emitEvent() {
+    function emitEvent(state) {
       // socket.io-like package (mitt) for emitting and listening to events
       // between COMPONENTS
-      emitter.emit('map', map_properties);
+      if (state === 'close') emitter.off('map', map_properties);
+      else emitter.emit('map', map_properties);
     }
 
     // listen to click event from the dom elements
@@ -184,12 +184,12 @@ export default {
         // eslint-disable-next-line valid-typeof
         map_properties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
         map_properties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
-        emitEvent();
+        emitEvent('open');
 
         if (showMap.index !== 0) {
 
           // The Emotion Map
-          drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, p);
+          drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, emitter, p);
 
           // Song Dots
           drawSongDots(starDots, chosenPoints, emitter);
@@ -225,6 +225,9 @@ export default {
                 // manipulate data to be sent to another component file
                 map_properties.status = false;
 
+                // wait for 1.5 sec before closing an event on map positions
+                setTimeout(() => { emitEvent('close'); }, 1500);
+
                 // HISTORICAL USERS
                 // use the history array available globally after collecting it the first time
                 // and push it t0 neighbours array as well
@@ -242,17 +245,20 @@ export default {
 
         // only draggable when the emotion map is shown
         if (showMap.index !== 0) {
-          for (let a = 0; a < starDots.length; a++) {
-            for (let b = 0; b < starDots[a].length; b++) {
-              if (starDots[a][b].onHover()) {
-                removeATempPlaylist(emitter);
+          // to get affective values
+          /// start by translating coordinates values to indices
+          const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
 
-                // convert the mapping algorithm to indices
-                // move the chosen point to other locations
-                const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-                chosenPoints[0] = i;
-                chosenPoints[1] = j;
-              }
+          // constrain dragable areas
+          if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
+            if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
+              removeATempPlaylist(emitter);
+
+              // convert the mapping algorithm to indices
+              // move the chosen point to other locations
+              const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+              chosenPoints[0] = i;
+              chosenPoints[1] = j;
             }
           }
         }

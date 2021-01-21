@@ -8,8 +8,8 @@
       </div>
       <div class="map_info" id="coordinates">
         <div id="display">
-          <img id="coord_img" src="@/assets/coordinates.png"/>
-          <h5>{{mapProperties.coords.x}}, {{mapProperties.coords.y}}</h5>
+          <img class="map_detail" id="coord_img" src="@/assets/coordinates.png"/>
+          <h5 class="map_detail">{{mapProperties.coords.x}}, {{mapProperties.coords.y}}</h5>
         </div>
       </div>
     </div>
@@ -47,7 +47,7 @@ export default {
         x: 0,
         y: 0,
       },
-      name: 'Land of Happiness',
+      name: 'Regions on The Map',
       img: '',
     });
 
@@ -55,6 +55,7 @@ export default {
     emitter.on('map', (map) => {
       mapProperties.coords.x = map.i;
       mapProperties.coords.y = map.j;
+      mapProperties.name = map.name;
       appState.map = map.status;
     });
 

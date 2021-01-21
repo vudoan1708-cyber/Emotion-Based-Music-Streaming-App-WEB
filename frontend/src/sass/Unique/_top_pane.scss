@@ -4,6 +4,7 @@
   left: 50%;
   margin-top: 40px;
   transform: translateX(-50%);
+  pointer-events: none;
   z-index: 3;
 
   h1 {

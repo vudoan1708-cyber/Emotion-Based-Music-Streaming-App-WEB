@@ -32,7 +32,35 @@ function drawHighlights(i, j, starDots, p5) {
   p5.pop();
 }
 
-function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5) {
+export function posOnMap(width, height, starDots, p5) {
+
+  // to get affective values
+  /// start by translating coordinates values to indices
+  const indices = coordinatesToIndices(p5.mouseX, p5.mouseY, width, height);
+
+  if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
+    if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
+      // then translate those indices to affective values
+      const mood = indicesToMood(indices.i, indices.j, starDots);
+      const { valence, arousal } = mood;
+      return { valence, arousal };
+    }
+  // eslint-disable-next-line no-dupe-keys
+  } return { NaN, NaN };
+}
+
+function mutateMapProps(map, mapName, emitter, starDots, width, height, p5) {
+  // Keep Track of Affective Values on The Emotion Map
+  const mood = posOnMap(width, height, starDots, p5);
+  // eslint-disable-next-line valid-typeof
+  map.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
+  map.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
+
+  map.name = mapName;
+  emitter.emit('map', map);
+}
+
+function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, emitter, width, height, p5) {
   // effects for separate regions
   // hovering only affects one selected region
   const region = mapRegions(i, j, i, starDots);
@@ -61,7 +89,7 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5) {
     p5.fill(0);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
-    // TOP LEFT (ANGRY)
+    // TOP LEFT (AGGRESSIVENESS)
   } else if (region === 1 && showMap === 1) {
 
     if (starDots[i][j].onHover(isClicked)) {
@@ -73,6 +101,8 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5) {
       drawLines(i, j, starDots, p5);
       p5.fill(255, 0, 0);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+
+      mutateMapProps(map, 'Land of Aggressiveness', emitter, starDots, width, height, p5);
     }
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
@@ -93,6 +123,8 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5) {
 
       p5.fill(255, 0, 0);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+
+      mutateMapProps(map, 'Land of Sadness', emitter, starDots, width, height, p5);
     }
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
@@ -115,6 +147,8 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5) {
 
       p5.fill(255, 0, 0);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+
+      mutateMapProps(map, 'Land of Excitement', emitter, starDots, width, height, p5);
     }
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
@@ -138,6 +172,8 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5) {
 
       p5.fill(255, 0, 0);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
+
+      mutateMapProps(map, 'Land of Calmness', emitter, starDots, width, height, p5);
     }
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
@@ -181,7 +217,7 @@ export function createMap(width, height, starDots, p5) {
   return starDots;
 }
 
-export function drawMap(width, height, isClicked, starDots, chosenPoints, showMap, p5) {
+export function drawMap(width, height, isClicked, starDots, chosenPoints, showMap, map, emitter, p5) {
   p5.push();
   p5.noStroke();
 
@@ -195,9 +231,9 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, showMa
 
         star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4, p5);
 
-        fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5);
+        fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, emitter, width, height, p5);
       } else {
-        fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, p5);
+        fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, emitter, width, height, p5);
 
         // a circle represents a chosen dot
         drawHighlights(chosenPoints[0], chosenPoints[1], starDots, p5);
@@ -213,21 +249,4 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, showMa
     }
   }
   p5.pop();
-}
-
-export function posOnMap(width, height, starDots, p5) {
-
-  // to get affective values
-  /// start by translating coordinates values to indices
-  const indices = coordinatesToIndices(p5.mouseX, p5.mouseY, width, height);
-
-  if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
-    if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
-      // then translate those indices to affective values
-      const mood = indicesToMood(indices.i, indices.j, starDots);
-      const { valence, arousal } = mood;
-      return { valence, arousal };
-    }
-  // eslint-disable-next-line no-dupe-keys
-  } return { NaN, NaN };
 }

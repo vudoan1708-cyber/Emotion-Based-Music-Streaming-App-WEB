@@ -14,5 +14,5 @@
 </template>
 
 <style scoped lang="scss">
-@import '@/sass/Unique/_logo.scss';
+@import '@/sass/Unique/_logo';
 </style>
