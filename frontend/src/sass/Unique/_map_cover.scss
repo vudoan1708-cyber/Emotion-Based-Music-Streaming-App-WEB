@@ -13,15 +13,14 @@
 
   ul {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 50% 50%;
     grid-gap: 20px;
-    /* background-color: #2196F3; */
     padding: 10px;
 
     li {
       list-style: none;
       padding: 45px 55px;
-      background-color: rgba(63, 63, 63, 0.911);
+      background-color: rgba(0, 0, 0, 0.911);
       cursor: pointer;
       @include transitionProperties(all, 0.25s);
       @include userSelect(none);

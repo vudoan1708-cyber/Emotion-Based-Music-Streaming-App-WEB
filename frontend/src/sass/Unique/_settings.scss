@@ -1,3 +1,5 @@
+@import '../Mixin/position';
+
 #board {
   display: none;
   position: absolute;
@@ -8,6 +10,8 @@
   background-color: rgb(172, 172, 172);
   text-align: center;
   z-index: 2;
+  overflow-y: scroll;
+  overflow-x: hidden;
 
   #closeBtn {
     margin: 10px;
@@ -47,7 +51,143 @@
 
   hr {
     clear: both;
-    margin: 10px;
+    margin: 20px 10px;
     border-color: black;
+  }
+
+  // Personalisation Settings
+  #settings_section {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    // height: 100%;
+
+    .checkboxes {
+      position: relative;
+      max-width: 100%;
+      margin-bottom: 20px;
+
+      div {
+        display: inline-block;
+        margin: 5px;
+      }
+
+      .titles {
+        position: relative;
+        margin-right: 10px;
+
+        h3 {
+          text-align: right;
+          font-size: 1.25rem;
+        }
+
+        h4 {
+          text-align: right;
+          font-size: 0.9rem;
+          width: 140px;
+  
+          // put hyphens in and break text according to a defined width
+          word-break: keep-all;
+        }
+      }
+
+      .check_fields {
+        position: relative;
+
+        // Hide a default checkbox
+        input[type=checkbox] {
+          position: absolute;
+          opacity: 0;
+          cursor: pointer;
+          height: 0;
+          width: 0;
+
+          &:checked {
+
+            // When the checkbox is checked, add a blue background
+            .checkmark {
+              background-color: #2196F3;
+            }
+
+            // Show the checkmark when checked
+            .checkmark:after {
+              display: block;
+            }
+          }
+        }
+
+        // Create a custom checkbox
+        .checkmark {
+          @include positionProperties(absolute, 0, '', -50%, '');
+          transform: translateY(-50%);
+          height: 25px;
+          width: 25px;
+          background-color: #eee;
+
+          // Create the checkmark/indicator (hidden when not checked)
+          &:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+          }
+        }
+      }
+    }
+
+    // Inputs Fields
+    #input_fields {
+      text-align: left;
+
+      p {
+        margin: 10px;
+        font-size: 0.75rem;
+      }
+
+      .fields {
+        margin: 10px;
+
+        input[type=text] {
+          width: 100%;
+          padding: 5px;
+        }
+      }
+    }
+  }
+
+  // Buttons
+  .btnStyling {
+    @include positionProperties(absolute, 0, '', '', 0);
+    width: 100%;
+    text-align: center;
+    background-color: rgb(201, 201, 201);
+
+    .decidingBtns {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+
+      &:hover {
+        color: black;
+      }
+    }
+
+    #save {
+      background-color: rgb(70, 211, 70);
+    }
+
+    #reset {
+      background-color: rgb(211, 70, 70);
+    }
   }
 }
