@@ -1,0 +1,2 @@
+[0123/115443.997:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\victo\AppData\Local\Google\Chrome\User Data\Crashpad\attachments\ef9ccbc8-f27f-4095-bc1f-5a67eb2f22c4: The system cannot find the path specified. (0x3)
+[0123/115444.001:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)

@@ -15,6 +15,7 @@ const callbackRouter = require('./routes/callback');
 const loginRouter = require('./routes/login');
 // const refreshRouter = require('./routes/refresh');
 const spotifyRouter = require('./routes/spotify');
+const databaseRouter = require('./routes/database');
 
 const root = path.join(__dirname, '../dist');
 const port = process.env.PORT || 5000;
@@ -37,6 +38,7 @@ loginRouter(app);
 callbackRouter(app);
 // refreshRouter(app);
 spotifyRouter(app);
+databaseRouter(app);
 
 // socketio
 const socketio = require('./logic/socketio/socketio');

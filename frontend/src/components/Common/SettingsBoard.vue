@@ -74,7 +74,7 @@
 
     <!-- Buttons -->
     <div ref="btnPosition" class="btnStyling">
-      <div class="decidingBtns" id="save" @click="saveSettings(0)">Save</div>
+      <div class="decidingBtns" id="save" @click="saveSettings">Save</div>
       <div class="decidingBtns" id="reset" @click="resetSettings">Reset</div>
     </div>
   </div>
@@ -84,9 +84,6 @@
 /* eslint-disable no-unused-expressions */
 
 import { ref, getCurrentInstance } from 'vue';
-
-import { getUserPersonalisation } from '@/handlers/spotify';
-import hashURL from '@/components/Utils/logic/hashURL';
 
 export default {
   name: 'SettingBoard',
@@ -99,13 +96,16 @@ export default {
     const boardRef = ref(null);
     const btnPosition = ref(null);
 
+    // Buttons - related variables
     const personalisationBtn = ref(null);
     const spotifyBtn = ref(null);
     const isBlur = ref(true);
 
+    // User Detail on the board
     const userDetail = ref({});
 
-    const songData = ref([]);
+    // Data Obj to POST to the MongoDB database
+    // const dataObj = ref({});
 
     // const textFieldInputs = ref([]);
 
@@ -122,20 +122,13 @@ export default {
       boardRef.value.style.display = 'none';
     }
 
-    async function saveSettings(num) {
-      // if 'Allow Spotify to Recommend' button is checked, when click save,
-      // it will search for personalisation API from Spotify
-      spotifyBtn.value.checked === true ? songData.value.push(await getUserPersonalisation('tracks', num)) : undefined;
-      console.log(songData.value);
-
-      // always get the latest array for next API search processes
-      const { nextURL } = songData.value[songData.value.length - 1];
-
-      if (nextURL !== null) {
-        const OFFSET = hashURL(nextURL);
-        saveSettings(OFFSET);
+    async function saveSettings() {
+      // Valildate Checkboxes
+      if (personalisationBtn.value.checked) {
+        if (spotifyBtn.value.check) {
+          // Insert data to MongDB Here
+        }
       }
-      // Talk to MongDB Here
     }
 
     function resetSettings() {

@@ -85,7 +85,7 @@ export default {
     const sadBtn = ref(null);
     const calmBtn = ref(null);
 
-    function emitEvent(state) {
+    function emitMapEvent(state) {
       // socket.io-like package (mitt) for emitting and listening to events
       // between COMPONENTS
       if (state === 'close') emitter.off('map', map_properties);
@@ -184,7 +184,7 @@ export default {
         // eslint-disable-next-line valid-typeof
         map_properties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
         map_properties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
-        emitEvent('open');
+        emitMapEvent('open');
 
         if (showMap.index !== 0) {
 
@@ -226,7 +226,7 @@ export default {
                 map_properties.status = false;
 
                 // wait for 1.5 sec before closing an event on map positions
-                setTimeout(() => { emitEvent('close'); }, 1500);
+                setTimeout(() => { emitMapEvent('close'); }, 1500);
 
                 // HISTORICAL USERS
                 // use the history array available globally after collecting it the first time
