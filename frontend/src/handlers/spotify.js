@@ -26,7 +26,7 @@ let playlist = [];
 
 // handling production and development mode
 const PRODUCTION = process.env.NODE_ENV;
-const TOKEN = hashURL();
+const TOKEN = hashURL(window.location.href);
 
 // Set up the Web Playback SDK PLAYER
 window.onSpotifyWebPlaybackSDKReady = () => {
@@ -223,9 +223,10 @@ export async function LoginHandlers() {
   }
 }
 
+// User
 export async function getUserProfile() {
-  const URL = (PRODUCTION === 'production') 
-            ? `https://muserfly.herokuapp.com/user/?token=${TOKEN}` 
+  const URL = (PRODUCTION === 'production')
+            ? `https://muserfly.herokuapp.com/user/?token=${TOKEN}`
             : `http://localhost:5000/user/?token=${TOKEN}`;
   try {
     const response = await useFetch(URL, 'GET');
@@ -235,6 +236,19 @@ export async function getUserProfile() {
   }
 }
 
+export async function getUserPersonalisation(type, offsetNum) {
+  const URL = (PRODUCTION === 'production')
+            ? `https://muserfly.herokuapp.com/user/personalisation/?token=${TOKEN}&type=${type}&offset=${offsetNum}`
+            : `http://localhost:5000/user/personalisation/?token=${TOKEN}&type=${type}&offset=${offsetNum}`;
+  try {
+    const response = await useFetch(URL, 'GET');
+    return response;
+  } catch (err) {
+    return err;
+  }
+}
+
+// Song Fetch
 export async function handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5, emitter) {
 
   // get songs' valence and arousal data 
@@ -262,7 +276,6 @@ export async function handlingSongsData(valence, arousal, starDots, chosenPoints
 
         const song_x = width / 5 + song_i * 15.4;
         const song_y = height / 5 + song_j * 15.4;
-        // console.log(`Song's Coordinates: ${song_x}, ${song_y}`);
 
         // compare
         if (song_x > bounds.x1 && 

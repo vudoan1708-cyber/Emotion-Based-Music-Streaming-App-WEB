@@ -35,7 +35,7 @@ module.exports = async function getSongs(TOKEN) {
     const request = await fetch(FETCH_URL, options);
     const json = await request.json();
     
-    // get the song's id
+    // extract needed data only
     const ids = [];
     const preview_urls = [];
     const titles = [];
