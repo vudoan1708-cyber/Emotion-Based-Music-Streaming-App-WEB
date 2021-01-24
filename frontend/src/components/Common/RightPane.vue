@@ -35,7 +35,6 @@ export default {
 
     watch(() => props.personalisationSettings, (data) => {
       settings.value = data;
-      console.log(settings.value);
     });
 
     return {

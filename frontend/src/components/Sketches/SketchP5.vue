@@ -154,7 +154,7 @@ export default {
         socket = io.connect(URL);
 
         socket.on('connect', () => {
-          console.log('Successfully Connected');
+          console.log('Connect to SocketIO successfully');
         });
 
         socket.on('click', userDataEmit);

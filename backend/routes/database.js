@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 // configure the connection to MongoDB
 const createConnection = require('../data/connection');
 
@@ -11,14 +9,13 @@ const createOneData = require('../logic/mongodb/createOneData');
 module.exports = async function databaseRouter(app) {
 
   // configure the connection to MongoDB
-  let db = await createConnection(0);
+  let db = createConnection(0);
 
   // SETTINGS
   // route to get all data
   app.get('/data/get/all', async (req, res) => {
     try {
       const data = await getAllData(db);
-      console.log(data);
       res.json(data);
     } catch (err) {
       res.json(err);
@@ -26,7 +23,7 @@ module.exports = async function databaseRouter(app) {
   });
 
   // route to get one specific data
-  app.get('/data/get/', async (req, res) => {
+  app.get('/data/get/one', async (req, res) => {
     const ID = req.query.id;
 
     const data = await getOneData(db, PARAM);
@@ -39,17 +36,16 @@ module.exports = async function databaseRouter(app) {
     const PARAM = req.body;
 
     const data = await createOneData(db, PARAM);
-    console.log(data);
     res.json(data);
   });
 
   // route to update one specific data
-  app.post('/data/update', async (req, res) => {
-    const ID = req.query.id;
-    const PARAM = req.body;
+  // app.post('/data/update', async (req, res) => {
+  //   const ID = req.query.id;
+  //   const PARAM = req.body;
 
-    const data = await updateOneData(db, PARAM);
-    console.log(data);
-    res.json(data);
-  });
+  //   const data = await updateOneData(db, PARAM);
+  //   console.log(data);
+  //   res.json(data);
+  // });
 }

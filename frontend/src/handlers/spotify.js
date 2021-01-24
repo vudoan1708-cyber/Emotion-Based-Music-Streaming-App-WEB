@@ -226,8 +226,8 @@ export async function LoginHandlers() {
 // User
 export async function getUserProfile() {
   const URL = (PRODUCTION === 'production')
-            ? `https://muserfly.herokuapp.com/user/?token=${TOKEN}`
-            : `http://localhost:5000/user/?token=${TOKEN}`;
+            ? `https://muserfly.herokuapp.com/user/detail/?token=${TOKEN}`
+            : `http://localhost:5000/user/detail/?token=${TOKEN}`;
   try {
     const response = await useFetch(URL, 'GET');
     return response;

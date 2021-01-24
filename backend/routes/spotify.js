@@ -35,7 +35,7 @@ module.exports = (app) => {
   });
 
   // users
-  app.get('/user', async(req, res) => {
+  app.get('/user/detail', async(req, res) => {
     const TOKEN = req.query.token;
     
     try {

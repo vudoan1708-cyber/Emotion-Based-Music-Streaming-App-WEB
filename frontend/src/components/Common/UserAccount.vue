@@ -22,8 +22,7 @@
 </template>
 
 <script>
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
+/* eslint-disable */
 
 import { getUserProfile } from '@/handlers/spotify';
 import {

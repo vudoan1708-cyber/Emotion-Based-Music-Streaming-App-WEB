@@ -7,7 +7,7 @@ export default async function useFetch(URL, methodType, data) {
     options = {
       method: methodType,
       headers: {
-        'Content-Type': '*',
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
     };
@@ -24,7 +24,11 @@ export default async function useFetch(URL, methodType, data) {
     };
   }
 
-  const request = await fetch(URL, options);
-  const response = await request.json();
-  return response;
+  try {
+    const request = await fetch(URL, options);
+    const response = await request.json();
+    return response;
+  } catch (err) {
+    return err;
+  }
 }
