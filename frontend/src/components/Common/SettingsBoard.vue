@@ -29,7 +29,8 @@
           <h3>Personalisation</h3>
         </div>
         <div class="check_fields">
-          <input type="checkbox" ref="personalisationBtn" @click="toggleCheckbox">
+          <input type="checkbox" ref="personalisationBtn"
+                  @click="toggleCheckbox">
           <span class="checkmark"></span>
         </div>
 
@@ -49,25 +50,25 @@
         <!-- Artists -->
         <div class="fields" id="artists">
           <label>Artists</label><br />
-          <input type="text" placeholder="Artist full names">
+          <input ref="artistsField" type="text" placeholder="Artist full names">
         </div>
 
         <!-- Themes -->
         <div class="fields" id="themes">
           <label>Themes</label><br />
-          <input type="text" placeholder="Love, Family,...">
+          <input ref="themesField" type="text" placeholder="Love, Family,...">
         </div>
 
         <!-- Genres -->
         <div class="fields" id="genres">
           <label>Genres</label><br />
-          <input type="text" placeholder="Rap, Pop,...">
+          <input ref="genresField" type="text" placeholder="Rap, Pop,...">
         </div>
 
         <!-- Countries -->
         <div class="fields" id="countries">
           <label>Countries</label><br />
-          <input type="text" placeholder="Country's full names">
+          <input ref="countriesField" type="text" placeholder="Country's full names">
         </div>
       </div>
     </div>
@@ -83,11 +84,19 @@
 <script>
 /* eslint-disable no-unused-expressions */
 
-import { ref, getCurrentInstance } from 'vue';
+import {
+  ref, watch, getCurrentInstance,
+} from 'vue';
+import { insertData } from '@/handlers/mongdb';
 
 export default {
   name: 'SettingBoard',
-  setup() {
+  props: {
+    personalisationSettings: {
+      type: Object,
+    },
+  },
+  setup(props) {
     // instantiate the app's current instance to get global properties
     // registered in the main.js file
     const app = getCurrentInstance();
@@ -105,13 +114,14 @@ export default {
     const userDetail = ref({});
 
     // Data Obj to POST to the MongoDB database
-    // const dataObj = ref({});
+    const dataObj = ref({});
 
     // const textFieldInputs = ref([]);
 
     emitter.on('toggle_settings', (data) => {
       boardRef.value.style.display = 'block';
 
+      userDetail.value.id = data.user.id;
       userDetail.value.name = data.user.name;
       userDetail.value.location = data.user.location;
       userDetail.value.email = data.user.email;
@@ -123,12 +133,22 @@ export default {
     }
 
     async function saveSettings() {
-      // Valildate Checkboxes
-      if (personalisationBtn.value.checked) {
-        if (spotifyBtn.value.check) {
-          // Insert data to MongDB Here
-        }
-      }
+      // Update data obj to be sent to the database
+      dataObj.value = {
+        user: {
+          id: userDetail.value.id,
+          name: userDetail.value.name,
+          location: userDetail.value.location,
+          email: userDetail.value.email,
+        },
+        last_checked: {
+          muserfly: personalisationBtn.value.checked,
+          spotify: spotifyBtn.value.checked,
+        },
+      };
+
+      // Insert data to MongDB Here
+      insertData(dataObj.value);
     }
 
     function resetSettings() {
@@ -138,8 +158,27 @@ export default {
     // Toggle Checkbox
     function toggleCheckbox() {
       // Check if the checkbox is checked
-      personalisationBtn.value.checked === true ? isBlur.value = false : isBlur.value = true;
+      personalisationBtn.value.checked === true
+        ? isBlur.value = false
+        : (isBlur.value = true, spotifyBtn.value.checked = false);
     }
+
+    // watch constantly any updates comming from the parent components
+    // if this was put in onMounted, data would flowed too slow to get there in time
+    watch(props.personalisationSettings, (data) => {
+      data.forEach((d) => {
+        // if just a muserfly personalisation checkbox was checked
+        if (d.muserfly) personalisationBtn.value.checked = true;
+        // otherwise, if both were checked
+        else if (d.TOKEN) {
+          personalisationBtn.value.checked = true;
+          spotifyBtn.value.checked = true;
+        }
+      });
+      personalisationBtn.value.checked === true
+        ? isBlur.value = false
+        : (isBlur.value = true, spotifyBtn.value.checked = false);
+    });
 
     return {
       boardRef,

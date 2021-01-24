@@ -193,8 +193,8 @@ async function playSong() {
     // Node.js
     const response = await useFetch(URL, 'GET');
     const errorStatus = response.error !== undefined 
-                        ? response.error.status
-                        : undefined;
+                      ? response.error.status
+                      : undefined;
     console.log(response);
     if (errorStatus === 404) {
       const errorDiv = document.createElement('div');

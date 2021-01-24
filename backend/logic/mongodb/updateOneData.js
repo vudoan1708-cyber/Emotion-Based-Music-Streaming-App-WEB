@@ -1,4 +1,4 @@
-module.exports = async function createOneData(db, settings_data) {
+module.exports = async function updateOneData(db, settings_data) {
 
   try {
     // find all

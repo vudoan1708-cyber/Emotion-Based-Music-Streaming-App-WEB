@@ -42,6 +42,7 @@ export default {
     const emitter = app.appContext.config.globalProperties.$emitter;
 
     const user = reactive({
+      id: '',
       name: '',
       location: '',
       email: 'no email provided',
@@ -60,6 +61,7 @@ export default {
       const data = await getUserProfile();
 
       // re-aasign responded data to the reactive object
+      user.id = data.ID === '' ? data.EXTERNAL_URL : data.ID;
       user.name = data.NAME === '' ? 'Anonymous' : data.NAME;
       user.location = data.COUNTRY === '' ? 'Not provided' : data.COUNTRY;
       user.email = data.EMAIL === '' ? 'Not provided' : data.EMAIL;

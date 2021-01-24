@@ -26,6 +26,7 @@ const server = http.createServer(app);
 
 // listening to any dynamic port number
 server.listen(port, () => console.log('Listening on port ' + port));
+app.use(express.json({ limit: '1mb' }));
 
 // cookie parser for authenticating correct redirecting
 app.use(cookieParser());

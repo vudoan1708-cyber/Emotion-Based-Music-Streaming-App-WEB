@@ -8,7 +8,7 @@
     <Playlist />
 
     <!-- Settings Board -->
-    <SettingsBoard />
+    <SettingsBoard :personalisationSettings="settings" />
   </div>
 </template>
 
@@ -16,15 +16,31 @@
 import Playlist from '@/components/Common/Playlist.vue';
 import UserAccount from '@/components/Common/UserAccount.vue';
 import SettingsBoard from '@/components/Common/SettingsBoard.vue';
+import { ref, watch } from 'vue';
 
 export default {
   name: 'RightPane',
+  props: {
+    personalisationSettings: {
+      type: Object,
+    },
+  },
   components: {
     SettingsBoard,
     Playlist,
     UserAccount,
   },
-  setup() {
+  setup(props) {
+    const settings = ref(props.personalisationSettings);
+
+    watch(() => props.personalisationSettings, (data) => {
+      settings.value = data;
+      console.log(settings.value);
+    });
+
+    return {
+      settings,
+    };
   },
 };
 </script>

@@ -59,7 +59,12 @@ import SongData from '@/components/Common/SongData.vue';
 
 export default {
   name: 'SketchP5',
-  setup() {
+  props: {
+    personalisationSettings: {
+      type: Object,
+    },
+  },
+  setup(props) {
 
     // instantiate the app's current instance to get global properties
     // registered in the main.js file
@@ -139,8 +144,6 @@ export default {
           // and push it to neighbours array
           createNewNeighbours(curent_data, chosenPoints, width, height);
         }
-        console.log(`Other User Data: ${curent_data.i}, ${curent_data.j}`);
-        // console.log(`My Data: ${chosenPoints[0]}, ${chosenPoints[1]}`);
       }
 
       function getSocket() {

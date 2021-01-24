@@ -1,24 +1,26 @@
 <template>
   <div id="home">
-    <SketchP5 :personalisationSettings="personalisationSettings"/>
+    <SketchP5 :personalisationSettings="personalisationSettings" />
     <TopPane />
     <LeftPane />
     <BottomPane />
-    <RightPane :personalisationSettings="personalisationSettings"/>
+    <RightPane :personalisationSettings="personalisationSettings" />
   </div>
 </template>
 
 <script>
+import { ref, onBeforeMount } from 'vue';
+
 import SketchP5 from '@/components/Sketches/SketchP5.vue';
 import TopPane from '@/components/Common/TopPane.vue';
 import BottomPane from '@/components/Common/BottomPane.vue';
 import LeftPane from '@/components/Common/LeftPane.vue';
 import RightPane from '@/components/Common/RightPane.vue';
 
-import { getUserPersonalisation } from '@/handlers/spotify';
-import hashURL from '@/components/Utils/logic/hashURL';
+import { getUserProfile, getUserPersonalisation } from '@/handlers/spotify';
+import { getAllData } from '@/handlers/mongdb';
 
-import { ref, onBeforeMount } from 'vue';
+import hashURL from '@/components/Utils/logic/hashURL';
 
 export default {
   name: 'Home',
@@ -48,19 +50,41 @@ export default {
     }
 
     // Talk to MongDB to GET back data about personalisation settings
-    // Then, if it is set to true, send this down
-    // Otherwise, don't
+    // Then, send this down to other children components
+    // to visualise and configure variables' default values
     async function getPersonalisationData() {
-      if ('there is data from database') {
-        // Check Settings
-        checkSettings(0);
-      } else {
-        // Do Nothing Here
+      try {
+        // get all data from the database
+        const dataResponse = await getAllData();
+        // get user data from spotify
+        const userData = await getUserProfile();
+
+        if (dataResponse.length > 0) {
+          // loop backwards to get the latest data
+          for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
+            // compare and validate user via user's id
+            if (dataResponse[i].settings_data.user.id === userData.ID) {
+              // eslint-disable-next-line max-len
+              const { muserfly, spotify } = dataResponse[i].settings_data.last_checked;
+
+              // if it's just the personalisation button is checked
+              if (muserfly) {
+                // if spotify button is also checked
+                if (spotify) checkSettings(0);
+                else personalisationSettings.value.push({ muserfly });
+              }
+
+              break;
+            }
+          }
+        }
+      } catch (err) {
+        personalisationSettings.value.push((err));
       }
     }
 
-    onBeforeMount(() => {
-      getPersonalisationData();
+    onBeforeMount(async () => {
+      await getPersonalisationData();
     });
 
     return {
