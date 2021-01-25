@@ -11,13 +11,13 @@ module.exports = async function getSongs(TOKEN) {
   const lim = 10;
 
   // random character
-  const randomChar = randomCharacters(randomInt(2, 3));
+  const KEYWORD = randomCharacters(randomInt(2, 3));
 
   // market
   const MARKET = 'from_token';
   
   // query params
-  const QUERY = randomChar + `&type=track&market=${MARKET}&limit=${lim}`;
+  const QUERY = KEYWORD + `&type=track&market=${MARKET}&limit=${lim}`;
 
   // get the url
   const FETCH_URL = BASE_URL + `q=${QUERY}`;

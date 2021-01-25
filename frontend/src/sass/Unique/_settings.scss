@@ -161,6 +161,7 @@
     // Blur
     .blur {
       filter: blur(5px);
+      @include userSelect(none);
       pointer-events: none;
     }
   }
