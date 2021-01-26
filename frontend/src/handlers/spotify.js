@@ -84,7 +84,7 @@ export async function getSongsData(KEYWORD) {
   try {
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production')
-              ? `https://muserfly.herokuapp.com/spotify/?token=${TOKEN}&keyword=${KEYWORD}` 
+              ? `https://muserfly.herokuapp.com/spotify/?token=${TOKEN}&keyword=${KEYWORD}`
               : `http://localhost:5000/spotify/?token=${TOKEN}&keyword=${KEYWORD}`;
 
     const response = await useFetch(URL, 'GET');
@@ -199,8 +199,8 @@ async function playSong() {
   try {
 
     // https://muserfly.herokuapp.com/
-    const URL = (PRODUCTION === 'production') 
-              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}` 
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}}`
               : `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
 
     // Node.js

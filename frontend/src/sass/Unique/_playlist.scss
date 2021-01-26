@@ -1,3 +1,5 @@
+@import '../Mixin/user_select';
+
 #playlist_container {
   clear: right;
   position: relative;
@@ -5,6 +7,10 @@
   margin: 10px;
   color: rgb(185, 185, 185);
   text-align: left;
+
+  h3 {
+    @include userSelect(none);
+  }
 
   #collected {
     margin: 10px;
