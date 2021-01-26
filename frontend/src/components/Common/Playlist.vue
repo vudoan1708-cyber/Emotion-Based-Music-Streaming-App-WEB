@@ -4,6 +4,7 @@
     <!-- Collected Tracks -->
     <h3>Collected Tracks</h3>
     <div ref="collectedTracksStyling" id="collected" style="min-height: 30%;"
+                @mousemove="duringDrag"
                 @mouseup="endDrag('collected')">
       <div class="tracks" v-for="data in acceptedSongData" :key="data.id">
         <img :src="data.album_imgs.url"
@@ -35,16 +36,22 @@
       </div>
 
       <div :class="{ draggable: draggableElement.isDragged }"
-        :style="{ top: draggableElement.pos.y + 'px', left: draggableElement.pos.x + 'px' }"></div>
+        :style="{ top: draggableElement.attributes.pos.y + 'px',
+                  left: draggableElement.attributes.pos.x + 'px' }">
+        <img v-if="draggableElement.isDragged"
+              :src="draggableElement.metadata.album_imgs.url" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-lonely-if */
-import { updatePlaylist } from '@/handlers/spotify';
+import { updatePlaylist, addSongToQueue } from '@/handlers/spotify';
 
-import { ref, reactive, getCurrentInstance } from 'vue';
+import {
+  ref, reactive, getCurrentInstance, watch,
+} from 'vue';
 
 export default {
   name: 'Playlist',
@@ -60,17 +67,18 @@ export default {
     const allSongData = ref([]);
     const acceptedSongData = ref([]);
 
+    const isPlayerActive = ref(false);
+
     const draggableElement = reactive({
-      pos: {
-        x: 0,
-        y: 0,
+      attributes: {
+        pos: {
+          x: 0,
+          y: 0,
+        },
       },
       indexNum: -1,
       isDragged: false,
       metadata: '',
-      prop: {
-        opacity: '100%',
-      },
     });
 
     // subscribe to the 'song_data' event
@@ -105,9 +113,8 @@ export default {
     // Init Dragging Elements
     function initDrag(e, id) {
       draggableElement.isDragged = true;
-      draggableElement.pos.x = e.clientX;
-      draggableElement.pos.y = e.clientY;
-
+      draggableElement.attributes.pos.x = e.clientX;
+      draggableElement.attributes.pos.y = e.clientY;
       // Loop Through All Tracks Array
       for (let i = allSongData.value.length - 1; i >= 0; i -= 1) {
         const s = allSongData.value[i];
@@ -127,8 +134,8 @@ export default {
     function duringDrag(e) {
       // If An Element is Dragged
       if (draggableElement.isDragged) {
-        draggableElement.pos.x = e.clientX;
-        draggableElement.pos.y = e.clientY;
+        draggableElement.attributes.pos.x = e.clientX;
+        draggableElement.attributes.pos.y = e.clientY;
       }
     }
 
@@ -145,6 +152,9 @@ export default {
           // Update The Playlist and Visualisation Via This Function
           draggableElement.metadata.label = 'accepted_by_user';
           updatePlaylist(draggableElement.metadata, 'add', emitter);
+
+          // Trigger Watch Function to Add Songs To The Player's Queue
+          isPlayerActive.value = true;
         // Otherwise
         } else {
           if (draggableElement.indexNum !== -1) {
@@ -155,14 +165,27 @@ export default {
       }
 
       // Then Reset Its Properties
-      draggableElement.pos = {
+      draggableElement.attributes.pos = {
         x: 0,
         y: 0,
       };
       draggableElement.indexNum = -1;
       draggableElement.isDragged = false;
-      draggableElement.metadata = '';
     }
+
+    async function awaitToAddSong(isActive) {
+      if (isActive) {
+        // Add New Song To The Player's Queue,
+        // Only Applicable When The Playlist Is Playing
+        await addSongToQueue(draggableElement.metadata.id);
+        isPlayerActive.value = false;
+      }
+    }
+
+    // Watch Function cannot wait for a response from an execution on ASYNC/AWAIT
+    watch(isPlayerActive, (isActive) => {
+      awaitToAddSong(isActive);
+    });
 
     return {
       collectedTracksStyling,

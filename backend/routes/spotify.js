@@ -4,6 +4,7 @@ const getSongPlay = require('../logic/spotify/getSongPlay');
 
 const getUser = require('../logic/spotify/getUser');
 const getUserPersonalisation = require('../logic/spotify/getUserPersonalisation');
+const addSong = require('../logic/spotify/addSong');
 
 module.exports = (app) => {
 
@@ -37,7 +38,16 @@ module.exports = (app) => {
 
   // add new song to the end of a playlist
   app.get('/player/queue', async(req, res) => {
-    // https://api.spotify.com/v1/me/player/queue
+    const TOKEN = req.query.token;
+    const URI = req.query.uri;
+    const PLAYER_ID = req.query.player_id;
+
+    try {
+      const addedSong = await addSong(TOKEN, URI, PLAYER_ID);
+      res.json(addedSong);
+    } catch(err) {
+      res.json(err);
+    }
   });
 
   // users

@@ -20,6 +20,8 @@ module.exports = async function getSongs(TOKEN, KEYWORD) {
   const options = {
     method: 'GET',
     headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${TOKEN}`,
     }
   };

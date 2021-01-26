@@ -50,22 +50,22 @@
         <!-- Minimum of Songs -->
         <div class="fields" id="minSongNum">
           <label>Minimum Number of Tracks to Play</label><br />
-          <input ref="artistsField" type="text" placeholder="5"
-                  :value="personalisedValues">
+          <input ref="tracksField" type="number" placeholder="5"
+                  :value="defaultPersonalisedValues().numOfTracks">
         </div>
 
         <!-- Artists -->
         <div class="fields" id="artists">
           <label>Artists</label><br />
           <input ref="artistsField" type="text" placeholder="Artist full names"
-                  :value="personalisedValues">
+                  :value="defaultPersonalisedValues().artists">
         </div>
 
         <!-- Themes -->
         <div class="fields" id="themes">
           <label>Themes</label><br />
           <input ref="themesField" type="text" placeholder="Love, Family,..."
-                  :value="personalisedValues">
+                  :value="defaultPersonalisedValues().themes">
         </div>
 
         <!-- Genres -->
@@ -77,7 +77,8 @@
         <!-- Market -->
         <div class="fields" id="countries">
           <label>Market</label><br />
-          <input ref="countriesField" type="text" placeholder="Country's ISO-2 code">
+          <input ref="marketField" type="text" placeholder="Country's ISO-2 code"
+                  :value="defaultPersonalisedValues().market">
         </div>
       </div>
     </div>
@@ -123,6 +124,13 @@ export default {
     const personalisationBtn = ref(null);
     const spotifyBtn = ref(null);
     const isBlur = ref(true);
+
+    // Input Fields
+    const tracksField = ref(null);
+    const artistsField = ref(null);
+    const themesField = ref(null);
+    const marketField = ref(null);
+
     // Keep Track of A Button Previous State Before Toggling Checkboxes Are Performed
     const btnSavedStates = ref({});
 
@@ -131,8 +139,6 @@ export default {
 
     // Data Obj to POST to the MongoDB database
     const dataObj = ref({});
-
-    // const textFieldInputs = ref([]);
 
     emitter.on('toggle_settings', (data) => {
       boardRef.value.style.display = 'block';
@@ -162,7 +168,10 @@ export default {
 
     async function saveSettings() {
       // Update data obj to be sent to the database
-      dataObj.value = settingsObj(userDetail, personalisationBtn, spotifyBtn);
+      dataObj.value = settingsObj(userDetail,
+        tracksField.value.value, artistsField.value.value,
+        themesField.value.value, marketField.value.value,
+        personalisationBtn, spotifyBtn);
 
       // Insert data to MongDB Here
       insertData(dataObj.value);
@@ -178,20 +187,24 @@ export default {
       toggleBlurSettings();
     }
 
-    function personalisedValues() {
-
+    function defaultPersonalisedValues() {
+      return {
+        numOfTracks: 5,
+        artists: [],
+        themes: [],
+        market: 'from_token',
+      };
     }
 
     // watch constantly any updates comming from the parent components
     // if this was put in onMounted, data would flowed too slow to get there in time
     watch(props.personalisationSettings, (data) => {
-      data.forEach((d) => {
-        // if just a muserfly personalisation checkbox was checked
-        if (d.muserfly) personalisationBtn.value.checked = true;
-        // otherwise, if both were checked
-        else if (d.TOKEN) {
-          personalisationBtn.value.checked = true;
-          spotifyBtn.value.checked = true;
+      data.forEach((datum, i) => {
+        // Get The Checkboxes Latest Settings
+        if (i === 0) {
+          const { muserfly, spotify } = data[i][datum.length - 1].settings_data.last_checked;
+          personalisationBtn.value.checked = muserfly;
+          spotifyBtn.value.checked = spotify;
         }
       });
 
@@ -215,7 +228,11 @@ export default {
       spotifyBtn,
       isBlur,
       toggleCheckbox,
-      personalisedValues,
+      defaultPersonalisedValues,
+      tracksField,
+      artistsField,
+      themesField,
+      marketField,
     };
   },
 };

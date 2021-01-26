@@ -56,9 +56,15 @@
     }
   }
 
+  // make the position of this element fixed to the ENTIRE WINDOW
   .draggable {
-    position: absolute;
-    background-color: white;
+    position: fixed;
+    background-color: rgba(50, 50, 50, 0.452);
+    width: 10%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    // filter: blur(0.25px);
+    filter: drop-shadow(0px 0px 10px gray);
     @extend .tracks;
   }
 }

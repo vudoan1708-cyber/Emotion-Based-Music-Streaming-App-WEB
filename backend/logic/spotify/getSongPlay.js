@@ -6,7 +6,7 @@ module.exports = async function getSongPlay(TOKEN, PLAYLIST, PLAYER_ID) {
     'play': true,
   };
 
-  const BASE_URL = `https://api.spotify.com/v1/me/player/play?device_id=${PLAYER_ID}`;
+  const URL = `https://api.spotify.com/v1/me/player/play?device_id=${PLAYER_ID}`;
 
   const options = {
     method: 'PUT',
@@ -19,7 +19,7 @@ module.exports = async function getSongPlay(TOKEN, PLAYLIST, PLAYER_ID) {
   };
 
   try {
-    const response = await fetch(BASE_URL, options);
+    const response = await fetch(URL, options);
     const json = await response.json();
     return json;
 

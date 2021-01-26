@@ -5,6 +5,7 @@ const settingsObj = {
     location: 'GB',
     email: 'vudoan083yroi@mymail.com',
     personalisation: {
+      numOfTracks: 5,
       artists: [
         'Michael Jackson',
         'Coldplay',
@@ -14,7 +15,7 @@ const settingsObj = {
         'Love',
       ],
       market: 'GB',
-    }
+    },
   },
   last_checked: {
     muserfly: false,
