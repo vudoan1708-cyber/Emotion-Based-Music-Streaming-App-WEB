@@ -167,6 +167,7 @@ export default {
     }
 
     async function saveSettings() {
+      boardRef.value.style.display = 'none';
       // Update data obj to be sent to the database
       dataObj.value = settingsObj(userDetail,
         tracksField.value.value, artistsField.value.value,

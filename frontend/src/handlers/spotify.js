@@ -83,7 +83,9 @@ export async function getSongsData(KEYWORD) {
 
   try {
     // https://muserfly.herokuapp.com/
-    const URL = `http://localhost:5000/spotify/?token=${TOKEN}&keyword=${KEYWORD}`;
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/spotify/?token=${TOKEN}&keyword=${KEYWORD}` 
+              : `http://localhost:5000/spotify/?token=${TOKEN}&keyword=${KEYWORD}`;
 
     const response = await useFetch(URL, 'GET');
     const isObjEmpty = isEmpty(response);
@@ -197,7 +199,9 @@ async function playSong() {
   try {
 
     // https://muserfly.herokuapp.com/
-    const URL = `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
+    const URL = (PRODUCTION === 'production') 
+              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}` 
+              : `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
 
     // Node.js
     const response = await useFetch(URL, 'GET');
@@ -224,7 +228,9 @@ export async function addSongToQueue(URI) {
   let response = null;
 
   if (isPlaying) {
-    const URL = `http://localhost:5000/player/queue/?token=${TOKEN}&uri=${URI}&player_id=${spotifyPlayerID}`;
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/player/queue/?token=${TOKEN}&uri=${URI}&player_id=${spotifyPlayerID}`
+              : `http://localhost:5000/player/queue/?token=${TOKEN}&uri=${URI}&player_id=${spotifyPlayerID}`;
     try {
       response = await useFetch(URL, 'GET');
     } catch (err) {
@@ -252,7 +258,9 @@ export async function LoginHandlers() {
 
 // User
 export async function getUserProfile() {
-  const URL = `http://localhost:5000/user/detail/?token=${TOKEN}`;
+  const URL = (PRODUCTION === 'production')
+            ? `https://muserfly.herokuapp.com/user/detail/?token=${TOKEN}`
+            : `http://localhost:5000/user/detail/?token=${TOKEN}`;
   try {
     const response = await useFetch(URL, 'GET');
     return response;
@@ -262,7 +270,9 @@ export async function getUserProfile() {
 }
 
 export async function getUserPersonalisation(type, offsetNum) {
-  const URL = `http://localhost:5000/user/personalisation/?token=${TOKEN}&type=${type}&offset=${offsetNum}`;
+  const URL = (PRODUCTION === 'production')
+            ? `https://muserfly.herokuapp.com/user/personalisation/?token=${TOKEN}&type=${type}&offset=${offsetNum}`
+            : `http://localhost:5000/user/personalisation/?token=${TOKEN}&type=${type}&offset=${offsetNum}`;
   try {
     const response = await useFetch(URL, 'GET');
     return response;
