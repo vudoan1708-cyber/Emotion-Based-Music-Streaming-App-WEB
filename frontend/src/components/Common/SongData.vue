@@ -2,7 +2,7 @@
   <div class="song_data_container"
       v-for="data in songData"
         :key="data.id"
-        :style="{top: (data.y - 20) + 'px', left: data.x + 'px'}">
+        :style="{ top: (data.y - 20) + 'px', left: data.x + 'px' }">
     <h3>{{data.title}}</h3>
   </div>
 </template>

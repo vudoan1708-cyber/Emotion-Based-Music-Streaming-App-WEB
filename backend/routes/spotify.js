@@ -10,9 +10,10 @@ module.exports = (app) => {
   // songs
   app.get('/spotify', async(req, res) => {
     const TOKEN = req.query.token;
+    const KEYWORD = req.query.keyword;
     
     try {
-      const song_data = await getSongs(TOKEN);
+      const song_data = await getSongs(TOKEN, KEYWORD);
 
       const feature_data = await getAudioFeatures(song_data);
       res.json(feature_data);
@@ -21,7 +22,7 @@ module.exports = (app) => {
     }
   });
 
-  app.get('/play', async(req, res) => {
+  app.get('/player/play', async(req, res) => {
     const TOKEN = req.query.token;
     const PLAYLIST = req.query.playlist.split(',');
     const PLAYER_ID = req.query.player_id;
@@ -32,6 +33,11 @@ module.exports = (app) => {
     } catch(err) {
       res.json(err);
     }
+  });
+
+  // add new song to the end of a playlist
+  app.get('/player/queue', async(req, res) => {
+    // https://api.spotify.com/v1/me/player/queue
   });
 
   // users

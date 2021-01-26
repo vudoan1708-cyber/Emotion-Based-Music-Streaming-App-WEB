@@ -14,6 +14,7 @@
 import hashURL from '@/components/Utils/logic/hashURL';
 import sleep from '@/components/Utils/logic/sleep';
 import isEmpty from '@/components/Utils/logic/object';
+import { randomCharacters, randomInt } from '@/components/Utils/logic/random';
 import useFetch from '@/components/Utils/logic/useFetch';
 
 import errorHandler from '@/components/Utils/dom/error';
@@ -66,13 +67,24 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   player.connect();
 };
 
-async function getSongsData() {
+export function getKeyword(how, text) {
+  let keyword = '';
+
+  // random character
+  if (how === 'random') keyword = randomCharacters(randomInt(2, 3));
+
+  // manual search input from a user
+  else keyword = text;
+  return keyword;
+}
+
+export async function getSongsData(KEYWORD) {
 
   try {
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production')
-              ? `https://muserfly.herokuapp.com/spotify/?token=${TOKEN}` 
-              : `http://localhost:5000/spotify/?token=${TOKEN}`;
+              ? `https://muserfly.herokuapp.com/spotify/?token=${TOKEN}&keyword=${KEYWORD}` 
+              : `http://localhost:5000/spotify/?token=${TOKEN}&keyword=${KEYWORD}`;
 
     const response = await useFetch(URL, 'GET');
     const isObjEmpty = isEmpty(response);
@@ -187,8 +199,8 @@ async function playSong() {
 
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production') 
-              ? `https://muserfly.herokuapp.com/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}` 
-              : `http://localhost:5000/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
+              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}` 
+              : `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
 
     // Node.js
     const response = await useFetch(URL, 'GET');
@@ -251,8 +263,11 @@ export async function getUserPersonalisation(type, offsetNum) {
 // Song Fetch
 export async function handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5, emitter) {
 
+  // get keyword for search
+  const KEYWORD = getKeyword('random');
+
   // get songs' valence and arousal data 
-  const audio_features = await getSongsData();
+  const audio_features = await getSongsData(KEYWORD);
 
   if (audio_features === null) LoginHandlers();
 

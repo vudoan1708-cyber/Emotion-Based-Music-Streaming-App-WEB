@@ -19,13 +19,12 @@ module.exports = async function getUser(TOKEN) {
     const json = await request.json();
 
     const ID = json.id;
-    const EXTERNAL_URL = json.external_urls.spotify;
     const COUNTRY = json.country;
     const NAME = json.display_name;
     const EMAIL = json.email;
     const IMAGES = json.images;
 
-    return { ID, EXTERNAL_URL, COUNTRY, NAME, EMAIL, IMAGES };
+    return { ID, COUNTRY, NAME, EMAIL, IMAGES };
   } catch (err) {
     console.warn(err);
     return err;

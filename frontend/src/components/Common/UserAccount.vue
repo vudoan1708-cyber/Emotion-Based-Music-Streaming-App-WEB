@@ -22,15 +22,18 @@
 </template>
 
 <script>
-/* eslint-disable */
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
 
 import { getUserProfile } from '@/handlers/spotify';
 import {
   reactive, onBeforeMount, getCurrentInstance,
 } from 'vue';
 
+import { randomCharacters } from '@/components/Utils/logic/random';
+
 // assets
-// import userDefaultImg from '@/assets/user.png';
+import userDefaultImg from '@/assets/user.png';
 
 export default {
   name: 'UserAccount',
@@ -45,7 +48,7 @@ export default {
       name: '',
       location: '',
       email: 'no email provided',
-      img: require(/* lazy loading user's image */ '@/assets/user.png'),
+      img: userDefaultImg,
     });
 
     const isActive = reactive({
@@ -60,13 +63,13 @@ export default {
       const data = await getUserProfile();
 
       // re-aasign responded data to the reactive object
-      user.id = data.ID === '' ? data.EXTERNAL_URL : data.ID;
+      user.id = data.ID === '' ? randomCharacters(10) : data.ID;
       user.name = data.NAME === '' ? 'Anonymous' : data.NAME;
       user.location = data.COUNTRY === '' ? 'Not provided' : data.COUNTRY;
       user.email = data.EMAIL === '' ? 'Not provided' : data.EMAIL;
 
       // eslint-disable-next-line max-len
-      user.img = data.IMAGES.length > 0 ? require(/* lazy loading user's image */ data.IMAGES[0]) : user.img;
+      user.img = data.IMAGES.length > 0 ? data.IMAGES[0] : user.img;
     }
 
     function isClicked() {

@@ -37,7 +37,8 @@ export default class SongDots {
     this.p5.ellipse(this.x, this.y, this.size + 5);
 
     this.p5.stroke(0);
-    if (this.label === 'accepted') { this.p5.fill(0, 225, 0); } else this.p5.fill(150);
+    // if accepted by the system: green, by user: yellow, not accepted: gray
+    if (this.label === 'accepted') { this.p5.fill(0, 225, 0); } else if (this.label === 'accepted_by_user') { this.p5.fill(255, 255, 0); } else this.p5.fill(150);
     this.p5.ellipse(this.x, this.y, this.size);
 
     // effects
@@ -71,6 +72,12 @@ export default class SongDots {
 
       if (this.label === 'unaccepted') {
 
+        // change the label to affect the visualisation
+        this.label = 'accepted';
+
+        // push it in the playlist array
+        updatePlaylist(this, 'add', emitter);
+      } else if (this.label === 'accepted_by_user') {
         // change the label to affect the visualisation
         this.label = 'accepted';
 

@@ -28,7 +28,7 @@ export default {
       emitter.on('song_data', (data) => {
         // handle removeAll label
         if (data.song !== undefined) {
-          if (data.song.label === 'accepted') {
+          if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user') {
             tracks.value.push(data.song);
             if (progressBar.value.style.width !== '100%') {
               barWidth.value = (tracks.value.length / 5) * 100;

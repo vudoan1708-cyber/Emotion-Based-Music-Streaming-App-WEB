@@ -47,28 +47,37 @@
       <div id="input_fields" :class="{ blur: isBlur }">
         <p><em>Anything else you would like to manually add in?</em></p>
 
+        <!-- Minimum of Songs -->
+        <div class="fields" id="minSongNum">
+          <label>Minimum Number of Tracks to Play</label><br />
+          <input ref="artistsField" type="text" placeholder="5"
+                  :value="personalisedValues">
+        </div>
+
         <!-- Artists -->
         <div class="fields" id="artists">
           <label>Artists</label><br />
-          <input ref="artistsField" type="text" placeholder="Artist full names">
+          <input ref="artistsField" type="text" placeholder="Artist full names"
+                  :value="personalisedValues">
         </div>
 
         <!-- Themes -->
         <div class="fields" id="themes">
           <label>Themes</label><br />
-          <input ref="themesField" type="text" placeholder="Love, Family,...">
+          <input ref="themesField" type="text" placeholder="Love, Family,..."
+                  :value="personalisedValues">
         </div>
 
         <!-- Genres -->
-        <div class="fields" id="genres">
+        <!-- <div class="fields" id="genres">
           <label>Genres</label><br />
           <input ref="genresField" type="text" placeholder="Rap, Pop,...">
-        </div>
+        </div> -->
 
-        <!-- Countries -->
+        <!-- Market -->
         <div class="fields" id="countries">
-          <label>Countries</label><br />
-          <input ref="countriesField" type="text" placeholder="Country's full names">
+          <label>Market</label><br />
+          <input ref="countriesField" type="text" placeholder="Country's ISO-2 code">
         </div>
       </div>
     </div>
@@ -87,7 +96,12 @@
 import {
   ref, watch, getCurrentInstance,
 } from 'vue';
+
+// MongoDB
 import { insertData } from '@/handlers/mongdb';
+
+// API
+import settingsObj from '@/components/API/settingsObj';
 
 export default {
   name: 'SettingBoard',
@@ -109,6 +123,8 @@ export default {
     const personalisationBtn = ref(null);
     const spotifyBtn = ref(null);
     const isBlur = ref(true);
+    // Keep Track of A Button Previous State Before Toggling Checkboxes Are Performed
+    const btnSavedStates = ref({});
 
     // User Detail on the board
     const userDetail = ref({});
@@ -127,25 +143,26 @@ export default {
       userDetail.value.email = data.user.email;
     });
 
+    function toggleBlurSettings() {
+      personalisationBtn.value.checked === true
+        ? isBlur.value = false
+        : (isBlur.value = true, spotifyBtn.value.checked = false);
+    }
+
     // Close The Settings Board
     function closeSettings() {
       boardRef.value.style.display = 'none';
+
+      // Reset Buttons' State Back to The Original
+      personalisationBtn.value.checked = btnSavedStates.value.muserfly;
+      spotifyBtn.value.checked = btnSavedStates.value.spotify;
+
+      toggleBlurSettings();
     }
 
     async function saveSettings() {
       // Update data obj to be sent to the database
-      dataObj.value = {
-        user: {
-          id: userDetail.value.id,
-          name: userDetail.value.name,
-          location: userDetail.value.location,
-          email: userDetail.value.email,
-        },
-        last_checked: {
-          muserfly: personalisationBtn.value.checked,
-          spotify: spotifyBtn.value.checked,
-        },
-      };
+      dataObj.value = settingsObj(userDetail, personalisationBtn, spotifyBtn);
 
       // Insert data to MongDB Here
       insertData(dataObj.value);
@@ -158,9 +175,11 @@ export default {
     // Toggle Checkbox
     function toggleCheckbox() {
       // Check if the checkbox is checked
-      personalisationBtn.value.checked === true
-        ? isBlur.value = false
-        : (isBlur.value = true, spotifyBtn.value.checked = false);
+      toggleBlurSettings();
+    }
+
+    function personalisedValues() {
+
     }
 
     // watch constantly any updates comming from the parent components
@@ -175,9 +194,14 @@ export default {
           spotifyBtn.value.checked = true;
         }
       });
-      personalisationBtn.value.checked === true
-        ? isBlur.value = false
-        : (isBlur.value = true, spotifyBtn.value.checked = false);
+
+      // Saved A Record of A Change in Buttons' State
+      btnSavedStates.value = {
+        muserfly: personalisationBtn.value.checked,
+        spotify: spotifyBtn.value.checked,
+      };
+
+      toggleBlurSettings();
     });
 
     return {
@@ -191,6 +215,7 @@ export default {
       spotifyBtn,
       isBlur,
       toggleCheckbox,
+      personalisedValues,
     };
   },
 };

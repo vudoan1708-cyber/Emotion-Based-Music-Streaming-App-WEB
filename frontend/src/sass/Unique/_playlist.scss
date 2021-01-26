@@ -26,7 +26,10 @@
     height: auto;
     text-align: center;
     margin-top: 25px;
-    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(50, 50, 50, 0.25);
+    cursor: all-scroll;
 
     img {
       width: 50%;
@@ -51,5 +54,11 @@
     &:hover {
       filter: drop-shadow(0px 0px 10px gray);
     }
+  }
+
+  .draggable {
+    position: absolute;
+    background-color: white;
+    @extend .tracks;
   }
 }

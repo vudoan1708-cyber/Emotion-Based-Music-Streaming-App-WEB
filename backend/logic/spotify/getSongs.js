@@ -1,17 +1,11 @@
 const fetch = require('node-fetch');
 
-const randomCharacters = require('../utils/randomCharacters');
-const randomInt = require('../utils/randomNumbers');
-
-module.exports = async function getSongs(TOKEN) {
+module.exports = async function getSongs(TOKEN, KEYWORD) {
   // base URL
   const BASE_URL = 'https://api.spotify.com/v1/search?';
 
   // search limit
   const lim = 10;
-
-  // random character
-  const KEYWORD = randomCharacters(randomInt(2, 3));
 
   // market
   const MARKET = 'from_token';

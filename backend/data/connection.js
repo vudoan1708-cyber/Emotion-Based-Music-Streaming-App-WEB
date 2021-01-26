@@ -6,7 +6,7 @@ module.exports = function createConnection(collectionNum) {
   try {
     const db = monk(MONGODB_URI);
     const database = collectionNum === 1 
-                            ? db.get('emotions')
+                            ? db.get('user_journey')
                             : db.get('settings');
     console.log('Connect to MongoDB Database successfully');
     return database;

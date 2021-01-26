@@ -33,6 +33,10 @@ export function createSongDots(label, title, valence, arousal, id,
   emitter.emit('song_data', emitData);
 }
 
+export function removeSongDots(index) {
+  songDots.splice(index, 1);
+}
+
 export function drawSongDots(starDots, chosenPoints, emitter) {
   if (songLoaded) {
     for (let i = 0; i < songDots.length; i += 1) {
