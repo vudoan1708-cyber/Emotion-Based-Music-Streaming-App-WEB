@@ -67,11 +67,13 @@ export default {
               // eslint-disable-next-line max-len
               const { muserfly, spotify } = dataResponse[i].settings_data.last_checked;
 
+              // Append Settings Config to the Array
+              personalisationSettings.value.push(dataResponse);
+
               // if it's just the personalisation button is checked
               if (muserfly) {
                 // if spotify button is also checked
                 if (spotify) checkSettings(0);
-                else personalisationSettings.value.push({ muserfly });
               }
 
               break;

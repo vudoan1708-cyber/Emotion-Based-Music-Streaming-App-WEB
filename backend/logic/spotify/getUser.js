@@ -9,6 +9,8 @@ module.exports = async function getUser(TOKEN) {
   const options = {
     method: 'GET',
     headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${TOKEN}`,
     },
   };

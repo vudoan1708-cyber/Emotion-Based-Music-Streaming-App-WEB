@@ -151,9 +151,11 @@
       .fields {
         margin: 10px;
 
-        input[type=text] {
+        input[type=text],
+        input[type=number] {
           width: 100%;
           padding: 5px;
+          border-radius: 5px;
         }
       }
     }

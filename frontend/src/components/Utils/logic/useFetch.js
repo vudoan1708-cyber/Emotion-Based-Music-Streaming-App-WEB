@@ -7,6 +7,7 @@ export default async function useFetch(URL, methodType, data) {
     options = {
       method: methodType,
       headers: {
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
@@ -17,6 +18,7 @@ export default async function useFetch(URL, methodType, data) {
     options = {
       method: methodType,
       headers: {
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
