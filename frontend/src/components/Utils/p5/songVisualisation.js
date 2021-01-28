@@ -6,7 +6,7 @@
 import SongDots from '@/components/Utils/p5/classes/songDots';
 import { moodToCoordinates } from '@/components/Utils/logic/algorithm';
 
-const songDots = [];
+export const songDots = [];
 
 let songLoaded = false;
 

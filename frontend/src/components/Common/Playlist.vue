@@ -1,10 +1,9 @@
 <template>
-  <div id="playlist_container">
+  <div id="playlist_container" @mousemove="duringDrag">
 
     <!-- Collected Tracks -->
-    <h3>Collected Tracks</h3>
+    <h3>Collected Tracks: {{ acceptedSongData.length }}</h3>
     <div ref="collectedTracksStyling" id="collected" style="min-height: 30%;"
-                @mousemove="duringDrag"
                 @mouseup="endDrag('collected')">
       <div class="tracks" v-for="data in acceptedSongData" :key="data.id">
         <img :src="data.album_imgs.url"
@@ -19,12 +18,11 @@
     </div>
 
     <!-- All Tracks -->
-    <h3>All Tracks</h3>
+    <h3>All Tracks: {{ allSongData.length }}</h3>
     <div ref="allTracksStyling" id="all" style="min-height: 40%;"
               @mouseup="endDrag('all')">
       <div class="tracks" v-for="data in allSongData" :key="data.id"
-              @mousedown="initDrag($event, data.id)"
-              @mousemove="duringDrag">
+              @mousedown="initDrag($event, data.id)">
         <img :src="data.album_imgs.url"
               :style="{ width: data.album_imgs.width, height: data.album_imgs.height }"
               draggable="false" @dragstart="false" />

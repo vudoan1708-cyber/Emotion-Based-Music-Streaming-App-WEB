@@ -192,7 +192,7 @@ function setup() {
   textAlign(CENTER);
 
   // make a 2D array
-  starDots = make2dArray(Math.floor(width / 40), Math.floor(height / 40));
+  starDots = make2dArray(Math.floor(width / 34), Math.floor(height / 34));
 
   // instantiate the starDots object
   for (let i = 0; i < starDots.length; i++) {
@@ -217,24 +217,6 @@ function drawLines(i, j) {
 }
 
 function drawHighlights(i, j) {
-  
-  // TOP LEFT
-  // if (i < starDots.length / 2 && j < starDots[i].length / 2) {
-  //   for (let a = i; a < starDots.length / 2; a++) {
-  //     push();
-  //       fill(255);
-  //       starDots[a][j].show(true);
-  //     pop();
-  //     if (a === i) {
-  //       for (let b = j; b < starDots[a].length / 2; b++) {
-  //         push();
-  //           fill(255);
-  //           starDots[a][b].show(true);
-  //         pop();
-  //       }
-  //     }
-  //   }
-  // }
   push();
     fill(255);
     starDots[i][j].show();
@@ -417,19 +399,6 @@ function fillStarsColor(i, j) {
 
     // dots on the intersection lines
     } else {
-      if (starDots[i][j].onHover()) {
-      
-        // draw highlighted dot
-        drawHighlights(i, j);
-        
-        // draw guidlines
-        drawLines(i, j);
-  
-        fill(255, 0, 0);
-  
-        // show all stars with different colours depending on different conditions
-        star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-      }
       fill(180, 180);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
     }
@@ -524,20 +493,20 @@ function moodToCoordinates(valence, arousal) {
   const i = Math.floor(valence * starDots.length);
   const j = Math.floor((1 - arousal) * starDots[i].length);
   
-  const x = width / 3.6 + i * OFFSET;
-  const y = height / 3.4 + j * OFFSET;
+  const x = width / 4 + i * OFFSET;
+  const y = height / 4 + j * OFFSET;
   return { x, y };
 }
 
 function coordinatesToIndices(x, y) {
-  const i = Math.floor((x - width / 3.6) / OFFSET);
-  const j = Math.floor((y - height / 3.4) / OFFSET);
+  const i = Math.floor((x - width / 4) / OFFSET);
+  const j = Math.floor((y - height / 4) / OFFSET);
   return { i, j };
 }
 
 function indicestoCoordinates(i, j) {
-  const x = width / 3.6 + i * OFFSET;
-  const y = height / 3.4 + j * OFFSET;
+  const x = width / 4 + i * OFFSET;
+  const y = height / 4 + j * OFFSET;
 
   return { x, y };
 }
@@ -788,8 +757,8 @@ async function handlingSongsData(valence, arousal) {
         const song_i = Math.floor(song_data.valence * starDots.length);
         const song_j = Math.floor((1 - song_data.arousal) * starDots[song_i].length);
 
-        const song_x = width / 3.6 + song_i * OFFSET;
-        const song_y = height / 3.4 + song_j * OFFSET;
+        const song_x = width / 4 + song_i * OFFSET;
+        const song_y = height / 4 + song_j * OFFSET;
         // console.log(`Song's Coordinates: ${song_x}, ${song_y}`);
 
         // compare

@@ -9,6 +9,8 @@ import twinkleEffects from '@/components/Utils/p5/twinkleEffects';
 
 import make2dArray from '@/components/Utils/logic/array';
 
+// import { songDots } from '@/components/Utils/p5/songVisualisation';
+
 import { coordinatesToIndices, indicesToMood } from '@/components/Utils/logic/algorithm';
 
 // scoped functions
@@ -65,10 +67,10 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
   // hovering only affects one selected region
   const region = mapRegions(i, j, i, starDots);
 
-  let green = ((i + j) * 2.5);
-  let blue = ((i + j) * 2.5);
-  let red = ((i + j) * 2.5);
-  let alpha = 255 - ((i + j) * 2.5);
+  let green = ((i + j) * 3.5);
+  let blue = ((i + j) * 3.5);
+  let red = ((i + j) * 3.5);
+  let alpha = 255 - ((i + j) * 3.5);
 
   p5.push();
 
@@ -158,7 +160,7 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
     blue = (255 * (j + 5)) / i;
     alpha = (i / (j + 5)) * 50;
 
-    p5.fill(red + 30, 255, blue + 30, alpha);
+    p5.fill(red + 40, 255, blue + 40, alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // BOTTOM RIGHT (CALM / RELAXED)
@@ -180,23 +182,11 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
     if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // pink
-    p5.fill(220, 300 - green, 250, 300 - alpha);
+    p5.fill(220, 255 - green, 250, 255 - alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
     // dots on the intersection lines
   } else {
-
-    if (starDots[i][j].onHover(isClicked)) {
-
-      // draw highlighted dot
-      drawHighlights(i, j, starDots, p5);
-
-      // draw guidlines
-      drawLines(i, j, starDots, p5);
-
-      p5.fill(255, 0, 0);
-      star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
-    }
     p5.fill(90, 150);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
   }
@@ -207,7 +197,7 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
 // globally accessible functions
 export function createMap(width, height, starDots, p5) {
   // make a 2D array
-  starDots = make2dArray(Math.floor(width / 25), Math.floor(height / 25));
+  starDots = make2dArray(Math.floor(width / 34), Math.floor(height / 34));
 
   // instantiate the starDots object
   for (let i = 0; i < starDots.length; i += 1) {
@@ -231,6 +221,7 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, showMa
         const a = p5.random(20, 255);
         p5.fill(c, a);
 
+        // if (songDots.)
         star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4, p5);
 
         fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, emitter, width, height, p5);

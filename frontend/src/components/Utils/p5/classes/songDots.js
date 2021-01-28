@@ -51,6 +51,12 @@ export default class SongDots {
     this.p5.ellipse(this.x, this.y, this.size + 5);
   }
 
+  overlay(star) {
+    if (this.x === star.x && this.y === star.y) {
+      return true;
+    } return false;
+  }
+
   onHover(isSongLoading) {
     if (isSongLoading) {
       if (this.p5.mouseX > this.x - this.size / 2 && this.p5.mouseX < this.x + this.size / 2) {

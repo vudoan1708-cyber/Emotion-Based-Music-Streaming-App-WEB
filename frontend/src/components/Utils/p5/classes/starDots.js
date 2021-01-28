@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 /* eslint-disable consistent-return */
-import { indicestoCoordinates } from '@/components/Utils/logic/algorithm';
+import { OFFSET, indicestoCoordinates } from '@/components/Utils/logic/algorithm';
 
 export default class StarDots {
   constructor(i, j, width, height, size, p5) {
@@ -41,10 +41,10 @@ export default class StarDots {
 
     // create new coordinate properties from those marks
     const newPos = {
-      x1: this.width / 5 + marks[0] * 15.4,
-      x2: this.width / 5 + marks[1] * 15.4,
-      y1: this.height / 5 + marks[2] * 15.4,
-      y2: this.height / 5 + marks[3] * 15.4,
+      x1: this.width / 4 + marks[0] * OFFSET,
+      x2: this.width / 4 + marks[1] * OFFSET,
+      y1: this.height / 4 + marks[2] * OFFSET,
+      y2: this.height / 4 + marks[3] * OFFSET,
     };
     return newPos;
   }

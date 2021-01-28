@@ -21,31 +21,22 @@
 
 <script>
 /* eslint-disable no-console */
-/* eslint-disable padded-blocks */
-/* eslint-disable no-trailing-spaces */
-/* eslint-disable-next-line linebreak-style */
-/* eslint-disable no-multiple-empty-lines */
-/* eslint-disable semi */
-/* eslint-disable indent */
-/* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 /* eslint-disable no-param-reassign */
-/* eslint-disable no-new */
-/* eslint-disable no-plusplus */
 /* eslint-disable new-cap */
 /* eslint-disable camelcase */
-/* eslint-disable vue/no-mutating-props */
 
 import {
- onMounted, reactive, ref, getCurrentInstance,
+  onMounted, reactive, ref, getCurrentInstance,
 } from 'vue';
 
 import p5 from 'p5';
 import io from 'socket.io-client';
 
 // Utilities
+import mapRegions from '@/components/Utils/p5/mapRegions';
 import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/bg';
-import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMap';
+import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMapVisualisation';
 import { drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
@@ -64,8 +55,7 @@ export default {
       type: Object,
     },
   },
-  setup(props) {
-
+  setup() {
     // instantiate the app's current instance to get global properties
     // registered in the main.js file
     const app = getCurrentInstance();
@@ -135,7 +125,6 @@ export default {
           if (curent_data.length !== 0) {
             // shallow copy the data and assign it to a global array
             history = [...curent_data];
-            console.log(history);
           }
 
         // check if it is a current event
@@ -164,6 +153,38 @@ export default {
         });
       }
 
+      function locationChosen(i, j) {
+        if (starDots[i][j].onHover()) {
+          // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
+          const { valence, arousal } = indicesToMood(i, j, starDots);
+
+          isClicked = true;
+          chosenPoints.push(i, j);
+
+          // send data to the server via socket
+          const data = {
+            i,
+            j,
+            size: starDots[i][j].size,
+          };
+          socket.emit('click', data);
+
+          // manipulate data to be sent to another component file
+          map_properties.status = false;
+
+          // wait for 1.5 sec before closing an event on map positions
+          setTimeout(() => { emitMapEvent('close'); }, 1500);
+
+          // HISTORICAL USERS
+          // use the history array available globally after collecting it the first time
+          // and push it t0 neighbours array as well
+          createHistoricalNeighbours(history, chosenPoints, width, height);
+
+          // get songs data from Spotify via the server
+          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p, emitter);
+        }
+      }
+
       p.setup = () => {
         p.createCanvas(width, height).parent('p5Canvas');
         p.ellipseMode(p.CENTER);
@@ -190,7 +211,6 @@ export default {
         emitMapEvent('open');
 
         if (showMap.index !== 0) {
-
           // The Emotion Map
           drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, emitter, p);
 
@@ -203,49 +223,31 @@ export default {
       };
 
       p.mousePressed = () => {
-
         // only clickable when the emotion map is shown
         if (showMap.index !== 0) {
-          for (let i = 0; i < starDots.length; i++) {
-            for (let j = 0; j < starDots[i].length; j++) {
+          const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
 
-              if (starDots[i][j].onHover()) {
+          for (let i = 0; i < starDots.length; i += 1) {
+            for (let j = 0; j < starDots[i].length; j += 1) {
+              const region = mapRegions(mouseIndices.i, mouseIndices.j, i, starDots);
 
-                // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-                const { valence, arousal } = indicesToMood(i, j, starDots);
-
-                isClicked = true;
-                chosenPoints.push(i, j);
-
-                // send data to the server via socket
-                const data = {
-                  i,
-                  j,
-                  size: starDots[i][j].size,
-                }
-                socket.emit('click', data);
-
-                // manipulate data to be sent to another component file
-                map_properties.status = false;
-
-                // wait for 1.5 sec before closing an event on map positions
-                setTimeout(() => { emitMapEvent('close'); }, 1500);
-
-                // HISTORICAL USERS
-                // use the history array available globally after collecting it the first time
-                // and push it t0 neighbours array as well
-                createHistoricalNeighbours(history, chosenPoints, width, height);
-
-                // get songs data from Spotify via the server
-                handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p, emitter);
+              // to prevent click event happens globally for all regions
+              // on clickable on one selected region
+              if (region === 1 && showMap.index === 1) {
+                locationChosen(i, j);
+              } else if (region === 2 && showMap.index === 2) {
+                locationChosen(i, j);
+              } else if (region === 3 && showMap.index === 3) {
+                locationChosen(i, j);
+              } else if (region === 4 && showMap.index === 4) {
+                locationChosen(i, j);
               }
             }
           }
         }
-      }
+      };
 
       p.mouseDragged = () => {
-
         // only draggable when the emotion map is shown
         if (showMap.index !== 0) {
           // to get affective values
@@ -265,14 +267,15 @@ export default {
             }
           }
         }
-      }
+      };
 
       p.windowResized = () => {
         p.resizeCanvas(width, height);
-      }
+      };
     };
 
     onMounted(() => {
+      // eslint-disable-next-line no-new
       new p5(sketch);
     });
 

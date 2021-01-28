@@ -35,10 +35,10 @@ class StarDots {
 
     // create new coordinate properties from those marks
     const newPos = {
-      x1: width / 3.6 + marks[0] * OFFSET,
-      x2: width / 3.6 + marks[1] * OFFSET,
-      y1: height / 3.4 + marks[2] * OFFSET,
-      y2: height / 3.4 + marks[3] * OFFSET,
+      x1: width / 4 + marks[0] * OFFSET,
+      x2: width / 4 + marks[1] * OFFSET,
+      y1: height / 4 + marks[2] * OFFSET,
+      y2: height / 4 + marks[3] * OFFSET,
     } 
     return newPos;
   }

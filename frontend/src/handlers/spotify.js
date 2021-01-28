@@ -15,6 +15,7 @@ import hashURL from '@/components/Utils/logic/hashURL';
 import sleep from '@/components/Utils/logic/sleep';
 import isEmpty from '@/components/Utils/logic/object';
 import { randomCharacters, randomInt } from '@/components/Utils/logic/random';
+import { moodToCoordinates } from '@/components/Utils/logic/algorithm';
 import useFetch from '@/components/Utils/logic/useFetch';
 
 import errorHandler from '@/components/Utils/dom/error';
@@ -200,7 +201,7 @@ async function playSong() {
 
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production')
-              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}}`
+              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`
               : `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}`;
 
     // Node.js
@@ -212,7 +213,6 @@ async function playSong() {
       const errorDiv = document.createElement('div');
       errorHandler(response.error.message, errorDiv);
     }
-    console.log(response);
     return response;
   } catch (err) {
     const errorDiv = document.createElement('div');
@@ -297,52 +297,49 @@ export async function handlingSongsData(valence, arousal, starDots, chosenPoints
 
     const song_data = audio_features[i];
 
-    // if playlist array hasn't reached its end
-    if (playlist.length < 5) {
+    if (song_data.valence !== undefined && song_data.arousal !== undefined) {
 
-      // if i hasn't reached the end of the audio featiures array's loop
-      if (i < audio_features.length - 1) {
+      // if playlist array hasn't reached its end
+      if (playlist.length < 5) {
+  
+        // if i hasn't reached the end of the audio featiures array's loop
+        if (i < audio_features.length - 1) {
+  
+          const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
 
-        const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
-        // console.log(`Bounds: ${bounds.x1}, ${bounds.x2}, ${bounds.y1}, ${bounds.y2}`);
+          const { song_x, song_y } = moodToCoordinates(song_data.valence, song_data.arousal, starDots, width, height);
 
-        // map song's affective values to coordinates on the map
-        const song_i = Math.floor(song_data.valence * starDots.length);
-        const song_j = Math.floor((1 - song_data.arousal) * starDots[song_i].length);
-
-        const song_x = width / 5 + song_i * 15.4;
-        const song_y = height / 5 + song_j * 15.4;
-
-        // compare
-        if (song_x > bounds.x1 && 
-            song_x < bounds.x2
-        && song_y > bounds.y1 && 
-            song_y < bounds.y2) {
-
-            // make a temporary playlist for the mood
-            await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal,
-                              song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
-                              starDots, width, height, chosenPoints, p5, emitter);
+          // compare
+          if (song_x > bounds.x1 && 
+              song_x < bounds.x2
+          && song_y > bounds.y1 && 
+              song_y < bounds.y2) {
+  
+              // make a temporary playlist for the mood
+              await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal,
+                                song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
+                                starDots, width, height, chosenPoints, p5, emitter);
+          } else {
+  
+            const id = `spotify:track:${song_data.id}`;
+  
+            // unaccepted songs
+            createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
+                            song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
+                            starDots, width, height, p5, emitter);
+          }
+  
+        // otherwise, redo the loop again until the playlist array condition is satisfied
         } else {
-
-          const id = `spotify:track:${song_data.id}`;
-
-          // unaccepted songs
-          createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
-                          song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
-                          starDots, width, height, p5, emitter);
+          await sleep(500);
+          // console.log(playlist.length)
+          handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5, emitter);
         }
-
-      // otherwise, redo the loop again until the playlist array condition is satisfied
       } else {
-        await sleep(500);
-        // console.log(playlist.length)
-        handlingSongsData(valence, arousal, starDots, chosenPoints, width, height, p5, emitter);
+        console.log(`End The Loop With ${playlist.length} songs`);
+        isPlaying = await playSong(song_data.access_token, playlist);
+        break;
       }
-    } else {
-      console.log(`End The Loop With ${playlist.length} songs`);
-      isPlaying = await playSong(song_data.access_token, playlist);
-      break;
     }
   }
 }

@@ -9,10 +9,15 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
       html {
         width: 100%;
         min-height: 100%;
+        text-align: center;
+        color: #2c3e50;
         overflow: hidden;
       }
 
@@ -29,17 +34,17 @@
 
       ul {
         display: grid;
-        grid-template-columns: auto auto;
+        grid-template-columns: 50% 50%;
         grid-gap: 20px;
         /* background-color: #2196F3; */
         padding: 10px;
       }
 
       ul li {
-        display: block;
         list-style: none;
         padding: 45px 55px;
-        background-color: rgb(68, 68, 68);
+        background-color: rgba(0, 0, 0, 0.911);
+        cursor: pointer;
         transition: all 0.25s ease-in-out;
       }
 
@@ -103,8 +108,8 @@
 
     <div id="map_cover">
       <ul>
-        <li id="top_left" style="opacity: 1;" onclick=changeMap(1)>Angry</li>
-        <li id="top_right" style="opacity: 1;" onclick=changeMap(2)>Happy</li>
+        <li id="top_left" style="opacity: 1;" onclick=changeMap(1)>Aggressive</li>
+        <li id="top_right" style="opacity: 1;" onclick=changeMap(2)>Exciting</li>
         <li id="bottom_left" style="opacity: 1;" onclick=changeMap(3)>Sad</li>
         <li id="bottom_right" style="opacity: 1;" onclick=changeMap(4)>Calm</li>
       </ul>
