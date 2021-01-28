@@ -27,7 +27,7 @@
 /* eslint-disable camelcase */
 
 import {
-  onMounted, reactive, ref, getCurrentInstance,
+  onMounted, reactive, ref, getCurrentInstance, watch,
 } from 'vue';
 
 import p5 from 'p5';
@@ -43,7 +43,7 @@ import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from 
 import { indicesToMood, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
 import changeMap from '@/components/Utils/dom/changeMap';
 
-import { handlingSongsData, removeATempPlaylist } from '@/handlers/spotify';
+import { handlingSongsData, removeATempPlaylist, showUserPlaylist } from '@/handlers/spotify';
 
 // Vue component
 import SongData from '@/components/Common/SongData.vue';
@@ -55,7 +55,7 @@ export default {
       type: Object,
     },
   },
-  setup() {
+  setup(props) {
     // instantiate the app's current instance to get global properties
     // registered in the main.js file
     const app = getCurrentInstance();
@@ -80,6 +80,12 @@ export default {
     const sadBtn = ref(null);
     const calmBtn = ref(null);
 
+    // P5
+    let starDots = [];
+    let p5Obj = null;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
     function emitMapEvent(state) {
       // socket.io-like package (mitt) for emitting and listening to events
       // between COMPONENTS
@@ -93,14 +99,11 @@ export default {
     }
 
     const sketch = (p) => {
+      p5Obj = p;
       // disables FES
       // eslint-disable-next-line no-param-reassign
       p.disableFriendlyErrors = true;
 
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      let starDots = [];
       let history = [];
 
       const galaxy = [];
@@ -273,6 +276,26 @@ export default {
         p.resizeCanvas(width, height);
       };
     };
+
+    function searchUserPersonalisedPlaylist(datum) {
+      const {
+        title, valence, arousal, id, album_imgs, artist_details, artist_names, external_urls,
+      } = datum;
+      showUserPlaylist(title, valence, arousal, id,
+        album_imgs, artist_details, artist_names, external_urls,
+        starDots, width, height, p5Obj, emitter);
+    }
+
+    watch(props.personalisationSettings, (data) => {
+      console.log(data);
+      data.forEach((datum, index) => {
+        if (index !== 0) {
+          datum.forEach((d) => {
+            searchUserPersonalisedPlaylist(d);
+          });
+        }
+      });
+    });
 
     onMounted(() => {
       // eslint-disable-next-line no-new

@@ -175,7 +175,10 @@ export default {
         personalisationBtn, spotifyBtn);
 
       // Insert data to MongDB Here
-      insertData(dataObj.value);
+      await insertData(dataObj.value);
+
+      // Refresh the entire document
+      document.location.reload();
     }
 
     function resetSettings() {

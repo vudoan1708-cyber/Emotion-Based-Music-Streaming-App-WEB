@@ -1,0 +1,42 @@
+#bar_styling {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translateX(-50%);
+  width: 50%;
+
+  #bar_container {
+  width: 100%;
+  background-color: rgb(87, 87, 87);
+  border-radius: 20px;
+
+    #bar {
+      margin: 0;
+      width: 0%;
+      height: 30px;
+      overflow-x: hidden;
+      background-color: rgb(112, 194, 130);
+      border-radius: 20px;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  #loading_info {
+    width: 100%;
+    color: rgb(156, 156, 156);
+
+    #percentage {
+      position: absolute;
+      text-align: left;
+    }
+
+    .song_detail {
+      font-size: 1.1rem;
+      text-align: right;
+    }
+  }
+}
+

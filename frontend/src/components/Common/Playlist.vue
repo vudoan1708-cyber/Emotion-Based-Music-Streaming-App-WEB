@@ -64,6 +64,7 @@ export default {
 
     const allSongData = ref([]);
     const acceptedSongData = ref([]);
+    const personalisedTracks = ref([]);
 
     const isPlayerActive = ref(false);
 
@@ -81,30 +82,38 @@ export default {
 
     // subscribe to the 'song_data' event
     emitter.on('song_data', (data) => {
-      // if a new song is added
-      if (data.how === 'add') {
-        // handle collected tracks, by the system or by the user
-        if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user') {
-          acceptedSongData.value.push(data.song);
-          if (collectedTracksStyling.value.style.minHeight === '30%') collectedTracksStyling.value.style.minHeight = '';
+      if (!data.beforeLoading) {
+        // if a new song is added
+        if (data.how === 'add') {
+          // handle collected tracks, by the system or by the user
+          if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user') {
+            acceptedSongData.value.push(data.song);
+            if (collectedTracksStyling.value.style.minHeight === '30%') collectedTracksStyling.value.style.minHeight = '';
+          } else {
+            // eslint-disable-next-line no-unused-expressions
+            allSongData.value.length === 0
+              ? allSongData.value = personalisedTracks.value
+              : undefined;
+            // push received data to the array
+            allSongData.value.push(data.song);
+            if (allTracksStyling.value.style.minHeight === '40%') allTracksStyling.value.style.minHeight = '';
+          }
+
+        // if a song is removed
+        } else if (data.how === 'remove') {
+          for (let i = acceptedSongData.value.length - 1; i >= 0; i -= 1) {
+            // check for removing songs
+            if (data.song.id === acceptedSongData.value[i].id) acceptedSongData.value.splice(i, 1);
+          }
+
+        // if all songs are removed
         } else {
-          // push received data to the array
-          allSongData.value.push(data.song);
-          if (allTracksStyling.value.style.minHeight === '40%') allTracksStyling.value.style.minHeight = '';
+          // reset
+          collectedTracksStyling.value.style.minHeight = '30%';
+          acceptedSongData.value = [...data.playlist];
         }
-
-      // if a song is removed
-      } else if (data.how === 'remove') {
-        for (let i = acceptedSongData.value.length - 1; i >= 0; i -= 1) {
-          // check for removing songs
-          if (data.song.id === acceptedSongData.value[i].id) acceptedSongData.value.splice(i, 1);
-        }
-
-      // if all songs are removed
       } else {
-        // reset
-        collectedTracksStyling.value.style.minHeight = '30%';
-        acceptedSongData.value = [...data.playlist];
+        personalisedTracks.value.push(data.song);
       }
     });
 

@@ -16,7 +16,7 @@
 
     <!-- Loading -->
     <div id="loading" v-else>
-      <LoadingBar />
+      <LoadingBar :tracks="tracks" />
     </div>
   </div>
 </template>
@@ -24,7 +24,7 @@
 <script>
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-unused-vars */
-import { reactive, getCurrentInstance } from 'vue';
+import { ref, reactive, getCurrentInstance } from 'vue';
 import LoadingBar from '@/components/Common/LoadingBar.vue';
 
 export default {
@@ -51,6 +51,12 @@ export default {
       img: '',
     });
 
+    const tracks = reactive({
+      total: 0,
+      artists: [],
+      titles: [],
+    });
+
     // subscribe on the 'map' event
     emitter.on('map', (map) => {
       mapProperties.coords.x = map.i;
@@ -59,9 +65,30 @@ export default {
       appState.map = map.status;
     });
 
+    // subscribe to the 'song_data' event
+    emitter.on('song_data', (data) => {
+      // handle removeAll label
+      if (data.song !== undefined) {
+        if (!data.beforeLoading && tracks.total < 5) {
+          if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user' || data.song.label === 'user_playlist') {
+            tracks.total += 1;
+            tracks.artists.push(data.song.artist_names);
+            tracks.titles.push(data.song.title);
+          }
+        }
+
+      // reset the array's length
+      } else {
+        tracks.total = 0;
+        tracks.artists = [];
+        tracks.titles = [];
+      }
+    });
+
     return {
       appState,
       mapProperties,
+      tracks,
     };
   },
 };

@@ -9,6 +9,7 @@ module.exports = async function getAudioFeature(data) {
   const EXTERNAL_URLS = data.external_urls;
   const ARTIST_NAMES = data.artist_names;
   const ARTIST_DETAILS = data.artist_details;
+  const NEXT_URL = data.nextURL !== undefined ? data.nextURL : '';
   const ALBUM_IMGS = data.album_imgs;
 
   const responses = [];
@@ -65,6 +66,7 @@ module.exports = async function getAudioFeature(data) {
           artist_details: ARTIST_DETAILS[i],
           album_imgs: ALBUM_IMGS[i],
           external_urls: EXTERNAL_URLS[i],
+          nextURL: NEXT_URL !== undefined ? NEXT_URL : '',
           access_token: TOKEN,
         });
       } else {

@@ -12,7 +12,7 @@ let songLoaded = false;
 
 export function createSongDots(label, title, valence, arousal, id,
                               album_imgs, artist_details, artist_names, external_urls,
-                              starDots, width, height, p5, emitter) {
+                              beforeLoading, starDots, width, height, p5, emitter) {
   // reverse the mapping algorithm to get the location values from valence and arousal
   const coordinates = moodToCoordinates(valence, arousal, starDots, width, height);
 
@@ -27,6 +27,7 @@ export function createSongDots(label, title, valence, arousal, id,
   const emitData = {
     song,
     how: 'add',
+    beforeLoading,
   };
 
   // emit the songDots instances one at a time
@@ -42,8 +43,10 @@ export function drawSongDots(starDots, chosenPoints, emitter) {
     for (let i = 0; i < songDots.length; i += 1) {
       songDots[i].show();
 
-      // live updating every song dots positions
-      songDots[i].updateLabels(starDots, chosenPoints, emitter);
+      if (chosenPoints.length > 0) {
+        // live updating every song dots positions
+        songDots[i].updateLabels(starDots, chosenPoints, emitter);
+      }
     }
   }
 }

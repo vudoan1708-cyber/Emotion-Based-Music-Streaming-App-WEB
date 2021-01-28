@@ -1,3 +1,4 @@
+/* eslint-disable brace-style */
 /* eslint-disable camelcase */
 /* eslint-disable indent */
 /* eslint-disable max-len */
@@ -37,18 +38,17 @@ export default class SongDots {
     this.p5.ellipse(this.x, this.y, this.size + 5);
 
     this.p5.stroke(0);
-    // if accepted by the system: green, by user: yellow, not accepted: gray
-    if (this.label === 'accepted') { this.p5.fill(0, 225, 0); } else if (this.label === 'accepted_by_user') { this.p5.fill(255, 255, 0); } else this.p5.fill(150);
+    // if accepted by the system: green, by user: yellow, not accepted: gray, by user personalised playlist: red
+    if (this.label === 'accepted') { this.p5.fill(0, 225, 0); }
+    else if (this.label === 'accepted_by_user') { this.p5.fill(255, 255, 0); }
+    else if (this.label === 'user_playlist') { this.p5.fill(255, 0, 0, 200); }
+    else this.p5.fill(150);
     this.p5.ellipse(this.x, this.y, this.size);
 
     // effects
     this.p5.fill(200, 75);
     this.p5.ellipse(this.x, this.y, this.size - 5);
     this.p5.pop();
-  }
-
-  showFavPlaylist() {
-    this.p5.ellipse(this.x, this.y, this.size + 5);
   }
 
   overlay(star) {
@@ -76,14 +76,8 @@ export default class SongDots {
   && this.y > bounds.y1 && 
       this.y < bounds.y2) {
 
-      if (this.label === 'unaccepted') {
+      if (this.label === 'unaccepted' || this.label === 'accepted_by_user' || this.label === 'user_playlist') {
 
-        // change the label to affect the visualisation
-        this.label = 'accepted';
-
-        // push it in the playlist array
-        updatePlaylist(this, 'add', emitter);
-      } else if (this.label === 'accepted_by_user') {
         // change the label to affect the visualisation
         this.label = 'accepted';
 

@@ -33,6 +33,7 @@ export default {
   },
   setup() {
     const personalisationSettings = ref([]);
+    const prevURL = ref('');
 
     async function checkSettings(num) {
       // if 'Allow Spotify to Recommend' button is checked, when click save,
@@ -41,9 +42,13 @@ export default {
       personalisationSettings.value.push(await getUserPersonalisation('tracks', num));
 
       // always get the latest array for next API search processes
-      const { nextURL } = personalisationSettings.value[personalisationSettings.value.length - 1];
+      // eslint-disable-next-line max-len
+      const { nextURL } = personalisationSettings.value[1][personalisationSettings.value.length - 1];
 
-      if (nextURL !== null) {
+      // Keep Track of URLs
+      prevURL.value = prevURL.value !== nextURL ? nextURL : null;
+
+      if (nextURL !== null && prevURL.value !== null) {
         const OFFSET = hashURL(nextURL);
         checkSettings(OFFSET);
       }

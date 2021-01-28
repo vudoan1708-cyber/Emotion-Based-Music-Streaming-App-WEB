@@ -49,8 +49,9 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   // Playback status updates
   player.on('player_state_changed', (state) => {
     console.log(state);
-    // $('#current-track').attr('src', state.track_window.current_track.album.images[0].url);
-    // $('#current-track-name').text(state.track_window.current_track.name);
+    if (state.paused) document.title = 'Muserfly';
+    // Change The Document's Title to The Currently Played Track
+    else document.title = `${state.track_window.current_track.name} - ${state.track_window.current_track.artists[0].name}`;
   });
 
   // Player Ready
@@ -145,6 +146,19 @@ export function updatePlaylist(song, how, emitter) {
   }
 }
 
+export async function showUserPlaylist(title, valence, arousal, id,
+                  album_imgs, artist_details, artist_names, external_urls,
+                  starDots, width, height, p5, emitter) {
+  // re-format the id
+  // eslint-disable-next-line no-param-reassign
+  id = `spotify:track:${id}`;
+
+  // accepted songs
+  createSongDots('user_playlist', title, valence, arousal, id,
+                  album_imgs, artist_details, artist_names, external_urls,
+                  true, starDots, width, height, p5, emitter);
+}
+
 export async function makeATempPlaylist(id, title, valence, arousal, 
                   album_imgs, artist_details, artist_names, external_urls,
                   starDots, width, height, chosenPoints, p5, emitter) {
@@ -160,7 +174,7 @@ export async function makeATempPlaylist(id, title, valence, arousal,
     // accepted songs
     createSongDots('accepted', title, valence, arousal, id,
                     album_imgs, artist_details, artist_names, external_urls,
-                    starDots, width, height, p5, emitter);
+                    false, starDots, width, height, p5, emitter);
   } else {
     for (let i = 0; i < playlist.length; i += 1) {
   
@@ -186,7 +200,7 @@ export async function makeATempPlaylist(id, title, valence, arousal,
           // accepted songs
           createSongDots('accepted', title, valence, arousal, id,
                           album_imgs, artist_details, artist_names, external_urls,
-                          starDots, width, height, p5, emitter);
+                          false, starDots, width, height, p5, emitter);
   
           break;
         }
@@ -326,7 +340,7 @@ export async function handlingSongsData(valence, arousal, starDots, chosenPoints
             // unaccepted songs
             createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
                             song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
-                            starDots, width, height, p5, emitter);
+                            false, starDots, width, height, p5, emitter);
           }
   
         // otherwise, redo the loop again until the playlist array condition is satisfied
