@@ -48,8 +48,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
   // Playback status updates
   player.on('player_state_changed', (state) => {
-    console.log(state);
-    if (state.paused) document.title = 'Muserfly';
+    // eslint-disable-next-line no-underscore-dangle
+    if (state.paused) document.title = player._options.name;
     // Change The Document's Title to The Currently Played Track
     else document.title = `${state.track_window.current_track.name} - ${state.track_window.current_track.artists[0].name}`;
   });

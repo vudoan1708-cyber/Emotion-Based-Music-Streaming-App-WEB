@@ -25,6 +25,12 @@ body {
   }
 }
 
+/* placeholder */
+::placeholder,
+::-webkit-placeholder {
+  font-style: italic;
+}
+
 /* width of the entire scrollbar */
 ::-webkit-scrollbar,
 ::-webkit-scrollbar { /* Chrome/Opera/Safari */

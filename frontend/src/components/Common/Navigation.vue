@@ -49,7 +49,15 @@ import { ref } from 'vue';
 
 export default {
   name: 'Navigation',
-  setup() {
+  props: {
+    emitter: {
+      type: Object,
+    },
+  },
+  setup(props) {
+    // Emitter
+    const emitterObj = ref(props.emitter);
+
     // set active state for elements
     const homeElement = ref(true);
     const searchElement = ref(false);
@@ -63,6 +71,8 @@ export default {
       for (let i = 0; i < whichElements.value.length; i += 1) {
         if (i === num - 1) {
           whichElements.value[i].value = true;
+          // Emit A Number Representing a Clicked Element
+          emitterObj.value.emit('nav', num);
         } else {
           whichElements.value[i].value = false;
         }

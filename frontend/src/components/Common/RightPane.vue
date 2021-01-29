@@ -2,13 +2,13 @@
   <div id="right_pane">
 
     <!-- User Account -->
-    <UserAccount />
+    <UserAccount :emitter="emitterObj" />
 
     <!-- Playlist Display -->
-    <Playlist />
+    <Playlist :emitter="emitterObj" />
 
     <!-- Settings Board -->
-    <SettingsBoard :personalisationSettings="settings" />
+    <SettingsBoard :personalisationSettings="settings" :emitter="emitterObj" />
   </div>
 </template>
 
@@ -24,6 +24,9 @@ export default {
     personalisationSettings: {
       type: Object,
     },
+    emitter: {
+      type: Object,
+    },
   },
   components: {
     SettingsBoard,
@@ -31,6 +34,7 @@ export default {
     UserAccount,
   },
   setup(props) {
+    const emitterObj = ref(props.emitter);
     const settings = ref(props.personalisationSettings);
 
     watch(() => props.personalisationSettings, (data) => {
@@ -39,6 +43,7 @@ export default {
 
     return {
       settings,
+      emitterObj,
     };
   },
 };

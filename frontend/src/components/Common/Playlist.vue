@@ -48,19 +48,19 @@
 import { updatePlaylist, addSongToQueue } from '@/handlers/spotify';
 
 import {
-  ref, reactive, getCurrentInstance, watch,
+  ref, reactive, watch,
 } from 'vue';
 
 export default {
   name: 'Playlist',
-  setup() {
+  props: {
+    emitter: {
+      type: Object,
+    },
+  },
+  setup(props) {
     const allTracksStyling = ref(null);
     const collectedTracksStyling = ref(null);
-
-    // instantiate the app's current instance to get global properties
-    // registered in the main.js file
-    const app = getCurrentInstance();
-    const emitter = app.appContext.config.globalProperties.$emitter;
 
     const allSongData = ref([]);
     const acceptedSongData = ref([]);
@@ -81,7 +81,7 @@ export default {
     });
 
     // subscribe to the 'song_data' event
-    emitter.on('song_data', (data) => {
+    props.emitter.on('song_data', (data) => {
       if (!data.beforeLoading) {
         // if a new song is added
         if (data.how === 'add') {
@@ -150,15 +150,18 @@ export default {
     function endDrag(where) {
       // If The Song Is Dropped At The Original Place
       if (where === 'all') {
-        // Put The Song Back To Its Original Place
-        allSongData.value.splice(draggableElement.indexNum, 0, draggableElement.metadata);
+        // Handle Error When Mouse Up Event Is Subscribed When There is no Songs Yet
+        if (allSongData.value.length !== 0) {
+          // Put The Song Back To Its Original Place
+          allSongData.value.splice(draggableElement.indexNum, 0, draggableElement.metadata);
+        }
       // If The Song Is Dropped on The Collected Area
       } else {
         // If The Song Was Found Before The Mouseup Event
         if (draggableElement.metadata !== '') {
           // Update The Playlist and Visualisation Via This Function
           draggableElement.metadata.label = 'accepted_by_user';
-          updatePlaylist(draggableElement.metadata, 'add', emitter);
+          updatePlaylist(draggableElement.metadata, 'add', props.emitter);
 
           // Trigger Watch Function to Add Songs To The Player's Queue
           isPlayerActive.value = true;

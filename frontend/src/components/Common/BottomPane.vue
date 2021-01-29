@@ -24,20 +24,20 @@
 <script>
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-unused-vars */
-import { ref, reactive, getCurrentInstance } from 'vue';
+import { reactive } from 'vue';
 import LoadingBar from '@/components/Common/LoadingBar.vue';
 
 export default {
   name: 'BottomPane',
+  props: {
+    emitter: {
+      type: Object,
+    },
+  },
   components: {
     LoadingBar,
   },
-  setup() {
-    // instantiate the app's current instance to get global properties
-    // registered in the main.js file
-    const app = getCurrentInstance();
-    const emitter = app.appContext.config.globalProperties.$emitter;
-
+  setup(props) {
     const appState = reactive({
       map: true,
     });
@@ -58,7 +58,7 @@ export default {
     });
 
     // subscribe on the 'map' event
-    emitter.on('map', (map) => {
+    props.emitter.on('map', (map) => {
       mapProperties.coords.x = map.i;
       mapProperties.coords.y = map.j;
       mapProperties.name = map.name;
@@ -66,7 +66,7 @@ export default {
     });
 
     // subscribe to the 'song_data' event
-    emitter.on('song_data', (data) => {
+    props.emitter.on('song_data', (data) => {
       // handle removeAll label
       if (data.song !== undefined) {
         if (!data.beforeLoading && tracks.total < 5) {

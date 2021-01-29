@@ -95,7 +95,7 @@
 /* eslint-disable no-unused-expressions */
 
 import {
-  ref, watch, getCurrentInstance,
+  ref, watch,
 } from 'vue';
 
 // MongoDB
@@ -110,13 +110,11 @@ export default {
     personalisationSettings: {
       type: Object,
     },
+    emitter: {
+      type: Object,
+    },
   },
   setup(props) {
-    // instantiate the app's current instance to get global properties
-    // registered in the main.js file
-    const app = getCurrentInstance();
-    const emitter = app.appContext.config.globalProperties.$emitter;
-
     const boardRef = ref(null);
     const btnPosition = ref(null);
 
@@ -140,7 +138,7 @@ export default {
     // Data Obj to POST to the MongoDB database
     const dataObj = ref({});
 
-    emitter.on('toggle_settings', (data) => {
+    props.emitter.on('toggle_settings', (data) => {
       boardRef.value.style.display = 'block';
 
       userDetail.value.id = data.user.id;
@@ -243,5 +241,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/sass/Unique/_settings';
+@import '@/sass/Unique/_settings_board';
 </style>

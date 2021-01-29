@@ -1,8 +1,10 @@
+@import '../Mixin/user_select';
+
 #logo {
   width: 100%;
   height: auto;
   text-align: center;
-  pointer-events: none;
+  @include userSelect(none);
 
   img {
     width: 40%;

@@ -27,7 +27,7 @@
 /* eslint-disable camelcase */
 
 import {
-  onMounted, reactive, ref, getCurrentInstance, watch,
+  onMounted, reactive, ref, watch,
 } from 'vue';
 
 import p5 from 'p5';
@@ -54,13 +54,11 @@ export default {
     personalisationSettings: {
       type: Object,
     },
+    emitter: {
+      type: Object,
+    },
   },
   setup(props) {
-    // instantiate the app's current instance to get global properties
-    // registered in the main.js file
-    const app = getCurrentInstance();
-    const emitter = app.appContext.config.globalProperties.$emitter;
-
     // indices on map
     const map_properties = reactive({
       i: 0,
@@ -89,8 +87,8 @@ export default {
     function emitMapEvent(state) {
       // socket.io-like package (mitt) for emitting and listening to events
       // between COMPONENTS
-      if (state === 'close') emitter.off('map', map_properties);
-      else emitter.emit('map', map_properties);
+      if (state === 'close') props.emitter.off('map', map_properties);
+      else props.emitter.emit('map', map_properties);
     }
 
     // listen to click event from the dom elements
@@ -184,7 +182,7 @@ export default {
           createHistoricalNeighbours(history, chosenPoints, width, height);
 
           // get songs data from Spotify via the server
-          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p, emitter);
+          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p, props.emitter);
         }
       }
 
@@ -215,10 +213,10 @@ export default {
 
         if (showMap.index !== 0) {
           // The Emotion Map
-          drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, emitter, p);
+          drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, props.emitter, p);
 
           // Song Dots
-          drawSongDots(starDots, chosenPoints, emitter);
+          drawSongDots(starDots, chosenPoints, props.emitter);
 
           // Neighbours
           drawNeighbours(p);
@@ -260,7 +258,7 @@ export default {
           // constrain dragable areas
           if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
             if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
-              removeATempPlaylist(emitter);
+              removeATempPlaylist(props.emitter);
 
               // convert the mapping algorithm to indices
               // move the chosen point to other locations
@@ -283,7 +281,7 @@ export default {
       } = datum;
       showUserPlaylist(title, valence, arousal, id,
         album_imgs, artist_details, artist_names, external_urls,
-        starDots, width, height, p5Obj, emitter);
+        starDots, width, height, p5Obj, props.emitter);
     }
 
     watch(props.personalisationSettings, (data) => {

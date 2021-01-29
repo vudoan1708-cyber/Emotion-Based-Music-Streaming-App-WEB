@@ -27,7 +27,7 @@
 
 import { getUserProfile } from '@/handlers/spotify';
 import {
-  reactive, onBeforeMount, getCurrentInstance,
+  reactive, onBeforeMount,
 } from 'vue';
 
 import { randomCharacters } from '@/components/Utils/logic/random';
@@ -37,12 +37,12 @@ import userDefaultImg from '@/assets/user.png';
 
 export default {
   name: 'UserAccount',
-  setup() {
-    // instantiate the app's current instance to get global properties
-    // registered in the main.js file
-    const app = getCurrentInstance();
-    const emitter = app.appContext.config.globalProperties.$emitter;
-
+  props: {
+    emitter: {
+      type: Object,
+    },
+  },
+  setup(props) {
     const user = reactive({
       id: '',
       name: '',
@@ -102,7 +102,7 @@ export default {
       };
 
       // subscribe to an event to toggle the personalisation settings
-      emitter.emit('toggle_settings', data);
+      props.emitter.emit('toggle_settings', data);
     }
 
     onBeforeMount(async () => {

@@ -1,21 +1,23 @@
 <template>
   <div id="home">
-    <SketchP5 :personalisationSettings="personalisationSettings" />
+    <SketchP5 :personalisationSettings="personalisationSettings" :emitter="emitter" />
     <TopPane />
-    <LeftPane />
-    <BottomPane />
-    <RightPane :personalisationSettings="personalisationSettings" />
+    <LeftPane :emitter="emitter" />
+    <BottomPane :emitter="emitter" />
+    <RightPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
+    <CenterPane :emitter="emitter" />
   </div>
 </template>
 
 <script>
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, getCurrentInstance } from 'vue';
 
 import SketchP5 from '@/components/Sketches/SketchP5.vue';
 import TopPane from '@/components/Common/TopPane.vue';
 import BottomPane from '@/components/Common/BottomPane.vue';
 import LeftPane from '@/components/Common/LeftPane.vue';
 import RightPane from '@/components/Common/RightPane.vue';
+import CenterPane from '@/components/Common/CenterPane.vue';
 
 import { getUserProfile, getUserPersonalisation } from '@/handlers/spotify';
 import { getAllData } from '@/handlers/mongdb';
@@ -30,8 +32,14 @@ export default {
     BottomPane,
     LeftPane,
     RightPane,
+    CenterPane,
   },
   setup() {
+    // instantiate the app's current instance to get global properties
+    // registered in the main.js file
+    const app = getCurrentInstance();
+    const emitter = app.appContext.config.globalProperties.$emitter;
+
     const personalisationSettings = ref([]);
     const prevURL = ref('');
 
@@ -96,6 +104,7 @@ export default {
 
     return {
       personalisationSettings,
+      emitter,
     };
   },
 };
