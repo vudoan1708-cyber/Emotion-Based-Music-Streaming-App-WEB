@@ -25,6 +25,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable new-cap */
 /* eslint-disable camelcase */
+/* eslint-disable no-unused-expressions */
 
 import {
   onMounted, reactive, ref, watch,
@@ -40,7 +41,7 @@ import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMapVi
 import { drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
-import { indicesToMood, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
+import { indicesToMood, moodToIndices, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
 import changeMap from '@/components/Utils/dom/changeMap';
 
 import { handlingSongsData, removeATempPlaylist, showUserPlaylist } from '@/handlers/spotify';
@@ -72,6 +73,14 @@ export default {
       index: 0,
     });
 
+    // Draggable Location on The Emotion Map
+    // Set Default to True,, because the welcoming screen is the Homepage
+    const isDraggable = ref(true);
+
+    // Allow User To Choose Their Locations on The Map Without Acc Opening It
+    // And Only Via Search
+    const isSearched = ref(false);
+
     // DOM
     const angryBtn = ref(null);
     const happyBtn = ref(null);
@@ -90,6 +99,12 @@ export default {
       if (state === 'close') props.emitter.off('map', map_properties);
       else props.emitter.emit('map', map_properties);
     }
+
+    // Listen on the 'nav' event
+    props.emitter.on('nav', (num) => {
+      if (num === 1) isDraggable.value = true;
+      else isDraggable.value = false;
+    });
 
     // listen to click event from the dom elements
     function instantiateMap(num) {
@@ -154,13 +169,18 @@ export default {
         });
       }
 
-      function locationChosen(i, j) {
-        if (starDots[i][j].onHover()) {
+      function locationChosen(i, j, how, trackObj) {
+        if (starDots[i][j].onHover() || isSearched.value) {
           // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
           const { valence, arousal } = indicesToMood(i, j, starDots);
 
           isClicked = true;
-          chosenPoints.push(i, j);
+          // Reassign The Array Variable Like This For Repeated Searches, Instead Of Array Push
+          chosenPoints[0] = i;
+          chosenPoints[1] = j;
+
+          // Refresh The Collected Playlist
+          chosenPoints.length !== 0 ? removeATempPlaylist(props.emitter) : undefined;
 
           // send data to the server via socket
           const data = {
@@ -182,9 +202,32 @@ export default {
           createHistoricalNeighbours(history, chosenPoints, width, height);
 
           // get songs data from Spotify via the server
-          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), starDots, chosenPoints, width, height, p, props.emitter);
+          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, starDots, chosenPoints, width, height, p, props.emitter);
         }
       }
+
+      // Listen on the 'plot_via_search' event
+      props.emitter.on('plot_via_search', (track) => {
+        // Switch The Variable To True In Order To Allow Opening Up The Zone of The Accepted
+        isSearched.value = true;
+        console.log(track);
+        // Get Indices of The Searched Tracks Via Its Mood Values
+        const trackMood = moodToIndices(track.valence, track.arousal, starDots);
+        locationChosen(trackMood.i, trackMood.j, 'search', track);
+
+        // Get The Regions Values
+        let region = null;
+        for (let i = 0; i < starDots.length; i += 1) {
+          for (let j = 0; j < starDots[i].length; j += 1) {
+            region = mapRegions(trackMood.i, trackMood.j, i, starDots);
+          }
+        }
+        // Show The Map, Only Applicable When The Map Is Not Shown Yet
+        showMap.index === 0 ? instantiateMap(region) : undefined;
+
+        // Tell The Navigation Bar To Switch Back To The Homepage After A Song Track Is Chosen
+        props.emitter.emit('nav', (1));
+      });
 
       p.setup = () => {
         p.createCanvas(width, height).parent('p5Canvas');
@@ -235,13 +278,13 @@ export default {
               // to prevent click event happens globally for all regions
               // on clickable on one selected region
               if (region === 1 && showMap.index === 1) {
-                locationChosen(i, j);
+                locationChosen(i, j, 'random', null);
               } else if (region === 2 && showMap.index === 2) {
-                locationChosen(i, j);
+                locationChosen(i, j, 'random', null);
               } else if (region === 3 && showMap.index === 3) {
-                locationChosen(i, j);
+                locationChosen(i, j, 'random', null);
               } else if (region === 4 && showMap.index === 4) {
-                locationChosen(i, j);
+                locationChosen(i, j, 'random', null);
               }
             }
           }
@@ -249,8 +292,8 @@ export default {
       };
 
       p.mouseDragged = () => {
-        // only draggable when the emotion map is shown
-        if (showMap.index !== 0) {
+        // only draggable when the emotion map is shown, and only when a user is on Homepage section
+        if (showMap.index !== 0 && isDraggable.value) {
           // to get affective values
           /// start by translating coordinates values to indices
           const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);

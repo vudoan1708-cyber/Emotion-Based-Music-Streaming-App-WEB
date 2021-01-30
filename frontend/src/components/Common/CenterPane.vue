@@ -4,18 +4,29 @@
     <Search v-if="number === 2" :emitter="emitterObj" />
 
     <!-- Records -->
-    <div v-else-if="number === 3" id="records_area"></div>
+    <div v-else-if="number === 3" id="records_area">
+      <div id="records_content">
+        <!-- Records Board -->
+        <div id="records_board"></div>
+      </div>
+    </div>
 
     <!-- Portfolio -->
-    <div v-else id="portfolio_area"></div>
+    <div v-else id="portfolio_area">
+      <div id="portfolio_content">
+        <!-- Portfolio Board -->
+        <div id="portfolio_board"></div>
+      </div>
+    </div>
 
-    <!-- Result Board -->
+    <!-- Search Result Board -->
     <div v-if="number === 2 && searchResults.length !== 0" id="results">
-      <div v-for="searchResult in searchResults" :key="searchResult.id"  class="result_details">
+      <div v-for="searchResult in searchResults" :key="searchResult.id"  class="result_details"
+        @click="plotTrackOnTheMap(searchResult)">
         <ul>
           <li><img :src="searchResult.album_imgs.url" /></li>
-          <li>{{ searchResult.artist_names }}</li>
-          <li>{{ searchResult.title }}</li>
+          <li id="track_title"><h3>{{ searchResult.title }}</h3></li>
+          <li id="artist_name">{{ searchResult.artist_names }}</li>
         </ul>
       </div>
     </div>
@@ -60,41 +71,21 @@ export default {
       // Handle Cases of Navigating Away From The Search Area
       if (number.value !== 2) searchResults.value = [];
     });
+
+    function plotTrackOnTheMap(track) {
+      emitterObj.value.emit('plot_via_search', track);
+    }
+
     return {
       emitterObj,
       number,
       searchResults,
+      plotTrackOnTheMap,
     };
   },
 };
 </script>
 
 <style scoped lang="scss">
-#center_pane {
-  position: absolute;
-  top: 0;
-  left: 200px;
-  width: 67%;
-  height: 82%;
-  background: rgba(0, 0, 0, 0.84);
-  z-index: 4;
-  text-align: left;
-
-  #results {
-    margin: 40px;
-    position: absolute;
-    display: grid;
-    grid-template-columns: 20% 20% 20% 20% 20%;
-    grid-gap: 10px;
-    .result_details {
-      li {
-        list-style: none;
-        width: 75%;
-        img {
-          width: 100%;
-        }
-      }
-    }
-  }
-}
+@import '@/sass/Unique/_center_pane';
 </style>

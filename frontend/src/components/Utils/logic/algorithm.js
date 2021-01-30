@@ -7,6 +7,12 @@ export function indicesToMood(i, j, starDots) {
   return { valence, arousal };
 }
 
+export function moodToIndices(valence, arousal, starDots) {
+  const i = Math.floor(valence * starDots.length);
+  const j = Math.floor((1 - arousal) * starDots[i].length);
+  return { i, j };
+}
+
 export function moodToCoordinates(valence, arousal, starDots, width, height) {
   const i = Math.floor(valence * starDots.length);
   const j = Math.floor((1 - arousal) * starDots[i].length);

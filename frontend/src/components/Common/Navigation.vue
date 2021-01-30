@@ -66,6 +66,17 @@ export default {
 
     const whichElements = ref([homeElement, searchElement, recordsElement, portfolioElement]);
 
+    // Listen on 'nav' event
+    emitterObj.value.on('nav', (num) => {
+      for (let i = 0; i < whichElements.value.length; i += 1) {
+        if (i === num - 1) {
+          whichElements.value[i].value = true;
+        } else {
+          whichElements.value[i].value = false;
+        }
+      }
+    });
+
     // when a nav button is clicked
     function onClickNav(num) {
       for (let i = 0; i < whichElements.value.length; i += 1) {

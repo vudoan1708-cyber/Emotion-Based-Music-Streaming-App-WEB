@@ -1,4 +1,5 @@
 const getSongs = require('../logic/spotify/getSongs');
+const getRecommendation = require('../logic/spotify/getRecommendation');
 const getAudioFeatures = require('../logic/spotify/getAudioFeatures');
 const getSongPlay = require('../logic/spotify/getSongPlay');
 
@@ -9,12 +10,32 @@ const addSong = require('../logic/spotify/addSong');
 module.exports = (app) => {
 
   // songs
-  app.get('/spotify', async(req, res) => {
+  app.get('/spotify/search', async(req, res) => {
     const TOKEN = req.query.token;
     const KEYWORD = req.query.keyword;
+    const TYPE = req.query.search_type;
     
     try {
-      const song_data = await getSongs(TOKEN, KEYWORD);
+      const song_data = await getSongs(TOKEN, KEYWORD, TYPE);
+
+      const feature_data = await getAudioFeatures(song_data);
+      res.json(feature_data);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/spotify/recommendation', async(req, res) => {
+    const TOKEN = req.query.token;
+    const ID = req.query.id;
+    const ARTIST_ID = req.query.artist_id;
+    const MIN_VALENCE = req.query.min_valence;
+    const MAX_VALENCE = req.query.max_valence;
+    const MIN_AROUSAL = req.query.min_arousal;
+    const MAX_AROUSAL = req.query.max_arousal;
+
+    try {
+      const song_data = await getRecommendation(TOKEN, ID, ARTIST_ID, MIN_VALENCE, MAX_VALENCE, MIN_AROUSAL, MAX_AROUSAL);
 
       const feature_data = await getAudioFeatures(song_data);
       res.json(feature_data);

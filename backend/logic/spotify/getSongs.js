@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-module.exports = async function getSongs(TOKEN, KEYWORD) {
+module.exports = async function getSongs(TOKEN, KEYWORD, TYPE) {
   // base URL
   const BASE_URL = 'https://api.spotify.com/v1/search?';
 
@@ -11,10 +11,10 @@ module.exports = async function getSongs(TOKEN, KEYWORD) {
   const MARKET = 'from_token';
   
   // query params
-  const QUERY = KEYWORD + `&type=track&market=${MARKET}&limit=${lim}`;
+  const QUERY = `${KEYWORD}&type=${TYPE}&market=${MARKET}&limit=${lim}`;
 
   // get the url
-  const FETCH_URL = BASE_URL + `q=${QUERY}`;
+  const FETCH_URL = `${BASE_URL}q=${QUERY}`;
 
   // create options object that include Authorisation header
   const options = {
