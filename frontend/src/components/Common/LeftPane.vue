@@ -2,12 +2,15 @@
   <div id="left_pane">
     <Logo />
     <Navigation :emitter="emitterObj" />
+    <MapKey />
   </div>
 </template>
 
 <script>
 import Logo from '@/components/Common/Logo.vue';
 import Navigation from '@/components/Common/Navigation.vue';
+import MapKey from '@/components/Common/MapKey.vue';
+
 import { ref } from 'vue';
 
 export default {
@@ -20,6 +23,7 @@ export default {
   components: {
     Logo,
     Navigation,
+    MapKey,
   },
   setup(props) {
     const emitterObj = ref(props.emitter);

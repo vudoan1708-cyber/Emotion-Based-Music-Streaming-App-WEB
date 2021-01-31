@@ -83,8 +83,9 @@ function makeBGStars() {
   }
 }
 
-function drawGalaxyBG() {
+async function drawGalaxyBG() {
   for (let i = 0; i < galaxy.length; i++) {
+    await sleep(50);
     galaxy[i].show();
 
     if (!showMap)
@@ -265,7 +266,7 @@ function fillStarsColor(i, j) {
   push();
     
     // the centred dot
-    if (region === 0 && showMap !== 0) {
+    if (region === 0) {
 
       if (starDots[i][j].onHover()) {
       
@@ -304,10 +305,6 @@ function fillStarsColor(i, j) {
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
         }
 
-        if (!isClicked) {
-          twinkleEffects(i, j);
-        }
-
         // orange
         fill(200, 98, 20, 90);
 
@@ -329,10 +326,6 @@ function fillStarsColor(i, j) {
     
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-        }
-
-        if (!isClicked) {
-          twinkleEffects(i, j);
         }
 
         // blue
@@ -358,11 +351,6 @@ function fillStarsColor(i, j) {
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
         }
 
-        if (!isClicked) {
-        twinkleEffects(i, j);
-        
-        }
-
         // green
         fill(176, 220, 90, 90);
 
@@ -384,11 +372,6 @@ function fillStarsColor(i, j) {
     
           // show all stars with different colours depending on different conditions
           star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
-        }
-
-        if (!isClicked) {
-          twinkleEffects(i, j);
-      
         }
 
         // pink
@@ -414,7 +397,7 @@ function drawStarDots() {
       for (let j = 0; j < starDots[i].length; j++) {
   
         if (!isClicked) {    
-
+          twinkleEffects(i, j);
           fillStarsColor(i, j);
         } else {
           fillStarsColor(i, j);
@@ -553,7 +536,7 @@ function mousePressed() {
     for (let i = 0; i < starDots.length; i++) {
       for (let j = 0; j < starDots[i].length; j++) {
         const region = mapRegions(mouseIndices.i, mouseIndices.j, i);
-  
+        showMap = region;
         // to prevent click event happens globally for all regions
         // on clickable on one selected region
         if (region === 1 && showMap === 1) {
@@ -578,16 +561,14 @@ function mousePressed() {
 function mouseDragged() {
   // only draggable when the emotion map is shown
   if (showMap !== 0) {
+    
+    // to get affective values
+    // start by translating coordinates values to indices
+    const mouseIndices = coordinatesToIndices(mouseX, mouseY, width, height);
 
-    const chosenPoints_coordinates = indicestoCoordinates(chosenPoints[0], chosenPoints[1]);
-    console.log(chosenPoints_coordinates)
-    // map_cover.style.display = 'flex';
-
-    if (chosenPoints_coordinates.x > starDots[0][0].x  - starDots[0][0].size / 2 
-      && chosenPoints_coordinates.x < starDots[starDots.length - 1][0].x  + starDots[starDots.length - 1][0].size / 2) {
-      if (chosenPoints_coordinates.y > starDots[0][0].y  - starDots[0][0].size / 2
-      && chosenPoints_coordinates.y < starDots[0][starDots[0].length - 1].y - starDots[0][starDots[0].length - 1].size / 2) {
-        console.log('DRAGGABLE');
+    // constrain dragable areas
+    if (mouseIndices.i >= 0 && mouseIndices.i < starDots[starDots.length - 1][0].i) {
+      if (mouseIndices.j >= 0 && mouseIndices.j < starDots[0][starDots[0].length - 1].j) {
 
         // empty the playlist and refill it
         playlist = [];
@@ -598,10 +579,9 @@ function mouseDragged() {
         const indices = coordinatesToIndices(mouseX, mouseY);
         chosenPoints[0] = indices.i;
         chosenPoints[1] = indices.j;
+
+        showMap = mapRegions(chosenPoints[0], chosenPoints[1], chosenPoints[0]);
       }
-    } else {
-      chosenPoints[0] = starDots[starDots.length - 1][0].i;
-      chosenPoints[1] = starDots[starDots.length - 1][0].j;
     }
 
     // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
@@ -660,7 +640,7 @@ function hashURL () {
   return result;
 }
 
-function sleep(ms) {
+async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -692,14 +672,6 @@ async function makeATempPlaylist(access_token, id, title, valence, arousal) {
                 
           // append the song's ids to the array
           playlist.push(id);
-  
-          // preview_urls.push(preview_url);
-  
-          // titles.push(title);
-  
-          // valences.push(song_valence);
-  
-          // arousals.push(song_energy);
   
           console.log(`Counter ${Number(playlist.length)}`);
   

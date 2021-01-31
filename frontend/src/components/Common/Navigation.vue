@@ -79,15 +79,8 @@ export default {
 
     // when a nav button is clicked
     function onClickNav(num) {
-      for (let i = 0; i < whichElements.value.length; i += 1) {
-        if (i === num - 1) {
-          whichElements.value[i].value = true;
-          // Emit A Number Representing a Clicked Element
-          emitterObj.value.emit('nav', num);
-        } else {
-          whichElements.value[i].value = false;
-        }
-      }
+      // Emit A Number Representing a Clicked Element
+      emitterObj.value.emit('nav', num);
     }
 
     return {

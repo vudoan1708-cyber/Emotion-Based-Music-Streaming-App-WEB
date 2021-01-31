@@ -181,7 +181,6 @@ export default {
       };
       draggableElement.indexNum = -1;
       draggableElement.isDragged = false;
-      draggableElement.metadata = '';
     }
 
     async function awaitToAddSong(isActive) {
@@ -190,6 +189,7 @@ export default {
         // Only Applicable When The Playlist Is Playing
         await addSongToQueue(draggableElement.metadata.id);
         isPlayerActive.value = false;
+        draggableElement.metadata = '';
       }
     }
 

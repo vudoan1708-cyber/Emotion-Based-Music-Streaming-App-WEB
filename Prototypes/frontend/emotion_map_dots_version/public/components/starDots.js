@@ -18,7 +18,7 @@ class StarDots {
       this.subt += this.acc;
     else
       this.angle += this.acc;
-    this.acc += 0.0000000000001;
+    this.acc += 0.0000000001;
   }
 
   show() {

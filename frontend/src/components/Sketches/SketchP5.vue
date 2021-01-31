@@ -36,7 +36,7 @@ import io from 'socket.io-client';
 
 // Utilities
 import mapRegions from '@/components/Utils/p5/mapRegions';
-import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/bg';
+import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/galaxyVisualisation';
 import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMapVisualisation';
 import { drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
@@ -255,36 +255,42 @@ export default {
         emitMapEvent('open');
 
         if (showMap.index !== 0) {
-          // The Emotion Map
-          drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, props.emitter, p);
+          // For Performances Reason, Hide All Song Dots And Neighbours
+          // All The Map-Related Visualisation Elements Will Always Be Drawn When Homepage is Visited
+          if (isDraggable.value) {
+            // The Emotion Map
+            drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, props.emitter, p);
 
-          // Song Dots
-          drawSongDots(starDots, chosenPoints, props.emitter);
+            // Song Dots
+            drawSongDots(starDots, chosenPoints, props.emitter);
 
-          // Neighbours
-          drawNeighbours(p);
+            // Neighbours
+            drawNeighbours(p);
+          }
         }
       };
 
       p.mousePressed = () => {
         // only clickable when the emotion map is shown
         if (showMap.index !== 0) {
-          const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+          if (map_properties.status) {
+            const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
 
-          for (let i = 0; i < starDots.length; i += 1) {
-            for (let j = 0; j < starDots[i].length; j += 1) {
-              const region = mapRegions(mouseIndices.i, mouseIndices.j, i, starDots);
+            for (let i = 0; i < starDots.length; i += 1) {
+              for (let j = 0; j < starDots[i].length; j += 1) {
+                const region = mapRegions(mouseIndices.i, mouseIndices.j, i, starDots);
 
-              // to prevent click event happens globally for all regions
-              // on clickable on one selected region
-              if (region === 1 && showMap.index === 1) {
-                locationChosen(i, j, 'random', null);
-              } else if (region === 2 && showMap.index === 2) {
-                locationChosen(i, j, 'random', null);
-              } else if (region === 3 && showMap.index === 3) {
-                locationChosen(i, j, 'random', null);
-              } else if (region === 4 && showMap.index === 4) {
-                locationChosen(i, j, 'random', null);
+                // to prevent click event happens globally for all regions
+                // on clickable on one selected region
+                if (region === 1 && showMap.index === 1) {
+                  locationChosen(i, j, 'random', null);
+                } else if (region === 2 && showMap.index === 2) {
+                  locationChosen(i, j, 'random', null);
+                } else if (region === 3 && showMap.index === 3) {
+                  locationChosen(i, j, 'random', null);
+                } else if (region === 4 && showMap.index === 4) {
+                  locationChosen(i, j, 'random', null);
+                }
               }
             }
           }
@@ -293,21 +299,26 @@ export default {
 
       p.mouseDragged = () => {
         // only draggable when the emotion map is shown, and only when a user is on Homepage section
-        if (showMap.index !== 0 && isDraggable.value) {
-          // to get affective values
-          /// start by translating coordinates values to indices
-          const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+        if (showMap.index !== 0) {
+          if (isDraggable.value) {
+            // to get affective values
+            /// start by translating coordinates values to indices
+            const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
 
-          // constrain dragable areas
-          if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
-            if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
-              removeATempPlaylist(props.emitter);
+            // constrain dragable areas
+            if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
+              if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
+                removeATempPlaylist(props.emitter);
 
-              // convert the mapping algorithm to indices
-              // move the chosen point to other locations
-              const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-              chosenPoints[0] = i;
-              chosenPoints[1] = j;
+                // convert the mapping algorithm to indices
+                // move the chosen point to other locations
+                const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+                chosenPoints[0] = i;
+                chosenPoints[1] = j;
+
+                // Reassign showMap index to change colour of region based on the chosen point's location
+                showMap.index = mapRegions(chosenPoints[0], chosenPoints[1], chosenPoints[0], starDots);
+              }
             }
           }
         }
@@ -328,7 +339,6 @@ export default {
     }
 
     watch(props.personalisationSettings, (data) => {
-      console.log(data);
       data.forEach((datum, index) => {
         if (index !== 0) {
           datum.forEach((d) => {

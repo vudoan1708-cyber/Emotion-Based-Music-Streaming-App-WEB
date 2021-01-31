@@ -5,7 +5,6 @@
 import StarDots from '@/components/Utils/p5/classes/starDots';
 import star from '@/components/Utils/p5/star';
 import mapRegions from '@/components/Utils/p5/mapRegions';
-import twinkleEffects from '@/components/Utils/p5/twinkleEffects';
 
 import make2dArray from '@/components/Utils/logic/array';
 
@@ -106,7 +105,6 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
 
       mutateMapProps(map, 'Land of Aggressiveness', emitter, starDots, width, height, p5);
     }
-    if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // red
     p5.fill(225, green, blue, alpha);
@@ -129,7 +127,6 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
 
       mutateMapProps(map, 'Land of Sadness', emitter, starDots, width, height, p5);
     }
-    if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // blue
     red = (100 * i) / j;
@@ -153,7 +150,6 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
 
       mutateMapProps(map, 'Land of Excitement', emitter, starDots, width, height, p5);
     }
-    if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // green
     red = (255 * (j + 5)) / i;
@@ -179,13 +175,12 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
 
       mutateMapProps(map, 'Land of Calmness', emitter, starDots, width, height, p5);
     }
-    if (!isClicked) twinkleEffects(i, j, starDots, p5);
 
     // pink
     p5.fill(220, 255 - green, 250, 255 - alpha);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
 
-    // dots on the intersection lines
+    // dots on the unselected ones
   } else {
     p5.fill(90, 150);
     star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4, p5);
@@ -221,7 +216,6 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, showMa
         const a = p5.random(20, 255);
         p5.fill(c, a);
 
-        // if (songDots.)
         star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 4, starDots[i][j].size / 8, 4, p5);
 
         fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, emitter, width, height, p5);

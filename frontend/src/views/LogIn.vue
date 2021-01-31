@@ -26,7 +26,7 @@ import p5 from 'p5';
 import { LoginHandlers } from '@/handlers/spotify';
 
 // Ultilities
-import { createBGStars, drawGalaxyBG, moveGalaxyBG } from '@/components/Utils/p5/bg';
+import { createBGStars, drawGalaxyBG, moveGalaxyBG } from '@/components/Utils/p5/galaxyVisualisation';
 
 import { onMounted, ref } from 'vue';
 

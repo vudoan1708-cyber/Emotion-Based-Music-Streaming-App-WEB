@@ -1,0 +1,56 @@
+@import '../Mixin/transition';
+@import '../Mixin/user_select';
+
+#map_key {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgb(0, 0, 0);
+
+  #key_content {
+    margin: 10px;
+    padding: 2px;
+    text-align: left;
+    @include userSelect(none);
+
+    ul {
+      list-style: none;
+
+      li {
+        margin: 10px;
+
+        .key_sections {
+          vertical-align: middle;
+        }
+
+        label {
+          text-align: right;
+          color: rgb(116, 114, 114);
+          font-size: 0.75rem;
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+
+  #toggle_map_key {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(63, 63, 63, 0.75);
+    padding: 0.5px;
+    cursor: pointer;
+    @include userSelect(none);
+    @include transitionProperties(background, 0.2s);
+
+    h3 {
+      color: rgb(27, 27, 27);
+    }
+
+    &:hover {
+      background-color:rgb(165, 165, 165);
+    }
+  }
+}

@@ -35,7 +35,7 @@
         </div>
 
         <div class="titles" :class="{ blur: isBlur }">
-          <h4>Allow Spotify to Recommend</h4>
+          <h4>Allow Muserfly to Access Your Spotify Playlists</h4>
         </div>
         <div class="check_fields" :class="{ blur: isBlur }">
           <input type="checkbox" ref="spotifyBtn">
@@ -51,21 +51,21 @@
         <div class="fields" id="minSongNum">
           <label>Minimum Number of Tracks to Play</label><br />
           <input ref="tracksField" type="number" placeholder="5"
-                  :value="defaultPersonalisedValues().numOfTracks">
+                  :value="numOfTracksValue">
         </div>
 
         <!-- Artists -->
         <div class="fields" id="artists">
           <label>Artists</label><br />
           <input ref="artistsField" type="text" placeholder="Artist full names"
-                  :value="defaultPersonalisedValues().artists">
+                  :value="artistsValue">
         </div>
 
         <!-- Themes -->
         <div class="fields" id="themes">
           <label>Themes</label><br />
           <input ref="themesField" type="text" placeholder="Love, Family,..."
-                  :value="defaultPersonalisedValues().themes">
+                  :value="themesValue">
         </div>
 
         <!-- Genres -->
@@ -78,7 +78,7 @@
         <div class="fields" id="countries">
           <label>Market</label><br />
           <input ref="marketField" type="text" placeholder="Country's ISO-2 code"
-                  :value="defaultPersonalisedValues().market">
+                  :value="marketValue">
         </div>
       </div>
     </div>
@@ -128,6 +128,11 @@ export default {
     const artistsField = ref(null);
     const themesField = ref(null);
     const marketField = ref(null);
+
+    const artistsValue = ref('');
+    const marketValue = ref('from_token');
+    const numOfTracksValue = ref('5');
+    const themesValue = ref('');
 
     // Keep Track of A Button Previous State Before Toggling Checkboxes Are Performed
     const btnSavedStates = ref({});
@@ -189,13 +194,11 @@ export default {
       toggleBlurSettings();
     }
 
-    function defaultPersonalisedValues() {
-      return {
-        numOfTracks: 5,
-        artists: [],
-        themes: [],
-        market: 'from_token',
-      };
+    function defaultPersonalisedValues(artists, market, numOfTracks, themes) {
+      artistsValue.value = artists !== '' ? artists : artistsValue.value;
+      marketValue.value = market !== '' ? market : 'from_market';
+      numOfTracksValue.value = numOfTracks !== 0 ? numOfTracks : 5;
+      themesValue.value = themes !== '' ? themes : themesValue.value;
     }
 
     // watch constantly any updates comming from the parent components
@@ -207,6 +210,12 @@ export default {
           const { muserfly, spotify } = data[i][datum.length - 1].settings_data.last_checked;
           personalisationBtn.value.checked = muserfly;
           spotifyBtn.value.checked = spotify;
+
+          // Replace Default Settings With The Data
+          const {
+            artists, market, numOfTracks, themes,
+          } = data[i][datum.length - 1].settings_data.user.personalisation;
+          defaultPersonalisedValues(artists, market, numOfTracks, themes);
         }
       });
 
@@ -230,7 +239,10 @@ export default {
       spotifyBtn,
       isBlur,
       toggleCheckbox,
-      defaultPersonalisedValues,
+      artistsValue,
+      marketValue,
+      numOfTracksValue,
+      themesValue,
       tracksField,
       artistsField,
       themesField,

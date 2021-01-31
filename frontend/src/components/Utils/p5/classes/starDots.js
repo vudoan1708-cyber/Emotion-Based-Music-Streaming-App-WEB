@@ -24,7 +24,7 @@ export default class StarDots {
   update(categorgy) {
     if (categorgy === 'spread') this.subt += this.acc;
     else this.angle += this.acc;
-    this.acc += 0.0000000000001;
+    this.acc += 0.00000001;
   }
 
   show() {

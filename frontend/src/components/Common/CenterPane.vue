@@ -4,12 +4,7 @@
     <Search v-if="number === 2" :emitter="emitterObj" />
 
     <!-- Records -->
-    <div v-else-if="number === 3" id="records_area">
-      <div id="records_content">
-        <!-- Records Board -->
-        <div id="records_board"></div>
-      </div>
-    </div>
+    <Records v-else-if="number === 3" />
 
     <!-- Portfolio -->
     <Portfolio v-else :emitter="emitterObj" />
@@ -33,6 +28,7 @@ import { ref } from 'vue';
 
 import Search from '@/components/Common/Search.vue';
 import Portfolio from '@/components/Common/Portfolio.vue';
+import Records from '@/components/Common/Records.vue';
 
 export default {
   name: 'CenterPane',
@@ -44,6 +40,7 @@ export default {
   components: {
     Search,
     Portfolio,
+    Records,
   },
   setup(props) {
     // Emitter
