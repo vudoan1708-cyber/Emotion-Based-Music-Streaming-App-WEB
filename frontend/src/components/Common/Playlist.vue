@@ -181,6 +181,7 @@ export default {
       };
       draggableElement.indexNum = -1;
       draggableElement.isDragged = false;
+      draggableElement.metadata = '';
     }
 
     async function awaitToAddSong(isActive) {

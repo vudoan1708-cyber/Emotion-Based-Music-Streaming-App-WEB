@@ -37,7 +37,7 @@ export default {
     watch(searchInput, (text) => {
       // get keyword for search
       const KEYWORD = getKeyword('by_user', text);
-      analyseResults(KEYWORD);
+      analyseResults(escape(KEYWORD));
     });
 
     onMounted(() => {
@@ -62,7 +62,7 @@ export default {
     font-size: 1.5rem;
     border-radius: 20px;
     outline: none;
-    padding: 5px;
+    padding: 5px 20px;
   }
 }
 </style>

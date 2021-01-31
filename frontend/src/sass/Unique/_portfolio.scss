@@ -1,0 +1,79 @@
+@import '../Mixin/position';
+
+#portfolio_area {
+  width: 100%;
+  height: 100%;
+  color: rgb(122, 122, 122);
+
+  #portfolio_board {
+    @include positionProperties(absolute, 50%, '', 0, '');
+    transform: translateX(-50%);
+    width: 75%;
+    height: 100%;
+    text-align: center;
+    margin: 40px 0;
+
+    #upload_area {
+      position: relative;
+      width: 100%;
+      height: 50%;
+      margin-bottom: 25px;
+
+      #upload_placeholder {
+        position: relative;
+        margin: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 65%;
+        height: 80%;
+        border: 8px dashed rgba(255, 255, 255, 0.842);
+        h2 {
+          position: relative;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+
+      #upload_input {
+        input[type=file] {
+          background-color: rgb(194, 194, 194);
+          outline: none;
+          border-radius: 5px;
+          padding: 5px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    #upload_type {
+      position: relative;
+      height: 10%;
+      .upload_options {
+        display: inline-block;
+        margin: 0 10px;
+        .upload_option_title {
+          margin: 10px;
+        }
+      }
+    }
+
+    #portfolio_display {
+      position: relative;
+    }
+  }
+}
+
+#audioDownloadProgress {
+  @include positionProperties(fixed, 50%, '', 0, '');
+  transform: translateX(-50%);
+  height: 20%;
+  width: 50%;
+  background-color: rgb(36, 36, 36);
+  text-align: center;
+  border-radius: 10px;
+  progress {
+    @include positionProperties(absolute, 50%, '', 50%, '');
+    transform: translate(-50%, -50%);
+    width: 75%;
+  }
+}

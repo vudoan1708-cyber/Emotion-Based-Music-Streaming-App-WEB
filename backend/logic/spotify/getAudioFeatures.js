@@ -50,34 +50,37 @@ module.exports = async function getAudioFeature(data) {
     const json = await request.json();
     const audio_features = json.audio_features;
 
-    // clean up the data from Spotify 
-    // and only send what is necessary to the client
-    for (let i = 0; i < audio_features.length; i++) {
-
-      if (audio_features[i] !== null) {
-
-        // IDs and TITLEs and other arrays have the same length as audio_features array
-        responses.push({
-          id: IDs[i],
-          title: TITLES[i],
-          valence: audio_features[i].valence,
-          arousal: audio_features[i].energy,
-          artist_names: ARTIST_NAMES[i],
-          artist_details: ARTIST_DETAILS[i],
-          album_imgs: ALBUM_IMGS[i],
-          external_urls: EXTERNAL_URLS[i],
-          nextURL: NEXT_URL !== undefined ? NEXT_URL : '',
-          access_token: TOKEN,
-        });
-      } else {
-        responses.push({'error': 'TypeError: null property'});
+    // handle undefined audio_features data scenario
+    if (audio_features !== undefined) {
+      // clean up the data from Spotify 
+      // and only send what is necessary to the client
+      for (let i = 0; i < audio_features.length; i++) {
+  
+        if (audio_features[i] !== null) {
+  
+          // IDs and TITLEs and other arrays have the same length as audio_features array
+          responses.push({
+            id: IDs[i],
+            title: TITLES[i],
+            valence: audio_features[i].valence,
+            arousal: audio_features[i].energy,
+            artist_names: ARTIST_NAMES[i],
+            artist_details: ARTIST_DETAILS[i],
+            album_imgs: ALBUM_IMGS[i],
+            external_urls: EXTERNAL_URLS[i],
+            nextURL: NEXT_URL !== undefined ? NEXT_URL : '',
+            access_token: TOKEN,
+          });
+        } else {
+          responses.push({'error': 'TypeError: null property'});
+        }
       }
-    }
+    } else responses.push({'error': 'TypeError: undefined property'});;
     return responses;
       
   // catch for any error
   } catch(err) {
-      console.warn(err);
-      return err;
+    console.warn(err);
+    return err;
   }
 }

@@ -12,12 +12,7 @@
     </div>
 
     <!-- Portfolio -->
-    <div v-else id="portfolio_area">
-      <div id="portfolio_content">
-        <!-- Portfolio Board -->
-        <div id="portfolio_board"></div>
-      </div>
-    </div>
+    <Portfolio v-else :emitter="emitterObj" />
 
     <!-- Search Result Board -->
     <div v-if="number === 2 && searchResults.length !== 0" id="results">
@@ -37,6 +32,7 @@
 import { ref } from 'vue';
 
 import Search from '@/components/Common/Search.vue';
+import Portfolio from '@/components/Common/Portfolio.vue';
 
 export default {
   name: 'CenterPane',
@@ -47,6 +43,7 @@ export default {
   },
   components: {
     Search,
+    Portfolio,
   },
   setup(props) {
     // Emitter

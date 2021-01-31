@@ -65,7 +65,7 @@ export default {
       appState.map = map.status;
     });
 
-    // subscribe to the 'song_data' event
+    // Listen on the 'song_data' event
     props.emitter.on('song_data', (data) => {
       // handle removeAll label
       if (data.song !== undefined) {

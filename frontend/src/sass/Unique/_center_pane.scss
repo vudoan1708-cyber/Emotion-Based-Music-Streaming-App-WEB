@@ -1,10 +1,10 @@
+@import '../Mixin/position';
+
 #center_pane {
-  position: absolute;
-  top: 0;
-  left: 205px;
+  @include positionProperties(absolute, 205px, '', 0, '');
   width: 66.75%;
   height: 82%;
-  background: rgba(0, 0, 0, 0.84);
+  background: rgba(0, 0, 0, 0.9);
   z-index: 4;
   text-align: left;
   overflow-y: scroll;

@@ -43,13 +43,16 @@ module.exports = async function getSongs(TOKEN, KEYWORD, TYPE) {
     // check if an access token is still valid through JSON response
     if (json.tracks !== undefined) {
       for (let i = 0; i < lim; i++) {
-        ids.push(json.tracks.items[i].id);
-        preview_urls.push(json.tracks.items[i].preview_url);
-        titles.push(json.tracks.items[i].name);
-        external_urls.push(json.tracks.items[i].external_urls.spotify);
-        artist_names.push(json.tracks.items[i].artists[0].name);
-        artist_details.push(json.tracks.items[i].artists[0].uri);
-        album_imgs.push(json.tracks.items[i].album.images[0]);
+        // handle undefined returned item scenario
+        if (json.tracks.items[i] !== undefined) {
+          ids.push(json.tracks.items[i].id);
+          preview_urls.push(json.tracks.items[i].preview_url);
+          titles.push(json.tracks.items[i].name);
+          external_urls.push(json.tracks.items[i].external_urls.spotify);
+          artist_names.push(json.tracks.items[i].artists[0].name);
+          artist_details.push(json.tracks.items[i].artists[0].uri);
+          album_imgs.push(json.tracks.items[i].album.images[0]);
+        } else continue;
       }
       return { ids, preview_urls, titles, external_urls, 
               artist_names, artist_details, album_imgs, TOKEN };

@@ -25,12 +25,13 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
 
-import { getUserProfile } from '@/handlers/spotify';
+import { getUserProfile, LoginHandlers } from '@/handlers/spotify';
 import {
   reactive, onBeforeMount,
 } from 'vue';
 
 import { randomCharacters } from '@/components/Utils/logic/random';
+import isEmpty from '@/components/Utils/logic/object';
 
 // assets
 import userDefaultImg from '@/assets/user.png';
@@ -62,14 +63,17 @@ export default {
     async function getUser() {
       const data = await getUserProfile();
 
-      // re-aasign responded data to the reactive object
-      user.id = data.ID === '' ? randomCharacters(10) : data.ID;
-      user.name = data.NAME === '' ? 'Anonymous' : data.NAME;
-      user.location = data.COUNTRY === '' ? 'Not provided' : data.COUNTRY;
-      user.email = data.EMAIL === '' ? 'Not provided' : data.EMAIL;
+      // check if the returned data is invalid or not (expired token scenario)
+      if (!isEmpty(data)) {
+        // re-aasign responded data to the reactive object
+        user.id = data.ID === '' ? randomCharacters(10) : data.ID;
+        user.name = data.NAME === '' ? 'Anonymous' : data.NAME;
+        user.location = data.COUNTRY === '' ? 'Not provided' : data.COUNTRY;
+        user.email = data.EMAIL === '' ? 'Not provided' : data.EMAIL;
 
-      // eslint-disable-next-line max-len
-      user.img = data.IMAGES.length > 0 ? data.IMAGES[0] : user.img;
+        // eslint-disable-next-line max-len
+        user.img = data.IMAGES.length > 0 ? data.IMAGES[0] : user.img;
+      } else LoginHandlers();
     }
 
     function isClicked() {
