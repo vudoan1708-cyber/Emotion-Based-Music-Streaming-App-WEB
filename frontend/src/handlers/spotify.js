@@ -405,9 +405,9 @@ export async function handlingSongsData(valence, arousal, how, trackObj, starDot
   } else KEYWORD = getKeyword(how, trackObj);
 
   // get songs' valence and arousal data
-  const audio_features = await getSongsData(escape(KEYWORD).normalize(), 'track');
+  let audio_features = await getSongsData(escape(KEYWORD).normalize(), 'track');
 
-  if (audio_features === null) await getSongsData(escape(trackObj.title).normalize(), 'album');
+  if (audio_features === null) audio_features = await getSongsData(escape(KEYWORD).normalize(), 'album');
 
   else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
   // console.log(audio_features);

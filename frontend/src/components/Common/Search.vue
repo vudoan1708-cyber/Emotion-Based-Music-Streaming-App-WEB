@@ -30,14 +30,19 @@ export default {
 
     async function analyseResults(KEYWORD) {
       // get songs' valence and arousal data
-      const audioFeatures = await getSongsData(KEYWORD, 'track');
-      emitterObj.value.emit('search', audioFeatures);
+      const audioFeatures = await getSongsData(escape(KEYWORD), 'track');
+      // Emitted Obj
+      const emitData = {
+        KEYWORD,
+        audioFeatures,
+      };
+      emitterObj.value.emit('search', emitData);
     }
 
     watch(searchInput, (text) => {
       // get keyword for search
       const KEYWORD = getKeyword('by_user', text);
-      analyseResults(escape(KEYWORD));
+      analyseResults((KEYWORD));
     });
 
     onMounted(() => {

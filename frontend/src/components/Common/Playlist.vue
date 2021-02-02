@@ -4,7 +4,9 @@
     <!-- Collected Tracks -->
     <h3>Collected Tracks: {{ acceptedSongData.length }}</h3>
     <div ref="collectedTracksStyling" id="collected" style="min-height: 30%;"
-                @mouseup="endDrag('collected')">
+                @mouseup="endDrag('collected')"
+                @mouseover="onMouseOverCollected(true)"
+                @mouseout="onMouseOverCollected(false)">
       <div class="tracks" v-for="data in acceptedSongData" :key="data.id">
         <img :src="data.album_imgs.url"
               :style="{ width: data.album_imgs.width, height: data.album_imgs.height }"
@@ -21,7 +23,7 @@
     <h3>All Tracks: {{ allSongData.length }}</h3>
     <div ref="allTracksStyling" id="all" style="min-height: 40%;"
               @mouseup="endDrag('all')">
-      <div class="tracks" v-for="data in allSongData" :key="data.id"
+      <div class="tracks tracks_all_info" v-for="data in allSongData" :key="data.id"
               @mousedown="initDrag($event, data.id)">
         <img :src="data.album_imgs.url"
               :style="{ width: data.album_imgs.width, height: data.album_imgs.height }"
@@ -137,6 +139,15 @@ export default {
       }
     }
 
+    function onMouseOverCollected(isOn) {
+      // Watch if Dragged Element is On Collected Tracks Area
+      if (isOn) {
+        collectedTracksStyling.value.style.filter = (draggableElement.isDragged && draggableElement.metadata !== '') ? 'drop-shadow(0px 0px 10px gray)' : '';
+      } else {
+        collectedTracksStyling.value.style.filter = '';
+      }
+    }
+
     // During Dragging
     function duringDrag(e) {
       // If An Element is Dragged
@@ -150,10 +161,13 @@ export default {
     function endDrag(where) {
       // If The Song Is Dropped At The Original Place
       if (where === 'all') {
-        // Handle Error When Mouse Up Event Is Subscribed When There is no Songs Yet
-        if (allSongData.value.length !== 0) {
-          // Put The Song Back To Its Original Place
-          allSongData.value.splice(draggableElement.indexNum, 0, draggableElement.metadata);
+        // If The Song Was Found Before The Mouseup Event
+        if (draggableElement.metadata !== '') {
+          // Handle Error When Mouse Up Event Is Subscribed When There is no Songs Yet
+          if (allSongData.value.length !== 0) {
+            // Put The Song Back To Its Original Place
+            allSongData.value.splice(draggableElement.indexNum, 0, draggableElement.metadata);
+          }
         }
       // If The Song Is Dropped on The Collected Area
       } else {
@@ -204,6 +218,7 @@ export default {
       allSongData,
       acceptedSongData,
       initDrag,
+      onMouseOverCollected,
       duringDrag,
       endDrag,
       draggableElement,

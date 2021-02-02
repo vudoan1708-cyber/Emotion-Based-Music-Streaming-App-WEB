@@ -14,11 +14,18 @@
       <div v-for="searchResult in searchResults" :key="searchResult.id"  class="result_details"
         @click="plotTrackOnTheMap(searchResult)">
         <ul>
-          <li><img :src="searchResult.album_imgs.url" /></li>
-          <li id="track_title"><h3>{{ searchResult.title }}</h3></li>
-          <li id="artist_name">{{ searchResult.artist_names }}</li>
+          <li><img v-if="searchResult.error === undefined"
+            :src="searchResult.album_imgs.url" /></li>
+          <li v-if="searchResult.error === undefined"
+            id="track_title"><h3>{{ searchResult.title }}</h3></li>
+          <li v-if="searchResult.error === undefined"
+            id="artist_name">{{ searchResult.artist_names }}</li>
         </ul>
       </div>
+    </div>
+    <div v-else-if="number === 2 && searchResults.length === 0 && searchKeywords !== ''"
+      id="no_results">
+      <h3>No Results Found For "{{ searchKeywords }}"</h3>
     </div>
   </div>
 </template>
@@ -51,11 +58,15 @@ export default {
 
     // Array to Hold Search Results
     const searchResults = ref([]);
+    // String to Hold Searched Keyword
+    const searchKeywords = ref('');
 
     // Listen to 'search' event
     emitterObj.value.on('search', (results) => {
       // Shallow Copy The Param and Reassign it To The searchResults Array
-      searchResults.value = results !== null ? [...results] : [];
+      searchResults.value = results.audioFeatures !== null ? [...results.audioFeatures] : [];
+      // Reassign The String
+      searchKeywords.value = results.KEYWORD;
     });
 
     // Listen to 'nav' event
@@ -63,7 +74,10 @@ export default {
       number.value = num;
 
       // Handle Cases of Navigating Away From The Search Area
-      if (number.value !== 2) searchResults.value = [];
+      if (number.value !== 2) {
+        searchResults.value = [];
+        searchKeywords.value = '';
+      }
     });
 
     function plotTrackOnTheMap(track) {
@@ -74,6 +88,7 @@ export default {
       emitterObj,
       number,
       searchResults,
+      searchKeywords,
       plotTrackOnTheMap,
     };
   },
