@@ -30,7 +30,7 @@ export default {
 
     async function analyseResults(KEYWORD) {
       // get songs' valence and arousal data
-      const audioFeatures = await getSongsData(escape(KEYWORD), 'track');
+      const audioFeatures = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
       // Emitted Obj
       const emitData = {
         KEYWORD,

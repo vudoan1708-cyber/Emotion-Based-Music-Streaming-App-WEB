@@ -18,7 +18,7 @@ module.exports = (app) => {
     try {
       const song_data = await getSongs(TOKEN, KEYWORD, TYPE);
 
-      const feature_data = await getAudioFeatures(song_data);
+      const feature_data = song_data.type === undefined ? await getAudioFeatures(song_data) : await getSongs(TOKEN, escape(KEYWORD), TYPE);
       res.json(feature_data);
     } catch(err) {
       res.json(err);

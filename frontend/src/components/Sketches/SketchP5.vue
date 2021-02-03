@@ -210,7 +210,7 @@ export default {
       props.emitter.on('plot_via_search', (track) => {
         // Switch The Variable To True In Order To Allow Opening Up The Zone of The Accepted
         isSearched.value = true;
-        console.log(track);
+
         // Get Indices of The Searched Tracks Via Its Mood Values
         const trackMood = moodToIndices(track.valence, track.arousal, starDots);
         locationChosen(trackMood.i, trackMood.j, 'search', track);
@@ -223,7 +223,7 @@ export default {
           }
         }
         // Show The Map, Only Applicable When The Map Is Not Shown Yet
-        showMap.index === 0 ? instantiateMap(region) : undefined;
+        showMap.index === 0 ? instantiateMap(region) : showMap.index = region;
 
         // Tell The Navigation Bar To Switch Back To The Homepage After A Song Track Is Chosen
         props.emitter.emit('nav', (1));

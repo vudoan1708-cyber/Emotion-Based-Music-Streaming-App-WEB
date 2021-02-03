@@ -24,6 +24,7 @@ import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 let spotifyPlayerID = null;
 let isPlaying = null;
 let playlist = [];
+const personalisedPlaylist = [];
 
 // handling production and development mode
 const PRODUCTION = process.env.NODE_ENV;
@@ -150,11 +151,16 @@ export async function showUserPlaylist(title, valence, arousal, id,
   // re-format the id
   // eslint-disable-next-line no-param-reassign
   id = `spotify:track:${id}`;
+  
+  const isDuplicate = checkDuplicates(id, personalisedPlaylist);
 
-  // accepted songs
-  createSongDots('user_playlist', title, valence, arousal, id,
-                  album_imgs, artist_details, artist_names, external_urls,
-                  true, starDots, width, height, p5, emitter);
+  if (!isDuplicate) {
+    personalisedPlaylist.push(id);
+    // accepted songs
+    createSongDots('user_playlist', title, valence, arousal, id,
+                    album_imgs, artist_details, artist_names, external_urls,
+                    true, starDots, width, height, p5, emitter);
+  }
 }
 // audio_features, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter
 export async function searchRecommendation(id, artist_details, valence, arousal) {
@@ -176,26 +182,29 @@ export async function searchRecommendation(id, artist_details, valence, arousal)
   }
 }
 
-function checkDuplicates(id) {
+function checkDuplicates(id, playlists) {
   let response = null;
 
-  console.log(playlist, id);
-  for (let i = 0; i < playlist.length; i += 1) {
-
-    // check for duplicates
-    if (id === playlist[i]) {
-
-      response = true;
-      break;
-    } else {
-        
-      // check the duplicates till the last element of the array
-      if (i === playlist.length - 1) {
-
-        response = false;
+  if (playlists.length > 0) {
+    for (let i = 0; i < playlists.length; i += 1) {
+  
+      // check for duplicates
+      if (id === playlists[i]) {
+  
+        response = true;
         break;
+      } else {
+          
+        // check the duplicates till the last element of the array
+        if (i === playlists.length - 1) {
+  
+          response = false;
+          break;
+        }
       }
     }
+  } else {
+    response = false;
   }
   return response;
 }
@@ -217,12 +226,13 @@ export async function makeATempPlaylist(id, title, valence, arousal,
                     album_imgs, artist_details, artist_names, external_urls,
                     false, starDots, width, height, p5, emitter);
   } else {
-    const isDuplicate = checkDuplicates(id);
+    const isDuplicate = checkDuplicates(id, playlist);
 
     // If There's A Duplicate of Songs
     if (isDuplicate) {
       // redo the workflow
-      handlingSongsData(valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
+      const audioFeature = await getSongsData((artist_names).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
+      checkCloselyMatched(audioFeature, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
     // Otherwise
     } else {
       // append the song's ids to the array
@@ -278,6 +288,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
           const song = moodToCoordinates(song_data.valence, song_data.arousal, starDots, width, height);
           const song_x = song.x;
           const song_y = song.y;
+          console.log(song_y);
 
           // compare
           if (song_x > bounds.x1 && 
@@ -290,6 +301,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
                                 song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
                                 how, trackObj, starDots, width, height, chosenPoints, p5, emitter);
           } else {
+            console.log(song_y);
   
             const id = `spotify:track:${song_data.id}`;
   
@@ -393,7 +405,7 @@ export async function handlingSongsData(valence, arousal, how, trackObj, starDot
     const id = `spotify:track:${trackObj.id}`;
 
     // Check for Duplicates
-    const isDuplicate = checkDuplicates(id);
+    const isDuplicate = checkDuplicates(id, playlist);
     if (!isDuplicate) {
       // Add It To The Playlist Immediately
       playlist.push(id);
@@ -405,9 +417,9 @@ export async function handlingSongsData(valence, arousal, how, trackObj, starDot
   } else KEYWORD = getKeyword(how, trackObj);
 
   // get songs' valence and arousal data
-  let audio_features = await getSongsData(escape(KEYWORD).normalize(), 'track');
+  let audio_features = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
 
-  if (audio_features === null) audio_features = await getSongsData(escape(KEYWORD).normalize(), 'album');
+  if (audio_features === null) audio_features = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'album');
 
   else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
   // console.log(audio_features);
