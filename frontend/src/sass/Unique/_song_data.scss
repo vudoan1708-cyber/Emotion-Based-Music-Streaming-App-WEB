@@ -1,0 +1,17 @@
+#song_data {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgba(58, 102, 80, 0.75);
+  z-index: 1;
+  font-size: 0.75rem;
+  color: rgb(172, 172, 172);
+  width: 100px;
+  cursor: context-menu;
+
+  img {
+    width: 100%;
+    opacity: 0.75;
+  }
+}

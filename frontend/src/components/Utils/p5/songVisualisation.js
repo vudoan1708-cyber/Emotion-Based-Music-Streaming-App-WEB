@@ -9,6 +9,7 @@ import { moodToCoordinates } from '@/components/Utils/logic/algorithm';
 export const songDots = [];
 
 let songLoaded = false;
+let songIndex = -1;
 
 export function createSongDots(label, title, valence, arousal, id,
                               album_imgs, artist_details, artist_names, external_urls,
@@ -20,7 +21,6 @@ export function createSongDots(label, title, valence, arousal, id,
                             album_imgs, artist_details, artist_names, external_urls,
                             coordinates.x, coordinates.y, 10, p5);
 
-  // console.log(`Song's Valence, Arousal: ${valence}, ${arousal}, amd indices: ${i}, ${j}`);
   songDots.push(song);
   songLoaded = true;
 
@@ -51,7 +51,15 @@ export function drawSongDots(starDots, chosenPoints, emitter) {
       // On Hover
       const songOnHover = songDots[i].onHover();
       if (songOnHover) {
+        songIndex = i;
         emitter.emit('song_on_hover', songDots[i]);
+      } else {
+        // Only send data of null to disable song detail display on the map
+        // if the song which is not on hover is the latest one that was hovered on
+        // eslint-disable-next-line no-lonely-if
+        if (songIndex === i) {
+          emitter.emit('song_on_hover', null);
+        }
       }
     }
   }
