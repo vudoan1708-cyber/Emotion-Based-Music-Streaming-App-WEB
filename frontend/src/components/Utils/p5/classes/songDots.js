@@ -64,8 +64,8 @@ export default class SongDots {
     this.p5.pop();
   }
 
-  overlay(star) {
-    if (this.x === star.x && this.y === star.y) {
+  overlaidPos(song) {
+    if (this.x === song.x && this.y === song.y) {
       return true;
     } return false;
   }

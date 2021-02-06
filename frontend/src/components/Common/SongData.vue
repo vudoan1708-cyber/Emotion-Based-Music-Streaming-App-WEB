@@ -29,8 +29,6 @@ export default {
       attr: {
         x: 0,
         y: 0,
-        width: 0,
-        height: 0,
       },
       title: '',
       img_url: '',
@@ -47,6 +45,8 @@ export default {
         songInfo.img_url = song.album_imgs.url;
         songInfo.valence = song.valence;
         songInfo.arousal = song.arousal;
+      } else {
+        songInfo.title = '';
       }
     });
 
@@ -58,21 +58,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#song_data {
-  position: absolute;
-  transform: translateX(-50%);
-  padding: 5px;
-  border-radius: 5px;
-  background-color: rgba(58, 102, 80, 0.75);
-  z-index: 1;
-  font-size: 0.75rem;
-  color: rgb(172, 172, 172);
-  width: 100px;
-  cursor: context-menu;
-
-  img {
-    width: 100%;
-    opacity: 0.75;
-  }
-}
+@import '@/sass/Unique/_song_data';
 </style>

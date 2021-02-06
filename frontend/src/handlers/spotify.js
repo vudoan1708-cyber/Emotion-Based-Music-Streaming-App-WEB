@@ -291,7 +291,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
           // if audio features object is invalid, go back to the start of the workflow
           // this happens because, the marginal differences at the edges of the map
           // creates negative/over-scored mood values
-          if (results === null || results.type === 'invalid-json' || results[0].error) handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+          if (results === null || results.type === 'invalid-json' || results.error) handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
           else checkCloselyMatched(results, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
         }
       } else {
