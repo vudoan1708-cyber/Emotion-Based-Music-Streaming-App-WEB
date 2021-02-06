@@ -382,7 +382,7 @@ function fillStarsColor(i, j) {
 
     // dots on the intersection lines
     } else {
-      fill(180, 180);
+      fill(50, 180);
       star(starDots[i][j].x, starDots[i][j].y, starDots[i][j].size / 2, starDots[i][j].size / 4, 4);
     }
   pop();
@@ -430,6 +430,9 @@ function drawSongDots() {
 
       if (onSongHover) {
         push();
+        fill(50, 150);
+        rectMode(CENTER);
+        rect(songDots[i].x, songDots[i].y - 10, 100, 50);
         fill(200);
         text(songDots[i].title, songDots[i].x, songDots[i].y - 10);
         pop();
@@ -686,15 +689,45 @@ async function makeATempPlaylist(access_token, id, title, valence, arousal) {
     }
   }
 }
+const TOKEN = 'BQCSdwVI3Y_AaQGJIK31Mzw1wbxJ_h6i-er8W1Z0HHUqiGnIf-9TD2vnXaJLzwUDNYo60t3fhWeURous40QXjNNS9B1wOhYoaqguHDcH0PAyLOf69gp44u5X7p1tvmZ12BOLMikhycZU1Rphg-vMhZ_qvXKZxSxVorpI7hJ1bRriEbxKM5SZHH2TVcCymp8LJrwAKwuNEo-j3HUYMdINzhyVwsmdmEx103wv3ealOIWSLM78epFaozrh5l3Ptd0';
 
-async function getSongsData() {
+function randomCharacters(max) {
+  let text = '';
 
-  const TOKEN = hashURL();
+  // a list of characters that can be chosen
+  const char = 'abcdefghijklmnopqrstuvwxyz';
+
+  // get random characters from the string
+  for (let i = 0; i < max; i += 1) {
+    text += char.charAt(Math.floor(Math.random() * char.length));
+  }
+
+  return text;
+}
+function randomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  // The maximum is inclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function getKeyword(how, text) {
+  let keyword = '';
+
+  // random character
+  if (how === 'random') keyword = randomCharacters(randomInt(2, 3));
+
+  // manual search input from a user
+  else keyword = text;
+  return keyword;
+}
+async function getSongsData(KEYWORD) {
+
 
   try {
 
     // Node.js
-    const request = await fetch(`http://localhost:5000/spotify/?token=${TOKEN}`);
+    const request = await fetch(`http://localhost:5000/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=track`);
 
     // Python
     // const request = await fetch(`http://localhost:5000/spotify/${TOKEN}/${valence}/${arousal}`);
@@ -708,9 +741,10 @@ async function getSongsData() {
 }
 
 async function handlingSongsData(valence, arousal) {
-
+  // Get Search Keyword based on Its Artist
+  const KEYWORD = getKeyword('random', null);
   // get songs' valence and arousal data 
-  const audio_features = await getSongsData();
+  const audio_features = await getSongsData(KEYWORD);
   
   // console.log(audio_features);
   for (let i = 0; i < audio_features.length; i++) {
@@ -763,7 +797,7 @@ async function handlingSongsData(valence, arousal) {
 
 // Set up the Web Playback SDK PLAYER
 window.onSpotifyPlayerAPIReady = () => {
-  const TOKEN = hashURL();
+  const TOKEN = 'BQBnMuQlRTye633k1qLB7WrAAyHoLM6JHGsT00DRZbA2Nul18wcVw5fXqgCtoVoq3nvFKmnNxSAxoitxHXnfzfkjYRzDhnF5B6IF4QTG5zIphtEEpG8CRse7yIZ5JWqn-7EdZPRNfl5AiUyGkq4Un5lM_GhDs5p5YEs5IFkV67X9SvP35fu-eakw2sl2Nj9ty_OqF6TS_aX1qGi9J7dYdfJP3D2yXZoYnTFDpkUdFdERg_o2k7oVu292g_8wHWk';
 
   const player = new Spotify.Player({
     name: 'IAE',

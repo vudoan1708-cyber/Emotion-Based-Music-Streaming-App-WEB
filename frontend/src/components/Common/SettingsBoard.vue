@@ -99,7 +99,7 @@ import {
 } from 'vue';
 
 // MongoDB
-import { insertData } from '@/handlers/mongdb';
+import { insertData, updateData } from '@/handlers/mongdb';
 
 // API
 import settingsObj from '@/components/API/settingsObj';
@@ -142,6 +142,7 @@ export default {
 
     // Data Obj to POST to the MongoDB database
     const dataObj = ref({});
+    const dataID = ref('');
 
     props.emitter.on('toggle_settings', (data) => {
       boardRef.value.style.display = 'block';
@@ -155,7 +156,12 @@ export default {
     function toggleBlurSettings() {
       personalisationBtn.value.checked === true
         ? isBlur.value = false
-        : (isBlur.value = true, spotifyBtn.value.checked = false);
+        : (isBlur.value = true, spotifyBtn.value.checked = false,
+        /* reset the input fields */
+        artistsValue.value = '',
+        marketValue.value = 'from_token',
+        numOfTracksValue.value = '5',
+        themesValue.value = '');
     }
 
     // Close The Settings Board
@@ -178,7 +184,9 @@ export default {
         personalisationBtn, spotifyBtn);
 
       // Insert data to MongDB Here
-      await insertData(dataObj.value);
+      props.personalisationSettings.length === 0
+        ? await insertData(dataObj.value)
+        : await updateData(dataID.value, dataObj.value);
 
       // Refresh the entire document
       document.location.reload();
@@ -207,9 +215,13 @@ export default {
       data.forEach((datum, i) => {
         // Get The Checkboxes Latest Settings
         if (i === 0) {
-          const { muserfly, spotify } = data[i][datum.length - 1].settings_data.last_checked;
+          const { muserfly, spotify } = datum[datum.length - 1].settings_data.last_checked;
           personalisationBtn.value.checked = muserfly;
           spotifyBtn.value.checked = spotify;
+
+          // Update dataID
+          // eslint-disable-next-line no-underscore-dangle
+          dataID.value = datum[datum.length - 1]._id;
 
           // Replace Default Settings With The Data
           const {

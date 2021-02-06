@@ -1,10 +1,21 @@
-module.exports = async function updateOneData(db, settings_data) {
-
+module.exports = async function updateOneData(db, id, settings_data) {
+  settings_data = { settings_data };
   try {
-    // find all
-    return await db.insert({/* specify needed data */ settings_data});
+    // find one data with the id
+    const returnedItem = await db.find({
+      /* specify needed data */ 
+      _id: id,
+    });
+
+    // handle no item found for update
+    if (!returnedItem) return null;
+    else return await db.update({
+      /* update needed data */
+      _id: id,
+    }, {
+      $set: settings_data,
+    });
   } catch (err) {
-    console.log(err);
     return err;
   }
 }

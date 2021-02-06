@@ -24,12 +24,15 @@
 <script>
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-unused-vars */
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import LoadingBar from '@/components/Common/LoadingBar.vue';
 
 export default {
   name: 'BottomPane',
   props: {
+    personalisationSettings: {
+      type: Object,
+    },
     emitter: {
       type: Object,
     },
@@ -53,6 +56,7 @@ export default {
 
     const tracks = reactive({
       total: 0,
+      min: 5,
       artists: [],
       titles: [],
     });
@@ -69,7 +73,7 @@ export default {
     props.emitter.on('song_data', (data) => {
       // handle removeAll label
       if (data.song !== undefined) {
-        if (!data.beforeLoading && tracks.total < 5) {
+        if (!data.beforeLoading && tracks.total < tracks.min) {
           if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user' || data.song.label === 'user_playlist') {
             tracks.total += 1;
             tracks.artists.push(data.song.artist_names);
@@ -83,6 +87,13 @@ export default {
         tracks.artists = [];
         tracks.titles = [];
       }
+    });
+
+    watch(props.personalisationSettings, (data) => {
+      const datum = data[0];
+      tracks.min = (datum.length !== 0 && datum[datum.length - 1].settings_data !== undefined)
+        ? datum[datum.length - 1].settings_data.user.personalisation.numOfTracks
+        : tracks.min;
     });
 
     return {

@@ -1,7 +1,7 @@
 module.exports = async function createOneData(db, settings_data) {
 
   try {
-    // find all
+    // create one
     return await db.insert({/* specify needed data */ settings_data});
   } catch (err) {
     console.log(err);

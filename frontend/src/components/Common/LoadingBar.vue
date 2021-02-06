@@ -40,7 +40,7 @@ export default {
 
     function updateLoadingBar(data) {
       if (progressBar.value !== null && progressBar.value.style.width !== '100%') {
-        barWidth.value = (data.total / 5) * 100;
+        barWidth.value = (data.total / data.min) * 100;
         progressBar.value.style.width = `${barWidth.value}%`;
       }
 

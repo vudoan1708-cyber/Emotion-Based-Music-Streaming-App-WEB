@@ -1,38 +1,78 @@
 <template>
-  <div class="song_data_container"
-      v-for="data in songData"
-        :key="data.id"
-        :style="{ top: (data.y - 20) + 'px', left: data.x + 'px' }">
-    <h3>{{data.title}}</h3>
+  <div id="song_data"
+    v-if="songInfo.title !== ''"
+    :style="{ top: (songInfo.attr.y - 175) + 'px', left: songInfo.attr.x + 'px' }">
+    <div id="song_data_container">
+      <img draggable="false" @dragstart="false" :src="songInfo.img_url" />
+      <h3>{{ songInfo.title }}</h3>
+      <p>{{ songInfo.valence }}</p>
+      <p>{{ songInfo.arousal }}</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, getCurrentInstance } from 'vue';
+import { ref, reactive } from 'vue';
 
 export default {
   name: 'SongData',
-  setup() {
-    // instantiate the app's current instance to get global properties
-    // registered in the main.js file
-    const app = getCurrentInstance();
-    const emitter = app.appContext.config.globalProperties.$emitter;
+  props: {
+    emitter: {
+      type: Object,
+    },
+  },
+  setup(props) {
+    const emitterObj = ref(props.emitter);
 
-    const songData = ref([]);
+    // Song Related Info
+    const songInfo = reactive({
+      attr: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      },
+      title: '',
+      img_url: '',
+      valence: 0,
+      arousal: 0,
+    });
 
-    // subscribe to the 'song_data' event
-    emitter.on('song_data', (data) => {
-      // push received data to the array
-      songData.value.push(data);
+    // Listen on 'song_on_hover' event
+    emitterObj.value.on('song_on_hover', (song) => {
+      if (song !== null) {
+        songInfo.attr.x = song.x;
+        songInfo.attr.y = song.y;
+        songInfo.title = song.title;
+        songInfo.img_url = song.album_imgs.url;
+        songInfo.valence = song.valence;
+        songInfo.arousal = song.arousal;
+      }
     });
 
     return {
-      songData,
+      songInfo,
     };
   },
 };
 </script>
 
 <style scoped lang="scss">
-@import '@/sass/Unique/_song_data';
+#song_data {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgba(58, 102, 80, 0.75);
+  z-index: 1;
+  font-size: 0.75rem;
+  color: rgb(172, 172, 172);
+  width: 100px;
+  cursor: context-menu;
+
+  img {
+    width: 100%;
+    opacity: 0.75;
+  }
+}
 </style>

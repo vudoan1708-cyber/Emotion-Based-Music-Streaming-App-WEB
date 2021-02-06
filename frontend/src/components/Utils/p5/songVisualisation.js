@@ -47,6 +47,12 @@ export function drawSongDots(starDots, chosenPoints, emitter) {
         // live updating every song dots positions
         songDots[i].updateLabels(starDots, chosenPoints, emitter);
       }
+
+      // On Hover
+      const songOnHover = songDots[i].onHover();
+      if (songOnHover) {
+        emitter.emit('song_on_hover', songDots[i]);
+      }
     }
   }
 }

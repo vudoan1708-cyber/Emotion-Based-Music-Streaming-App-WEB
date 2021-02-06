@@ -16,6 +16,19 @@ export async function insertData(PARAM) {
   }
 }
 
+export async function updateData(ID, PARAM) {
+  const URL = (PRODUCTION === 'production')
+            ? `https://muserfly.herokuapp.com/data/update/?id=${ID}`
+            : `http://localhost:5000/data/update/?id=${ID}`;
+
+  try {
+    const response = await useFetch(URL, 'PUT', PARAM);
+    return response;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function getAllData() {
   const URL = (PRODUCTION === 'production')
             ? 'https://muserfly.herokuapp.com/data/get/all'

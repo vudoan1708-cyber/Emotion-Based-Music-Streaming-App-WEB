@@ -29,13 +29,26 @@ export default class SongDots {
     this.p5 = p5;
   }
 
+  onHover() {
+    if (this.p5.mouseX > this.x - this.size / 2 && this.p5.mouseX < this.x + this.size / 2) {
+      if (this.p5.mouseY > this.y - this.size / 2 && this.p5.mouseY < this.y + this.size / 2) {
+        return true;
+      }
+    } return false;
+  }
+
   show() {
+    // responses
+    let updatedSize = this.size;
+    if (this.onHover()) updatedSize += 5;
+    else updatedSize = this.size;
+
     this.p5.push();
 
     // effects
     this.p5.noStroke();
     this.p5.fill(200, 75);
-    this.p5.ellipse(this.x, this.y, this.size + 5);
+    this.p5.ellipse(this.x, this.y, updatedSize + 5);
 
     this.p5.stroke(0);
     // if accepted by the system: green, by user: yellow, not accepted: gray, by user personalised playlist: red
@@ -43,11 +56,11 @@ export default class SongDots {
     else if (this.label === 'accepted_by_user') { this.p5.fill(255, 255, 0); }
     else if (this.label === 'user_playlist') { this.p5.fill(255, 0, 0, 200); }
     else this.p5.fill(150);
-    this.p5.ellipse(this.x, this.y, this.size);
+    this.p5.ellipse(this.x, this.y, updatedSize);
 
     // effects
     this.p5.fill(200, 75);
-    this.p5.ellipse(this.x, this.y, this.size - 5);
+    this.p5.ellipse(this.x, this.y, updatedSize - 5);
     this.p5.pop();
   }
 
@@ -55,16 +68,6 @@ export default class SongDots {
     if (this.x === star.x && this.y === star.y) {
       return true;
     } return false;
-  }
-
-  onHover(isSongLoading) {
-    if (isSongLoading) {
-      if (this.p5.mouseX > this.x - this.size / 2 && this.p5.mouseX < this.x + this.size / 2) {
-        if (this.p5.mouseY > this.y - this.size / 2 && this.p5.mouseY < this.y + this.size / 2) {
-          return true;
-        }
-      } return false;
-    }
   }
 
   updateLabels(starDots, chosenPoints, emitter) {

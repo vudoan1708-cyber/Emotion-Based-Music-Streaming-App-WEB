@@ -3,7 +3,7 @@
     <SketchP5 :personalisationSettings="personalisationSettings" :emitter="emitter" />
     <TopPane />
     <LeftPane :emitter="emitter" />
-    <BottomPane :emitter="emitter" />
+    <BottomPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
     <RightPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
     <CenterPane :emitter="emitter" />
   </div>

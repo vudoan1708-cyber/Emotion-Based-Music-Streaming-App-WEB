@@ -24,11 +24,28 @@ import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 let spotifyPlayerID = null;
 let isPlaying = null;
 let playlist = [];
+let minTracks = 5;
 const personalisedPlaylist = [];
 
 // handling production and development mode
 const PRODUCTION = process.env.NODE_ENV;
 const TOKEN = hashURL(window.location.href);
+
+export function LoginHandlers() {
+
+  // if it's production mode, get rid of the proxied server,
+  // because, the client will be built on top of Python then,
+  // and it is served by Python as static files
+  // otherwise, run these two sides separately,
+  // with the endpoint /api as a proxy to the server
+  const ENDPOINT = (PRODUCTION === 'production') ? '' : '/api';
+  try {
+    window.location.href = `${ENDPOINT}/login`;
+  } catch (e) {
+    window.location.href = '/';
+    console.log(e);
+  }
+}
 
 // Set up the Web Playback SDK PLAYER
 window.onSpotifyWebPlaybackSDKReady = () => {
@@ -43,7 +60,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   player.on('initialization_error', (e) => console.error(e));
   player.on('authentication_error', (e) => console.error(e));
   player.on('account_error', (e) => console.error(e));
-  player.on('playback_error', (e) => console.error(e));
+  player.on('playback_error', (e) => { 
+    console.error(e);
+    LoginHandlers();
+  });
 
   // Playback status updates
   player.on('player_state_changed', (state) => {
@@ -78,6 +98,20 @@ export function getKeyword(how, text) {
   // manual search input from a user
   else keyword = text;
   return keyword;
+}
+
+export async function getSongIsPlaying() {
+
+  try {
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/spotify/is-playing/?token=${TOKEN}`
+              : `http://localhost:5000/spotify/is-playing/?token=${TOKEN}`;
+
+    const response = await useFetch(URL, 'GET');
+    return response;
+  } catch (err) {
+    return err;
+  }
 }
 
 export async function getSongsData(KEYWORD, SEARCH_TYPE) {
@@ -209,40 +243,91 @@ function checkDuplicates(id, playlists) {
   return response;
 }
 
+async function checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter) {
+  for (let i = 0; i < audio_features.length; i += 1) {
+
+    const song_data = audio_features[i];
+
+    if (song_data.valence !== undefined && song_data.arousal !== undefined) {
+
+      // if playlist array hasn't reached its end
+      if (playlist.length < minTracks) {
+  
+        // if i hasn't reached the end of the audio features array's loop
+        if (i < audio_features.length - 1) {
+  
+          const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
+
+          const song = moodToCoordinates(song_data.valence, song_data.arousal, starDots, width, height);
+          const song_x = song.x;
+          const song_y = song.y;
+
+          // compare
+          if (song_x > bounds.x1 && 
+              song_x < bounds.x2
+          && song_y > bounds.y1 && 
+              song_y < bounds.y2) {
+
+              // make a temporary playlist based on the mood
+              await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal,
+                                song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
+                                how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5, emitter);
+          } else {
+  
+            const id = `spotify:track:${song_data.id}`;
+  
+            // unaccepted songs
+            createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
+                            song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
+                            false, starDots, width, height, p5, emitter);
+          }
+  
+        // otherwise, redo the loop again until the playlist array condition is satisfied
+        } else {
+          await sleep(250);
+
+          // search recommendations
+          const results = await searchRecommendation(song_data.id, song_data.artist_details, valence, arousal);
+          // if audio features object is invalid, go back to the start of the workflow
+          // this happens because, the marginal differences at the edges of the map
+          // creates negative/over-scored mood values
+          if (results === null || results.type === 'invalid-json' || results[0].error) handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+          else checkCloselyMatched(results, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+        }
+      } else {
+        console.log(`End The Loop With ${playlist.length} songs`);
+        isPlaying = await playSong(song_data.access_token, playlist);
+        break;
+      }
+    }
+  }
+}
+
 export async function makeATempPlaylist(id, title, valence, arousal, 
                   album_imgs, artist_details, artist_names, external_urls,
-                  how, trackObj, starDots, width, height, chosenPoints, p5, emitter) {
+                  how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5, emitter) {
   // re-format the id
   // eslint-disable-next-line no-param-reassign
-  id = `spotify:track:${id}`;
+  const reformatID = `spotify:track:${id}`;
 
-  if (playlist.length === 0) {
+  const isDuplicate = checkDuplicates(reformatID, playlist);
+
+  // If There's A Duplicate of Songs
+  if (isDuplicate) {
+
+    // redo the workflow
+    const audioFeature = await searchRecommendation(id, artist_details, valence, arousal);
+    checkCloselyMatched(audioFeature, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+  // Otherwise
+  } else {
 
     // append the song's ids to the array
-    playlist.push(id);
+    playlist.push(reformatID);
 
     // accepted songs
-    createSongDots('accepted', title, valence, arousal, id,
+    createSongDots('accepted', title, valence, arousal, reformatID,
                     album_imgs, artist_details, artist_names, external_urls,
                     false, starDots, width, height, p5, emitter);
-  } else {
-    const isDuplicate = checkDuplicates(id, playlist);
-
-    // If There's A Duplicate of Songs
-    if (isDuplicate) {
-      // redo the workflow
-      const audioFeature = await getSongsData((artist_names).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
-      checkCloselyMatched(audioFeature, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
-    // Otherwise
-    } else {
-      // append the song's ids to the array
-      playlist.push(id);
-  
-      // accepted songs
-      createSongDots('accepted', title, valence, arousal, id,
-                      album_imgs, artist_details, artist_names, external_urls,
-                      false, starDots, width, height, p5, emitter);
-    }
   }
 }
 
@@ -270,68 +355,6 @@ async function playSong() {
   }
 }
 
-async function checkCloselyMatched(audio_features, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter) {
-  for (let i = 0; i < audio_features.length; i += 1) {
-
-    const song_data = audio_features[i];
-
-    if (song_data.valence !== undefined && song_data.arousal !== undefined) {
-
-      // if playlist array hasn't reached its end
-      if (playlist.length < 5) {
-  
-        // if i hasn't reached the end of the audio features array's loop
-        if (i < audio_features.length - 1) {
-  
-          const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
-
-          const song = moodToCoordinates(song_data.valence, song_data.arousal, starDots, width, height);
-          const song_x = song.x;
-          const song_y = song.y;
-          console.log(song_y);
-
-          // compare
-          if (song_x > bounds.x1 && 
-              song_x < bounds.x2
-          && song_y > bounds.y1 && 
-              song_y < bounds.y2) {
-
-              // make a temporary playlist based on the mood
-              await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal,
-                                song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
-                                how, trackObj, starDots, width, height, chosenPoints, p5, emitter);
-          } else {
-            console.log(song_y);
-  
-            const id = `spotify:track:${song_data.id}`;
-  
-            // unaccepted songs
-            createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
-                            song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
-                            false, starDots, width, height, p5, emitter);
-          }
-  
-        // otherwise, redo the loop again until the playlist array condition is satisfied
-        } else {
-          await sleep(250);
-
-          // search recommendations
-          const results = await searchRecommendation(song_data.id, song_data.artist_details, valence, arousal);
-          // if audio features object is invalid, go back to the start of the workflow
-          // this happens because, the marginal differences at the edges of the map
-          // creates negative/over-scored mood values
-          if (results === null || results.type === 'invalid-json' || results[0].error) handlingSongsData(valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
-          else checkCloselyMatched(results, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
-        }
-      } else {
-        console.log(`End The Loop With ${playlist.length} songs`);
-        isPlaying = await playSong(song_data.access_token, playlist);
-        break;
-      }
-    }
-  }
-}
-
 // GLOBALLY ACCESSIBLE FUNCTIONS
 
 // Add Song to Player's Queue
@@ -349,22 +372,6 @@ export async function addSongToQueue(URI) {
     }
   }
   return response;
-}
-
-export function LoginHandlers() {
-
-  // if it's production mode, get rid of the proxied server,
-  // because, the client will be built on top of Python then,
-  // and it is served by Python as static files
-  // otherwise, run these two sides separately,
-  // with the endpoint /api as a proxy to the server
-  const ENDPOINT = (PRODUCTION === 'production') ? '' : '/api';
-  try {
-    window.location.href = `${ENDPOINT}/login`;
-  } catch (e) {
-    window.location.href = '/';
-    console.log(e);
-  }
 }
 
 // User
@@ -393,7 +400,11 @@ export async function getUserPersonalisation(type, offsetNum) {
 }
 
 // Song Fetch
-export async function handlingSongsData(valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter) {
+export async function handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter) {
+  // Get The Min Number of Tracks to Collect from User Settings Data
+  minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1].settings_data !== undefined)
+            ? userSettingsData[userSettingsData.length - 1].settings_data.user.personalisation.numOfTracks
+            : minTracks;
   let KEYWORD = '';
 
   // If The Song Track Comming in As A Valid Object
@@ -421,6 +432,6 @@ export async function handlingSongsData(valence, arousal, how, trackObj, starDot
 
   if (audio_features === null) audio_features = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'album');
 
-  else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5, emitter);
+  else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
   // console.log(audio_features);
 }

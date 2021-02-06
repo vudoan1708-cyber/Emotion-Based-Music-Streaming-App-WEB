@@ -14,9 +14,8 @@
     </ul>
   </div>
 
-  <!-- song data -->
-  <SongData />
-
+  <!-- Song Info On The Map -->
+  <SongData :emitter="emitterObj" />
 </template>
 
 <script>
@@ -38,7 +37,7 @@ import io from 'socket.io-client';
 import mapRegions from '@/components/Utils/p5/mapRegions';
 import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/galaxyVisualisation';
 import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMapVisualisation';
-import { drawSongDots } from '@/components/Utils/p5/songVisualisation';
+import { songDots, drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
 import { indicesToMood, moodToIndices, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
@@ -46,7 +45,7 @@ import changeMap from '@/components/Utils/dom/changeMap';
 
 import { handlingSongsData, removeATempPlaylist, showUserPlaylist } from '@/handlers/spotify';
 
-// Vue component
+// Vue Component
 import SongData from '@/components/Common/SongData.vue';
 
 export default {
@@ -58,6 +57,9 @@ export default {
     emitter: {
       type: Object,
     },
+  },
+  components: {
+    SongData,
   },
   setup(props) {
     // indices on map
@@ -81,6 +83,12 @@ export default {
     // And Only Via Search
     const isSearched = ref(false);
 
+    // Get User Settings
+    const userSettingsData = ref([]);
+
+    // PROPS
+    const emitterObj = ref(props.emitter);
+
     // DOM
     const angryBtn = ref(null);
     const happyBtn = ref(null);
@@ -96,12 +104,12 @@ export default {
     function emitMapEvent(state) {
       // socket.io-like package (mitt) for emitting and listening to events
       // between COMPONENTS
-      if (state === 'close') props.emitter.off('map', map_properties);
-      else props.emitter.emit('map', map_properties);
+      if (state === 'close') emitterObj.value.off('map', map_properties);
+      else emitterObj.value.emit('map', map_properties);
     }
 
     // Listen on the 'nav' event
-    props.emitter.on('nav', (num) => {
+    emitterObj.value.on('nav', (num) => {
       if (num === 1) isDraggable.value = true;
       else isDraggable.value = false;
     });
@@ -180,7 +188,7 @@ export default {
           chosenPoints[1] = j;
 
           // Refresh The Collected Playlist
-          chosenPoints.length !== 0 ? removeATempPlaylist(props.emitter) : undefined;
+          chosenPoints.length !== 0 ? removeATempPlaylist(emitterObj.value) : undefined;
 
           // send data to the server via socket
           const data = {
@@ -202,12 +210,12 @@ export default {
           createHistoricalNeighbours(history, chosenPoints, width, height);
 
           // get songs data from Spotify via the server
-          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, starDots, chosenPoints, width, height, p, props.emitter);
+          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, userSettingsData.value, starDots, chosenPoints, width, height, p, emitterObj.value);
         }
       }
 
       // Listen on the 'plot_via_search' event
-      props.emitter.on('plot_via_search', (track) => {
+      emitterObj.value.on('plot_via_search', (track) => {
         // Switch The Variable To True In Order To Allow Opening Up The Zone of The Accepted
         isSearched.value = true;
 
@@ -226,7 +234,7 @@ export default {
         showMap.index === 0 ? instantiateMap(region) : showMap.index = region;
 
         // Tell The Navigation Bar To Switch Back To The Homepage After A Song Track Is Chosen
-        props.emitter.emit('nav', (1));
+        emitterObj.value.emit('nav', (1));
       });
 
       p.setup = () => {
@@ -259,10 +267,10 @@ export default {
           // All The Map-Related Visualisation Elements Will Always Be Drawn When Homepage is Visited
           if (isDraggable.value) {
             // The Emotion Map
-            drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, props.emitter, p);
+            drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, emitterObj.value, p);
 
             // Song Dots
-            drawSongDots(starDots, chosenPoints, props.emitter);
+            drawSongDots(starDots, chosenPoints, emitterObj.value);
 
             // Neighbours
             drawNeighbours(p);
@@ -308,7 +316,7 @@ export default {
             // constrain dragable areas
             if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
               if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
-                removeATempPlaylist(props.emitter);
+                removeATempPlaylist(emitterObj.value);
 
                 // convert the mapping algorithm to indices
                 // move the chosen point to other locations
@@ -335,7 +343,7 @@ export default {
       } = datum;
       showUserPlaylist(title, valence, arousal, id,
         album_imgs, artist_details, artist_names, external_urls,
-        starDots, width, height, p5Obj, props.emitter);
+        starDots, width, height, p5Obj, emitterObj.value);
     }
 
     watch(props.personalisationSettings, (data) => {
@@ -344,6 +352,8 @@ export default {
           datum.forEach((d) => {
             searchUserPersonalisedPlaylist(d);
           });
+        } else {
+          userSettingsData.value = datum;
         }
       });
     });
@@ -354,13 +364,14 @@ export default {
     });
 
     return {
+      emitterObj,
+      songDots,
       angryBtn,
       happyBtn,
       sadBtn,
       calmBtn,
       instantiateMap,
       map_properties,
-      SongData,
     };
   },
 };
