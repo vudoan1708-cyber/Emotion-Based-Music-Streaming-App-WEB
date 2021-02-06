@@ -21,14 +21,6 @@ export function createSongDots(label, title, valence, arousal, id,
                             album_imgs, artist_details, artist_names, external_urls,
                             coordinates.x, coordinates.y, 10, p5);
 
-  for (let i = songDots.length - 1; i >= 0; i -= 1) {
-    if (songDots[i].overlaidPos(song)) {
-      // Remove The Old Song
-      songDots.splice(i, 1);
-      break;
-    }
-  }
-
   songDots.push(song);
   songLoaded = true;
 
