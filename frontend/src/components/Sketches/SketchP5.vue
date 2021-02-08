@@ -79,6 +79,9 @@ export default {
     // Set Default to True,, because the welcoming screen is the Homepage
     const isDraggable = ref(true);
 
+    // When mouseReleased event is Triggered, The System Searches for Song
+    const isDragging = ref(false);
+
     // Allow User To Choose Their Locations on The Map Without Acc Opening It
     // And Only Via Search
     const isSearched = ref(false);
@@ -305,6 +308,13 @@ export default {
         }
       };
 
+      p.mouseReleased = () => {
+        if (isDragging.value) {
+          isDragging.value = false;
+          locationChosen(chosenPoints[0], chosenPoints[1], 'random', null);
+        }
+      };
+
       p.mouseDragged = () => {
         // only draggable when the emotion map is shown, and only when a user is on Homepage section
         if (showMap.index !== 0) {
@@ -313,7 +323,7 @@ export default {
             /// start by translating coordinates values to indices
             const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
 
-            // constrain dragable areas
+            // constrain the dragable areas
             if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
               if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
                 removeATempPlaylist(emitterObj.value);
@@ -326,6 +336,9 @@ export default {
 
                 // Reassign showMap index to change colour of region based on the chosen point's location
                 showMap.index = mapRegions(chosenPoints[0], chosenPoints[1], chosenPoints[0], starDots);
+
+                // Trigger isDragging to true to search for song when mouse is released
+                isDragging.value = true;
               }
             }
           }
