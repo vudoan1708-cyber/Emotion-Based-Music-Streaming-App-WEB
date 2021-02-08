@@ -1,4 +1,5 @@
 @import '../Mixin/position';
+@import '../Mixin/transition';
 
 #center_pane {
   @include positionProperties(absolute, 205px, '', 0, '');
@@ -15,20 +16,48 @@
     display: grid;
     grid-template-columns: 20% 20% 20% 20% 20%;
     grid-gap: 10px;
+
     .result_details {
+      position: relative;
+      margin: 0 10px 10px 10px;
       text-align: center;
+      width: 75%;
+      color: rgba(184, 184, 184, 0.733);
       cursor: pointer;
+      overflow: hidden;
+
       li {
+        position: relative;
         list-style: none;
-        width: 75%;
-        color: rgba(184, 184, 184, 0.733);
+        margin: 5px;
+
         img {
+          position: relative;
           width: 100%;
+          height: 100%;
+        }
+      }
+
+      .v-a {
+        font-size: 0.75rem;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(54, 54, 54, 0.8);
+        color: rgb(255, 255, 255);
+        @include positionProperties(absolute, 0, '', -150%, '');
+        @include transitionProperties(top, 0.2s);
+
+        .track_moods {
+          @include positionProperties(absolute, 0, '', '', 0);
         }
       }
 
       &:hover {
         filter: drop-shadow(0px 0px 10px gray);
+
+        .v-a {
+          top: 0;
+        }
       }
     }
   }

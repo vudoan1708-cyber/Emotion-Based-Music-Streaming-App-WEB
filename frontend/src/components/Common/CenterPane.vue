@@ -15,11 +15,25 @@
         @click="plotTrackOnTheMap(searchResult)">
         <ul>
           <li><img v-if="searchResult.error === undefined"
-            :src="searchResult.album_imgs.url" /></li>
+            :src="searchResult.album_imgs.url" />
+            <!-- Valence & Arousal Values When On Hover -->
+            <div class="v-a">
+              <div class="track_moods">
+                <div v-if="searchResult.error === undefined">
+                  <b>Valence: {{ searchResult.valence }}</b>
+                </div>
+                <div v-if="searchResult.error === undefined">
+                  <b>Arousal: {{ searchResult.arousal }}</b>
+                </div>
+              </div>
+            </div>
+          </li>
           <li v-if="searchResult.error === undefined"
-            id="track_title"><h3>{{ searchResult.title }}</h3></li>
+            id="track_title"><h3>{{ searchResult.title }}</h3>
+          </li>
           <li v-if="searchResult.error === undefined"
-            id="artist_name">{{ searchResult.artist_names }}</li>
+            id="artist_name">{{ searchResult.artist_names }}
+          </li>
         </ul>
       </div>
     </div>

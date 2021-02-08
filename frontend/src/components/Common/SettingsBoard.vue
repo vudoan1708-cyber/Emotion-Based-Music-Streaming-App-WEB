@@ -8,6 +8,10 @@
         <h4 class="content">Display Name</h4>
         <p class="content">{{ userDetail.name }}</p>
       </li>
+      <li id="id">
+        <h4 class="content">User ID</h4>
+        <p class="content">{{ userDetail.id }}</p>
+      </li>
       <li id="location">
         <h4 class="content">Location</h4>
         <p class="content">{{ userDetail.location }}</p>
