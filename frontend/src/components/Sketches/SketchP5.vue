@@ -181,7 +181,8 @@ export default {
       }
 
       function locationChosen(i, j, how, trackObj) {
-        if (starDots[i][j].onHover() || isSearched.value) {
+        // Either, a click event, drag and drop events, or a search is accepted
+        if (starDots[i][j].onHover() || isSearched.value || isDragging.value) {
           // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
           const { valence, arousal } = indicesToMood(i, j, starDots);
 
@@ -310,8 +311,8 @@ export default {
 
       p.mouseReleased = () => {
         if (isDragging.value) {
-          isDragging.value = false;
           locationChosen(chosenPoints[0], chosenPoints[1], 'random', null);
+          isDragging.value = false;
         }
       };
 
@@ -361,7 +362,7 @@ export default {
 
     watch(props.personalisationSettings, (data) => {
       data.forEach((datum, index) => {
-        if (index !== 0) {
+        if (index !== 0 && datum.message !== 'no personalised data') {
           datum.forEach((d) => {
             searchUserPersonalisedPlaylist(d);
           });

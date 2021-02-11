@@ -92,7 +92,9 @@ module.exports = (app) => {
     try {
       const personalised_data = await getUserPersonalisation(TOKEN, TYPE, OFFSET);
 
-      const feature_data = await getAudioFeatures(personalised_data);
+      const feature_data = personalised_data.message === 'success'
+          ? await getAudioFeatures(personalised_data)
+          : {'message': 'no personalised data'};
       res.json(feature_data);
     } catch(err) {
       res.json(err);

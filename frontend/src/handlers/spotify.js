@@ -345,8 +345,9 @@ async function playSong() {
     const errorStatus = response.error !== undefined 
                       ? response.error.status
                       : undefined;
-    if (errorStatus === 404) {
+    if (errorStatus === 404 || errorStatus === 403) {
       // Do Some Error Handling Here
+      // const { message } = response.error;
     }
     return response;
   } catch (err) {
@@ -402,7 +403,7 @@ export async function getUserPersonalisation(type, offsetNum) {
 // Song Fetch
 export async function handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter) {
   // Get The Min Number of Tracks to Collect from User Settings Data
-  minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1].settings_data !== undefined)
+  minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
             ? userSettingsData[userSettingsData.length - 1].settings_data.user.personalisation.numOfTracks
             : minTracks;
   let KEYWORD = '';

@@ -19,7 +19,7 @@ module.exports = async function getUserPersonalisation(TOKEN, type, offset) {
   try {
     const request = await fetch(URL, options);
     const json = await request.json();
-
+    console.log(json);
     // extract needed data only
     const ids = [];
     const preview_urls = [];
@@ -29,6 +29,7 @@ module.exports = async function getUserPersonalisation(TOKEN, type, offset) {
     const artist_details = [];
     const album_imgs = [];
 
+    let message = 'success';
     let nextURL = null;
 
     // check if an access token is still valid through JSON response
@@ -45,9 +46,9 @@ module.exports = async function getUserPersonalisation(TOKEN, type, offset) {
         artist_details.push(items[i].artists[0].uri);
         album_imgs.push(items[i].album.images[0]);
       }
-    }
+    } else message = 'not success';
 
-    return { ids, preview_urls, titles, external_urls, 
+    return { message, ids, preview_urls, titles, external_urls, 
               artist_names, artist_details, album_imgs, nextURL, TOKEN };
   } catch (err) {
     console.warn(err);

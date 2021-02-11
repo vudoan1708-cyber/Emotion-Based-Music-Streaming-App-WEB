@@ -138,6 +138,9 @@ export default {
     const numOfTracksValue = ref('5');
     const themesValue = ref('');
 
+    // Save Personalised Settings
+    const personalisedData = ref(null);
+
     // Keep Track of A Button Previous State Before Toggling Checkboxes Are Performed
     const btnSavedStates = ref({});
 
@@ -147,15 +150,6 @@ export default {
     // Data Obj to POST to the MongoDB database
     const dataObj = ref({});
     const dataID = ref('');
-
-    props.emitter.on('toggle_settings', (data) => {
-      boardRef.value.style.display = 'block';
-
-      userDetail.value.id = data.user.id;
-      userDetail.value.name = data.user.name;
-      userDetail.value.location = data.user.location;
-      userDetail.value.email = data.user.email;
-    });
 
     function toggleBlurSettings() {
       personalisationBtn.value.checked === true
@@ -213,27 +207,39 @@ export default {
       themesValue.value = themes !== '' ? themes : themesValue.value;
     }
 
-    // watch constantly any updates comming from the parent components
-    // if this was put in onMounted, data would flowed too slow to get there in time
-    watch(props.personalisationSettings, (data) => {
-      data.forEach((datum, i) => {
-        // Get The Checkboxes Latest Settings
-        if (i === 0) {
-          const { muserfly, spotify } = datum[datum.length - 1].settings_data.last_checked;
-          personalisationBtn.value.checked = muserfly;
-          spotifyBtn.value.checked = spotify;
+    props.emitter.on('toggle_settings', (data) => {
+      boardRef.value.style.display = 'block';
 
-          // Update dataID
-          // eslint-disable-next-line no-underscore-dangle
-          dataID.value = datum[datum.length - 1]._id;
+      userDetail.value.id = data.user.id;
+      userDetail.value.name = data.user.name;
+      userDetail.value.location = data.user.location;
+      userDetail.value.email = data.user.email;
 
-          // Replace Default Settings With The Data
-          const {
-            artists, market, numOfTracks, themes,
-          } = data[i][datum.length - 1].settings_data.user.personalisation;
-          defaultPersonalisedValues(artists, market, numOfTracks, themes);
-        }
-      });
+      if (personalisedData.value !== null) {
+        personalisedData.value.forEach((datum, i) => {
+          // Get The Checkboxes Latest Settings
+          if (i === 0) {
+            datum.forEach((_, d) => {
+              // Check for The Correct User
+              if (datum[d].settings_data.user.id === userDetail.value.id) {
+                const { muserfly, spotify } = datum[d].settings_data.last_checked;
+                personalisationBtn.value.checked = muserfly;
+                spotifyBtn.value.checked = spotify;
+
+                // Update dataID
+                // eslint-disable-next-line no-underscore-dangle
+                dataID.value = datum[d]._id;
+
+                // Replace Default Settings With The Data
+                const {
+                  artists, market, numOfTracks, themes,
+                } = datum[d].settings_data.user.personalisation;
+                defaultPersonalisedValues(artists, market, numOfTracks, themes);
+              }
+            });
+          }
+        });
+      }
 
       // Saved A Record of A Change in Buttons' State
       btnSavedStates.value = {
@@ -242,6 +248,12 @@ export default {
       };
 
       toggleBlurSettings();
+    });
+
+    // watch constantly any updates comming from the parent components
+    // if this was put in onMounted, data would flowed too slow to get there in time
+    watch(props.personalisationSettings, (data) => {
+      personalisedData.value = data;
     });
 
     return {

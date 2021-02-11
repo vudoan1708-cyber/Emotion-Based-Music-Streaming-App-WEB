@@ -51,7 +51,9 @@ export default {
 
       // always get the latest array for next API search processes
       // eslint-disable-next-line max-len
-      const { nextURL } = personalisationSettings.value[1][personalisationSettings.value.length - 1];
+      const nextURL = personalisationSettings.value[1].message !== 'no personalised data'
+        ? personalisationSettings.value[1][personalisationSettings.value.length - 1].nextURL
+        : null;
 
       // Keep Track of URLs
       prevURL.value = prevURL.value !== nextURL ? nextURL : null;
