@@ -6,11 +6,11 @@
   background-color: rgba(20, 26, 18, 0.384);
   border-top: 2px solid rgb(207, 207, 207);
   text-align: center;
-  pointer-events: none;
 
   #map {
     position: relative;
     margin: 25px 0;
+    pointer-events: none;
 
     .map_info {
       display: block;
@@ -27,6 +27,7 @@
     }
 
     #coordinates {
+
       #display {
         display: inline-block;
         margin: 5px 10px;

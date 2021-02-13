@@ -19,7 +19,7 @@ module.exports = async function getUserPersonalisation(TOKEN, type, offset) {
   try {
     const request = await fetch(URL, options);
     const json = await request.json();
-    console.log(json);
+
     // extract needed data only
     const ids = [];
     const preview_urls = [];

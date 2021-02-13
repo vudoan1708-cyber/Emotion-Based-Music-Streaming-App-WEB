@@ -2,6 +2,9 @@ const getSongs = require('../logic/spotify/getSongs');
 const getRecommendation = require('../logic/spotify/getRecommendation');
 const getAudioFeatures = require('../logic/spotify/getAudioFeatures');
 const getSongPlay = require('../logic/spotify/getSongPlay');
+const getSongPause = require('../logic/spotify/getSongPause');
+const getSongIsPlaying = require('../logic/spotify/getSongIsPlaying');
+const getPlayerInfo = require('../logic/spotify/getPlayerInfo');
 
 const getUser = require('../logic/spotify/getUser');
 const getUserPersonalisation = require('../logic/spotify/getUserPersonalisation');
@@ -44,14 +47,39 @@ module.exports = (app) => {
     }
   });
 
+  app.get('/player/is-playing', async(req, res) => {
+    const TOKEN = req.query.token;
+
+    try {
+      const songPlay = await getSongIsPlaying(TOKEN);
+      res.json(songPlay);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
   app.get('/player/play', async(req, res) => {
     const TOKEN = req.query.token;
     const PLAYLIST = req.query.playlist.split(',');
     const PLAYER_ID = req.query.player_id;
+    const POSITION_MS = req.query.position_ms;
+    const OFFSET = req.query.offset;
 
     try {
-      const songPlay = await getSongPlay(TOKEN, PLAYLIST, PLAYER_ID);
+      const songPlay = await getSongPlay(TOKEN, PLAYLIST, PLAYER_ID, POSITION_MS, OFFSET);
       res.json(songPlay);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/player/pause', async(req, res) => {
+    const TOKEN = req.query.token;
+    const PLAYER_ID = req.query.player_id;
+
+    try {
+      const songPause = await getSongPause(TOKEN, PLAYER_ID);
+      res.json(songPause);
     } catch(err) {
       res.json(err);
     }
@@ -66,6 +94,18 @@ module.exports = (app) => {
     try {
       const addedSong = await addSong(TOKEN, URI, PLAYER_ID);
       res.json(addedSong);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/player/info', async(req, res) => {
+    const TOKEN = req.query.token;
+    const PLAYER_ID = req.query.player_id;
+
+    try {
+      const playerInfo = await getPlayerInfo(TOKEN, PLAYER_ID);
+      res.json(playerInfo);
     } catch(err) {
       res.json(err);
     }

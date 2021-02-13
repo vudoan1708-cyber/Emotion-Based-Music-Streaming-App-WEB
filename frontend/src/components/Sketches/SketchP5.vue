@@ -264,7 +264,7 @@ export default {
         // eslint-disable-next-line valid-typeof
         map_properties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
         map_properties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
-        emitMapEvent('open');
+        map_properties.status ? emitMapEvent('open') : undefined;
 
         if (showMap.index !== 0) {
           // For Performances Reason, Hide All Song Dots And Neighbours

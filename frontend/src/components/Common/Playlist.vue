@@ -109,7 +109,7 @@ export default {
           }
 
         // if all songs are removed
-        } else {
+        } else if (data.how === 'removeAll') {
           // reset
           collectedTracksStyling.value.style.minHeight = '30%';
           acceptedSongData.value = [...data.playlist];

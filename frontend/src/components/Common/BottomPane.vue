@@ -2,7 +2,7 @@
   <div id="bottom_pane">
 
     <!-- The Emotion Map -->
-    <div id="map" v-if="appState.map">
+    <div id="map" v-if="appState.stage === 1">
       <div class="map_info" id="land_name">
         <h1>{{mapProperties.name}}</h1>
       </div>
@@ -15,8 +15,13 @@
     </div>
 
     <!-- Loading -->
-    <div id="loading" v-else>
+    <div id="loading" v-else-if="appState.stage === 2">
       <LoadingBar :tracks="tracks" />
+    </div>
+
+    <!-- Playing -->
+    <div id="playing" v-else>
+      <Playing />
     </div>
   </div>
 </template>
@@ -26,6 +31,7 @@
 /* eslint-disable no-unused-vars */
 import { reactive, watch } from 'vue';
 import LoadingBar from '@/components/Common/LoadingBar.vue';
+import Playing from '@/components/Common/Playing.vue';
 
 export default {
   name: 'BottomPane',
@@ -39,10 +45,12 @@ export default {
   },
   components: {
     LoadingBar,
+    Playing,
   },
   setup(props) {
     const appState = reactive({
       map: true,
+      stage: 1,
     });
 
     const mapProperties = reactive({
@@ -67,6 +75,8 @@ export default {
       mapProperties.coords.y = map.j;
       mapProperties.name = map.name;
       appState.map = map.status;
+
+      appState.stage = !appState.map ? 2 : 1;
     });
 
     // Listen on the 'song_data' event
@@ -79,20 +89,24 @@ export default {
             tracks.artists.push(data.song.artist_names);
             tracks.titles.push(data.song.title);
           }
+        } else if (data.how === 'finish' && tracks.total >= tracks.min) {
+          appState.stage = 3;
         }
 
       // reset the array's length
       } else {
+        appState.stage = 2;
         tracks.total = 0;
         tracks.artists = [];
         tracks.titles = [];
       }
     });
 
+    // Get The Minimum Number of Tracks To Fetch
     watch(props.personalisationSettings, (data) => {
       const datum = data[0];
       tracks.min = (datum.length !== 0 && datum[datum.length - 1].settings_data !== undefined)
-        ? datum[datum.length - 1].settings_data.user.personalisation.numOfTracks
+        ? Number(datum[datum.length - 1].settings_data.user.personalisation.numOfTracks)
         : tracks.min;
     });
 
