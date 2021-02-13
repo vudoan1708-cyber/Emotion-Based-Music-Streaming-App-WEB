@@ -21,7 +21,7 @@
 
     <!-- Playing -->
     <div id="playing" v-else>
-      <Playing />
+      <Playing :appState="appState" />
     </div>
   </div>
 </template>

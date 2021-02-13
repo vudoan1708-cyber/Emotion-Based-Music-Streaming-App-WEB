@@ -5,6 +5,9 @@ const getSongPlay = require('../logic/spotify/getSongPlay');
 const getSongPause = require('../logic/spotify/getSongPause');
 const getSongIsPlaying = require('../logic/spotify/getSongIsPlaying');
 const getPlayerInfo = require('../logic/spotify/getPlayerInfo');
+const getSongSeek = require('../logic/spotify/getSongSeek');
+const getSongShuffle = require('../logic/spotify/getSongShuffle');
+const getSongRepeat = require('../logic/spotify/getSongRepeat');
 
 const getUser = require('../logic/spotify/getUser');
 const getUserPersonalisation = require('../logic/spotify/getUserPersonalisation');
@@ -47,6 +50,7 @@ module.exports = (app) => {
     }
   });
 
+  // player
   app.get('/player/is-playing', async(req, res) => {
     const TOKEN = req.query.token;
 
@@ -62,8 +66,8 @@ module.exports = (app) => {
     const TOKEN = req.query.token;
     const PLAYLIST = req.query.playlist.split(',');
     const PLAYER_ID = req.query.player_id;
-    const POSITION_MS = req.query.position_ms;
-    const OFFSET = req.query.offset;
+    const POSITION_MS = Number(req.query.position_ms);
+    const OFFSET = req.query.offset !== 'undefined' ? Number(req.query.offset) : undefined;
 
     try {
       const songPlay = await getSongPlay(TOKEN, PLAYLIST, PLAYER_ID, POSITION_MS, OFFSET);
@@ -80,6 +84,45 @@ module.exports = (app) => {
     try {
       const songPause = await getSongPause(TOKEN, PLAYER_ID);
       res.json(songPause);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/player/seek', async(req, res) => {
+    const TOKEN = req.query.token;
+    const PLAYER_ID = req.query.player_id;
+    const POSITION_MS = req.query.position_ms;
+
+    try {
+      const songSeek = await getSongSeek(TOKEN, PLAYER_ID, POSITION_MS);
+      res.json(songSeek);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/player/shuffle', async(req, res) => {
+    const TOKEN = req.query.token;
+    const PLAYER_ID = req.query.player_id;
+    const STATE = req.query.state;
+
+    try {
+      const songShuffle = await getSongShuffle(TOKEN, PLAYER_ID, STATE);
+      res.json(songShuffle);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/player/repeat', async(req, res) => {
+    const TOKEN = req.query.token;
+    const PLAYER_ID = req.query.player_id;
+    const STATE = req.query.state;
+
+    try {
+      const songRepeat = await getSongRepeat(TOKEN, PLAYER_ID, STATE);
+      res.json(songRepeat);
     } catch(err) {
       res.json(err);
     }

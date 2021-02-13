@@ -243,6 +243,7 @@ export default {
 
       p.setup = () => {
         p.createCanvas(width, height).parent('p5Canvas');
+        p.frameRate(15);
         p.ellipseMode(p.CENTER);
         p.rectMode(p.CENTER);
 

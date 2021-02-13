@@ -1,7 +1,7 @@
+@import '../Mixin/position';
+
 #bar_styling {
-  position: absolute;
-  left: 50%;
-  top: 25%;
+  @include positionProperties(absolute, 50%, '', 25%, '');
   transform: translateX(-50%);
   width: 50%;
   pointer-events: none;
@@ -18,10 +18,6 @@
       overflow-x: hidden;
       background-color: rgb(112, 194, 130);
       border-radius: 20px;
-
-      img {
-        width: 100%;
-      }
     }
   }
 

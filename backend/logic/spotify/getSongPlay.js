@@ -1,12 +1,20 @@
 const fetch = require('node-fetch');
 
 module.exports = async function getSongPlay(TOKEN, PLAYLIST, PLAYER_ID, POSITION_MS, OFFSET) {
-  const data = {
+  const data = OFFSET !== undefined 
+  ? {
     'uris': PLAYLIST,
     'play': true,
+    /* offset track position can only work when
+        there's no duplicate to the start track in the uris field */
     'offset': {
       'position': OFFSET,
     },
+    'position_ms': POSITION_MS,
+  }
+  : {
+    'uris': PLAYLIST,
+    'play': true,
     'position_ms': POSITION_MS,
   };
 
