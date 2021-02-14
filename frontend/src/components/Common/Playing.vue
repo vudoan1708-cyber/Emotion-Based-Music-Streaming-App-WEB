@@ -25,13 +25,19 @@
     <!-- Player Settings (Shuffle Play, Repeat,...) -->
     <div id="playing_settings">
       <!-- Shuffle Mode -->
-      <div class="playing_mode" :class="{ 'shuffle_hightlight': isChosen === 1 }" id="shuffle">
+      <div class="playing_mode" :class="{ 'shuffle_hightlight': isChosen === 1 }" id="shuffle"
+        @click="togglePlayerModes(1)">
         <img src="@/assets/shuffle.png" />
       </div>
 
       <!-- Repeat Mode -->
-      <div class="playing_mode" :class="{ 'repeat_hightlight': isChosen === 2 }" id="repeat">
+      <div class="playing_mode" :class="{ 'repeat_hightlight': isChosen === -1 }" id="repeat"
+        @click="togglePlayerModes(-1)">
         <img src="@/assets/repeat.png" />
+        <div v-if="currentRepeatState !== 'off'" id="modes">
+          <h5 v-if="currentRepeatState === 'track'">1</h5>
+          <h5 v-else-if="currentRepeatState === 'context'">All</h5>
+        </div>
       </div>
     </div>
   </div>
@@ -41,7 +47,8 @@
 import { reactive, ref, watchEffect } from 'vue';
 
 import {
-  pauseSong, playSong, getSongIsPlaying, seekSongPosition,
+  pauseSong, playSong, getSongIsPlaying,
+  seekSongPosition, shuffleSong, repeatSong,
 } from '@/handlers/spotify';
 
 import Play from '@/assets/play.png';
@@ -77,6 +84,15 @@ export default {
       },
     });
 
+    // Player Modes
+    const repeatCounter = ref(0);
+    const shuffleCounter = ref(0);
+    // track: repeat the current track
+    // context: repeat the current context
+    // off: repeat off
+    const repeatStates = ref(['track', 'context', 'off']);
+    const currentRepeatState = ref('');
+
     // References
     const playingProgressRef = ref(null);
     // Player Mode (Shuffle, Repeat)
@@ -104,8 +120,6 @@ export default {
 
           songPlay.artists = songPlay.isPlaying.response.item.artists[0].name;
           songPlay.title = songPlay.isPlaying.response.item.name;
-        } else {
-          songPlay.progress_ms = 0;
         }
         setTimeout(liveUpdatePlayerBar, 1000);
       }
@@ -127,15 +141,56 @@ export default {
     }
 
     function endSeek() {
-      seeker.isDragged = false;
+      if (seeker.isDragged) {
+        seeker.isDragged = false;
 
-      // Update Newly Seeked Position
-      playingProgressRef.value.style.width = `${seeker.percentage}%`;
+        // Update Newly Seeked Position
+        playingProgressRef.value.style.width = `${seeker.percentage}%`;
 
-      // Find Current Seek Position
-      const currentSeekPos = (seeker.percentage / 100) * songPlay.duration_ms;
+        // Find Current Seek Position
+        const currentSeekPos = (seeker.percentage / 100) * songPlay.duration_ms;
 
-      seekSongPosition(Math.floor(currentSeekPos));
+        seekSongPosition(Math.floor(currentSeekPos));
+      }
+    }
+
+    function togglePlayerModes(num) {
+      // Shuffle Mode
+      if (num === 1) {
+        // Toggle On/Off
+        shuffleCounter.value += 1;
+        // Reset The Repeat Mode
+        repeatCounter.value = 0;
+        // Turn Off Current Repeat State
+        currentRepeatState.value = 'off';
+        // Highlight The Shuffle Mode
+        if (shuffleCounter.value % 2 === 0) {
+          isChosen.value = 0;
+          // Trigger A Func To Call The Shuffle API
+          shuffleSong(false);
+        } else {
+          isChosen.value = num;
+          // Trigger A Func To Call The Shuffle API
+          shuffleSong(true);
+        }
+
+      // Repeat Mode
+      } else {
+        // Reset The Shuffle Mode
+        shuffleCounter.value = 0;
+        // Assign Current Repeat State
+        currentRepeatState.value = repeatStates.value[repeatCounter.value];
+        // Trigger A Func To Call The Repeat API
+        repeatSong(currentRepeatState.value);
+        // eslint-disable-next-line no-lonely-if
+        if (repeatCounter.value < 2) {
+          repeatCounter.value += 1;
+          isChosen.value = num;
+        } else {
+          repeatCounter.value = 0;
+          isChosen.value = 0;
+        }
+      }
     }
 
     watchEffect(() => {
@@ -155,6 +210,8 @@ export default {
       duringSeek,
       endSeek,
       isChosen,
+      togglePlayerModes,
+      currentRepeatState,
     };
   },
 };

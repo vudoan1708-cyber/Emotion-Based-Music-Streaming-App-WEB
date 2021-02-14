@@ -134,6 +134,30 @@ export async function getSongIsPlaying() {
   }
 }
 
+export async function shuffleSong(state) {
+  try {
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/player/shuffle/?token=${TOKEN}&player_id=${spotifyPlayerID}&state=${state}`
+              : `http://localhost:5000/player/shuffle/?token=${TOKEN}&player_id=${spotifyPlayerID}&state=${state}`;
+    const response = await useFetch(URL, 'GET');
+    return response;
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function repeatSong(state) {
+  try {
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/player/repeat/?token=${TOKEN}&player_id=${spotifyPlayerID}&state=${state}`
+              : `http://localhost:5000/player/repeat/?token=${TOKEN}&player_id=${spotifyPlayerID}&state=${state}`;
+    const response = await useFetch(URL, 'GET');
+    return response;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function seekSongPosition(ms) {
   try {
     const URL = (PRODUCTION === 'production')

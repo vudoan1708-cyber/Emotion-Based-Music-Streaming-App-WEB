@@ -90,5 +90,15 @@
         filter: invert(100%);
       }
     }
+
+    .shuffle_hightlight,
+    .repeat_hightlight {
+      filter: invert(100%);
+    }
+
+    #modes {
+      position: absolute;
+      border-radius: 50%;
+    }
   }
 }
