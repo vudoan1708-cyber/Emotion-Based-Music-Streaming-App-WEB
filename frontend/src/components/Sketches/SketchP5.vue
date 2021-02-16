@@ -25,6 +25,7 @@
 /* eslint-disable new-cap */
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
+/* eslint-disable no-await-in-loop */
 
 import {
   onMounted, reactive, ref, watch,
@@ -43,7 +44,10 @@ import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from 
 import { indicesToMood, moodToIndices, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
 import changeMap from '@/components/Utils/dom/changeMap';
 
-import { handlingSongsData, removeATempPlaylist, showUserPlaylist } from '@/handlers/spotify';
+import {
+  handlingSongsData, removeATempPlaylist,
+  showUserPlaylist, playSong, findSongViaID,
+} from '@/handlers/spotify';
 
 // Vue Component
 import SongData from '@/components/Common/SongData.vue';
@@ -283,7 +287,7 @@ export default {
         }
       };
 
-      p.mousePressed = () => {
+      p.mousePressed = async () => {
         // only clickable when the emotion map is shown
         if (showMap.index !== 0) {
           if (map_properties.status) {
@@ -304,6 +308,13 @@ export default {
                 } else if (region === 4 && showMap.index === 4) {
                   locationChosen(i, j, 'random', null);
                 }
+              }
+            }
+          } else {
+            for (let i = 0; i < songDots.length; i += 1) {
+              if (songDots[i].onHover()) {
+                const offsetTrack = findSongViaID(songDots[i].id);
+                await playSong(0, offsetTrack);
               }
             }
           }

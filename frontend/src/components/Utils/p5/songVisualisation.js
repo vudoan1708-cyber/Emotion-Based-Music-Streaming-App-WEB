@@ -49,12 +49,16 @@ export function drawSongDots(starDots, chosenPoints, emitter) {
       if (songOnHover) {
         songIndex = i;
         emitter.emit('song_on_hover', songDots[i]);
+
+        if (document.body.style.cursor !== 'pointer') document.body.style.cursor = 'pointer';
       } else {
         // Only send data of null to disable song detail display on the map
         // if the song which is not on hover is the latest one that was hovered on
         // eslint-disable-next-line no-lonely-if
         if (songIndex === i) {
           emitter.emit('song_on_hover', null);
+
+          if (document.body.style.cursor === 'pointer') document.body.style.cursor = 'context-menu';
         }
       }
     }

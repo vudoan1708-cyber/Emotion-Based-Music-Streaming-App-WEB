@@ -21,15 +21,14 @@
 
     <!-- Playing -->
     <div id="playing" v-else>
-      <Playing :appState="appState" />
+      <Playing :appState="appState" :emitter="emitterObj" />
     </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable object-curly-newline */
-/* eslint-disable no-unused-vars */
-import { reactive, watch } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import LoadingBar from '@/components/Common/LoadingBar.vue';
 import Playing from '@/components/Common/Playing.vue';
 
@@ -69,8 +68,11 @@ export default {
       titles: [],
     });
 
+    // Props
+    const emitterObj = ref(props.emitter);
+
     // subscribe on the 'map' event
-    props.emitter.on('map', (map) => {
+    emitterObj.value.on('map', (map) => {
       mapProperties.coords.x = map.i;
       mapProperties.coords.y = map.j;
       mapProperties.name = map.name;
@@ -80,7 +82,7 @@ export default {
     });
 
     // Listen on the 'song_data' event
-    props.emitter.on('song_data', (data) => {
+    emitterObj.value.on('song_data', (data) => {
       // handle removeAll label
       if (data.song !== undefined) {
         if (!data.beforeLoading && tracks.total < tracks.min) {
@@ -114,6 +116,7 @@ export default {
       appState,
       mapProperties,
       tracks,
+      emitterObj,
     };
   },
 };

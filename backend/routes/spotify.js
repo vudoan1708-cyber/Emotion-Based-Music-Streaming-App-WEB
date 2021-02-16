@@ -8,6 +8,9 @@ const getPlayerInfo = require('../logic/spotify/getPlayerInfo');
 const getSongSeek = require('../logic/spotify/getSongSeek');
 const getSongShuffle = require('../logic/spotify/getSongShuffle');
 const getSongRepeat = require('../logic/spotify/getSongRepeat');
+const getNextSong = require('../logic/spotify/getNextSong');
+const getPreviousSong = require('../logic/spotify/getPreviousSong');
+const getVolume = require('../logic/spotify/getVolume');
 
 const getUser = require('../logic/spotify/getUser');
 const getUserPersonalisation = require('../logic/spotify/getUserPersonalisation');
@@ -20,9 +23,10 @@ module.exports = (app) => {
     const TOKEN = req.query.token;
     const KEYWORD = req.query.keyword;
     const TYPE = req.query.search_type;
+    const LIMIT = req.query.limit !== 'undefined' ? req.query.limit : undefined;
     
     try {
-      const song_data = await getSongs(TOKEN, KEYWORD, TYPE);
+      const song_data = await getSongs(TOKEN, KEYWORD, TYPE, LIMIT);
 
       const feature_data = song_data.type === undefined ? await getAudioFeatures(song_data) : await getSongs(TOKEN, escape(KEYWORD), TYPE);
       res.json(feature_data);
@@ -123,6 +127,32 @@ module.exports = (app) => {
     try {
       const songRepeat = await getSongRepeat(TOKEN, PLAYER_ID, STATE);
       res.json(songRepeat);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/player/skip', async(req, res) => {
+    const TOKEN = req.query.token;
+    const PLAYER_ID = req.query.player_id;
+    const HOW = req.query.how;
+
+    try {
+      const songSkip = HOW === 'next' ? await getNextSong(TOKEN, PLAYER_ID) : await getPreviousSong(TOKEN, PLAYER_ID);
+      res.json(songSkip);
+    } catch(err) {
+      res.json(err);
+    }
+  });
+
+  app.get('/player/volume', async(req, res) => {
+    const TOKEN = req.query.token;
+    const PLAYER_ID = req.query.player_id;
+    const PERCENT = req.query.percent;
+
+    try {
+      const volume = await getVolume(TOKEN, PLAYER_ID, PERCENT);
+      res.json(volume);
     } catch(err) {
       res.json(err);
     }

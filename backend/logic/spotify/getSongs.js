@@ -1,11 +1,11 @@
 const fetch = require('node-fetch');
 
-module.exports = async function getSongs(TOKEN, KEYWORD, TYPE) {
+module.exports = async function getSongs(TOKEN, KEYWORD, TYPE, LIMIT) {
   // base URL
   const BASE_URL = 'https://api.spotify.com/v1/search?';
 
   // search limit
-  const lim = 10;
+  const lim = LIMIT !== undefined ? LIMIT : 10;
 
   // market
   const MARKET = 'from_token';

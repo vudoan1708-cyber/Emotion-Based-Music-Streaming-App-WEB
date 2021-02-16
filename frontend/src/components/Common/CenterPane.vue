@@ -36,6 +36,13 @@
           </li>
         </ul>
       </div>
+      <div id="next_back_button">
+        <h3 v-if="searchPage > 1" id="back_button" class="center_nav_button"
+          @click="navigateThroughPages(-1)">&lt;</h3>
+        <h2 class="center_nav_button">{{ searchPage }}</h2>
+        <h3 id="next_button" class="center_nav_button"
+          @click="navigateThroughPages(1)">&gt;</h3>
+      </div>
     </div>
     <div v-else-if="number === 2 && searchResults.length === 0 && searchKeywords !== ''"
       id="no_results">
@@ -46,6 +53,8 @@
 
 <script>
 import { ref } from 'vue';
+
+import { getSongsData } from '@/handlers/spotify';
 
 import Search from '@/components/Common/Search.vue';
 import Portfolio from '@/components/Common/Portfolio.vue';
@@ -74,6 +83,8 @@ export default {
     const searchResults = ref([]);
     // String to Hold Searched Keyword
     const searchKeywords = ref('');
+    // Search Pages
+    const searchPage = ref(1);
 
     // Listen to 'search' event
     emitterObj.value.on('search', (results) => {
@@ -81,6 +92,9 @@ export default {
       searchResults.value = results.audioFeatures !== null ? [...results.audioFeatures] : [];
       // Reassign The String
       searchKeywords.value = results.KEYWORD;
+      searchPage.value = (searchKeywords.value === '' || searchResults.value === [])
+        ? 1
+        : searchPage.value;
     });
 
     // Listen to 'nav' event
@@ -89,13 +103,28 @@ export default {
 
       // Handle Cases of Navigating Away From The Search Area
       if (number.value !== 2) {
+        // Reset All The Search-Related Variables
         searchResults.value = [];
         searchKeywords.value = '';
+        searchPage.value = 1;
       }
     });
 
     function plotTrackOnTheMap(track) {
       emitterObj.value.emit('plot_via_search', track);
+    }
+
+    async function navigateThroughPages(num) {
+      if (searchPage.value > 0) {
+        searchPage.value += num;
+        const audioFeatures = await getSongsData(searchKeywords.value, 'track', searchPage.value * 10);
+        // Emitted Obj
+        const emitData = {
+          KEYWORD: searchKeywords.value,
+          audioFeatures,
+        };
+        emitterObj.value.emit('search', emitData);
+      }
     }
 
     return {
@@ -104,6 +133,8 @@ export default {
       searchResults,
       searchKeywords,
       plotTrackOnTheMap,
+      searchPage,
+      navigateThroughPages,
     };
   },
 };

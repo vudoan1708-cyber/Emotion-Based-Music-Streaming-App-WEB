@@ -8,6 +8,12 @@
       <img draggable="false" @dragstart="false" :src="images" />
     </div>
 
+    <!-- Skip Songs Buttons -->
+    <div id="skip_buttons">
+      <img draggable="false" @dragstart="false" @click="skipSong('previous')" :src="Previous" />
+      <img draggable="false" @dragstart="false" @click="skipSong('next')" :src="Next" />
+    </div>
+
     <!-- Playing Progress Bar -->
     <div id="playing_progress_bar"
       @mousedown="initSeek">
@@ -19,7 +25,7 @@
     <!-- Songs -->
     <div id="play_song_details">
       <h2>{{ songPlay.title }}</h2>
-      <h5>{{ songPlay.artists }}</h5>
+      <h5 @click="searchViaClick">{{ songPlay.artists }}</h5>
     </div>
 
     <!-- Player Settings (Shuffle Play, Repeat,...) -->
@@ -39,6 +45,12 @@
           <h5 v-else-if="currentRepeatState === 'context'">All</h5>
         </div>
       </div>
+
+      <!-- Volume -->
+      <div id="volume">
+        <input ref="volumeRef" type="range" min="1" max="100" value="100"
+          @change="setVolume" />
+      </div>
     </div>
   </div>
 </template>
@@ -49,15 +61,21 @@ import { reactive, ref, watchEffect } from 'vue';
 import {
   pauseSong, playSong, getSongIsPlaying,
   seekSongPosition, shuffleSong, repeatSong,
+  getSongsData, changeVolume, skipSong,
 } from '@/handlers/spotify';
 
 import Play from '@/assets/play.png';
 import Pause from '@/assets/pause.png';
+import Next from '@/assets/next.png';
+import Previous from '@/assets/previous.png';
 
 export default {
   name: 'Playing',
   props: {
     appState: {
+      type: Object,
+    },
+    emitter: {
       type: Object,
     },
   },
@@ -97,6 +115,11 @@ export default {
     const playingProgressRef = ref(null);
     // Player Mode (Shuffle, Repeat)
     const isChosen = ref(null);
+    // Volume
+    const volumeRef = ref(null);
+
+    // Props
+    const emitterObj = ref(props.emitter);
 
     function togglePlayPause() {
       if (images.value === Play) {
@@ -193,6 +216,26 @@ export default {
       }
     }
 
+    // Click To Search
+    async function searchViaClick() {
+      // get songs' valence and arousal data
+      const audioFeatures = await getSongsData((songPlay.artists).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
+      // Emitted Obj
+      const emitData = {
+        KEYWORD: songPlay.artists,
+        audioFeatures,
+      };
+      emitterObj.value.emit('search', emitData);
+
+      // Emit A Number 2 Representing The Search Nav Element
+      emitterObj.value.emit('nav', 2);
+    }
+
+    // Set Volume
+    async function setVolume() {
+      await changeVolume(volumeRef.value.value);
+    }
+
     watchEffect(() => {
       if (props.appState.stage === 3) {
         liveUpdatePlayerBar();
@@ -212,6 +255,12 @@ export default {
       isChosen,
       togglePlayerModes,
       currentRepeatState,
+      searchViaClick,
+      volumeRef,
+      setVolume,
+      Next,
+      Previous,
+      skipSong,
     };
   },
 };

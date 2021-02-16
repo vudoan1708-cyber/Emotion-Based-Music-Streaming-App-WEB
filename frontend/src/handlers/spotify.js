@@ -102,6 +102,22 @@ export function getKeyword(how, text) {
   return keyword;
 }
 
+export function findSongViaID(uri) {
+  // Offset Song
+  let offset = 0;
+  let count = 0;
+  // Loop through the playlist array to check offset songs
+  playlist.forEach((songID, index) => {
+    if (songID === uri) {
+      count += 1;
+      if (count <= 1) {
+        offset = index;
+      } else updatePlaylist(songID, 'remove');
+    }
+  });
+  return offset;
+}
+
 export async function getSongIsPlaying() {
 
   try {
@@ -111,24 +127,26 @@ export async function getSongIsPlaying() {
 
     const response = await useFetch(URL, 'GET');
 
-    // Offset Song
-    let offset = 0;
-    let count = 0;
-    // Loop through the playlist array to check offset songs
-    playlist.forEach((songID, index) => {
-      if (songID === response.item.uri) {
-        count += 1;
-        if (count <= 1) {
-          offset = index;
-        } else updatePlaylist(songID, 'remove');
-      }
-    });
+    // Find Songs Via Their IDs
+    const offset = findSongViaID(response.item.uri);
 
     const responseData = {
       offset,
       response,
     };
     return responseData;
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function changeVolume(PERCENT) {
+  try {
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/player/volume/?token=${TOKEN}&player_id=${spotifyPlayerID}&percent=${PERCENT}`
+              : `http://localhost:5000/player/volume/?token=${TOKEN}&player_id=${spotifyPlayerID}&percent=${PERCENT}`;
+    const response = await useFetch(URL, 'GET');
+    return response;
   } catch (err) {
     return err;
   }
@@ -158,6 +176,18 @@ export async function repeatSong(state) {
   }
 }
 
+export async function skipSong(how) {
+  try {
+    const URL = (PRODUCTION === 'production')
+              ? `https://muserfly.herokuapp.com/player/skip/?token=${TOKEN}&player_id=${spotifyPlayerID}&how=${how}`
+              : `http://localhost:5000/player/skip/?token=${TOKEN}&player_id=${spotifyPlayerID}&how=${how}`;
+    const response = await useFetch(URL, 'GET');
+    return response;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function seekSongPosition(ms) {
   try {
     const URL = (PRODUCTION === 'production')
@@ -171,13 +201,13 @@ export async function seekSongPosition(ms) {
   }
 }
 
-export async function getSongsData(KEYWORD, SEARCH_TYPE) {
+export async function getSongsData(KEYWORD, SEARCH_TYPE, LIMIT) {
 
   try {
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production')
-              ? `https://muserfly.herokuapp.com/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}`
-              : `http://localhost:5000/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}`;
+              ? `https://muserfly.herokuapp.com/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}&limit=${LIMIT}`
+              : `http://localhost:5000/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}&limit=${LIMIT}`;
 
     const response = await useFetch(URL, 'GET');
     const isObjEmpty = isEmpty(response);
