@@ -31,9 +31,9 @@ const personalisedPlaylist = [];
 
 // handling production and development mode
 const PRODUCTION = process.env.NODE_ENV;
-const TOKEN = hashURL(window.location.href);
+const TOKEN = hashURL(window.location.href, 2);
 
-export function LoginHandlers() {
+export function LoginHandlers(instructions) {
 
   // if it's production mode, get rid of the proxied server,
   // because, the client will be built on top of Python then,
@@ -42,7 +42,7 @@ export function LoginHandlers() {
   // with the endpoint /api as a proxy to the server
   const ENDPOINT = (PRODUCTION === 'production') ? '' : '/api';
   try {
-    window.location.href = `${ENDPOINT}/login`;
+    window.location.href = `${ENDPOINT}/login?instructions=${instructions}`;
   } catch (e) {
     window.location.href = '/';
     console.log(e);
@@ -64,7 +64,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   player.on('account_error', (e) => console.error(e));
   player.on('playback_error', (e) => { 
     console.error(e);
-    LoginHandlers();
+    LoginHandlers(false);
   });
 
   // Playback status updates
@@ -379,8 +379,16 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
           // if audio features object is invalid, go back to the start of the workflow
           // this happens because, the marginal differences at the edges of the map
           // creates negative/over-scored mood values
-          if (results === null || results.type === 'invalid-json' || results.error) handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
-          else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
+          console.log(results);
+          // if the result's form is not an array
+          if (results.length === undefined) {
+            if (results === null || results.type === 'invalid-json') handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+            else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
+          // otherwise, it is an array
+          } else {
+            if (results[0].error) handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+            else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
+          }
         }
       } else {
         if (isSearching) {
@@ -534,8 +542,9 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
 
   // get songs' valence and arousal data
   let audio_features = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
-
+  // error comes from no audio features values detected
   if (audio_features === null) audio_features = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'album');
-
+  // error comes from JSON input
+  else if (audio_features.type === 'invalid-json') handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
   else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5);
 }

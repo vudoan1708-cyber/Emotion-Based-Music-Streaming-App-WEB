@@ -5,7 +5,7 @@
   </div>
 
   <!-- map cover -->
-  <div id="map_cover" v-if="map_properties.status">
+  <div id="map_cover" v-if="mapProperties.status">
     <ul>
       <li id="top_left" style="opacity: 1;" @click=instantiateMap(1) ref="angryBtn">Aggressive</li>
       <li id="top_right" style="opacity: 1;" @click=instantiateMap(2) ref="happyBtn">Exciting</li>
@@ -16,6 +16,11 @@
 
   <!-- Song Info On The Map -->
   <SongData :emitter="emitterObj" />
+
+  <!-- Instructions -->
+  <transition name="fade">
+    <Notifications :emitter="emitterObj" v-if="isInstructionsShown" />
+  </transition>
 </template>
 
 <script>
@@ -23,7 +28,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-param-reassign */
 /* eslint-disable new-cap */
-/* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-await-in-loop */
 
@@ -42,6 +46,8 @@ import { songDots, drawSongDots } from '@/components/Utils/p5/songVisualisation'
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
 import { indicesToMood, moodToIndices, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
+import hashURL from '@/components/Utils/logic/hashURL';
+
 import changeMap from '@/components/Utils/dom/changeMap';
 
 import {
@@ -51,6 +57,8 @@ import {
 
 // Vue Component
 import SongData from '@/components/Common/SongData.vue';
+
+import Notifications from '@/components/Reusable/Notifications.vue';
 
 export default {
   name: 'SketchP5',
@@ -64,10 +72,11 @@ export default {
   },
   components: {
     SongData,
+    Notifications,
   },
   setup(props) {
     // indices on map
-    const map_properties = reactive({
+    const mapProperties = reactive({
       i: 0,
       j: 0,
       name: 'Regions on The Map',
@@ -102,6 +111,14 @@ export default {
     const sadBtn = ref(null);
     const calmBtn = ref(null);
 
+    // Delay Time To Display The Instruction Board
+    const isInstructionsShown = ref(false);
+    // setTimeout for deplaying the instruction to be displayed
+    setTimeout(() => {
+      const allowInstructionDisplayed = (hashURL(window.location.href, 1) === 'true');
+      isInstructionsShown.value = allowInstructionDisplayed;
+    }, 1200);
+
     // P5
     let starDots = [];
     let p5Obj = null;
@@ -111,14 +128,19 @@ export default {
     function emitMapEvent(state) {
       // socket.io-like package (mitt) for emitting and listening to events
       // between COMPONENTS
-      if (state === 'close') emitterObj.value.off('map', map_properties);
-      else emitterObj.value.emit('map', map_properties);
+      if (state === 'close') emitterObj.value.off('map', mapProperties);
+      else emitterObj.value.emit('map', mapProperties);
     }
 
     // Listen on the 'nav' event
     emitterObj.value.on('nav', (num) => {
       if (num === 1) isDraggable.value = true;
       else isDraggable.value = false;
+    });
+
+    // Listen on the 'instructions' event
+    emitterObj.value.on('instructions', (isClose) => {
+      if (isClose) isInstructionsShown.value = false;
     });
 
     // listen to click event from the dom elements
@@ -146,23 +168,23 @@ export default {
       // in one machine, only two types of data emit from this socket connection
       // 1: HISTORICAL DATA (when first open the app)
       // 2: NEW DATA (when other users choose a coordinates closely to others)
-      function userDataEmit(curent_data) {
+      function userDataEmit(curentData) {
         // check if it is the first HISTORICAL data emit
         // because a HISTORICAL data emit is in a form of an array (not undefined)
         // this condition statement is to store the historical data to a global variable
-        if (curent_data.length !== undefined) {
+        if (curentData.length !== undefined) {
           // check if a user is not the first connection to the system
           // because first users don't need historical data
-          if (curent_data.length !== 0) {
+          if (curentData.length !== 0) {
             // shallow copy the data and assign it to a global array
-            history = [...curent_data];
+            history = [...curentData];
           }
 
         // check if it is a current event
         } else {
           // receive the NEW data broadcasted by OTHER USERS
           // and push it to neighbours array
-          createNewNeighbours(curent_data, chosenPoints, width, height);
+          createNewNeighbours(curentData, chosenPoints, width, height);
         }
       }
 
@@ -207,7 +229,7 @@ export default {
           socket.emit('click', data);
 
           // manipulate data to be sent to another component file
-          map_properties.status = false;
+          mapProperties.status = false;
 
           // wait for 1.5 sec before closing an event on map positions
           setTimeout(() => { emitMapEvent('close'); }, 1500);
@@ -267,16 +289,16 @@ export default {
         // Keep Track of Affective Values on The Emotion Map
         const mood = posOnMap(width, height, starDots, p);
         // eslint-disable-next-line valid-typeof
-        map_properties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
-        map_properties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
-        map_properties.status ? emitMapEvent('open') : undefined;
+        mapProperties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
+        mapProperties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
+        mapProperties.status ? emitMapEvent('open') : undefined;
 
         if (showMap.index !== 0) {
           // For Performances Reason, Hide All Song Dots And Neighbours
           // All The Map-Related Visualisation Elements Will Always Be Drawn When Homepage is Visited
           if (isDraggable.value) {
             // The Emotion Map
-            drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, map_properties, emitterObj.value, p);
+            drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, mapProperties, emitterObj.value, p);
 
             // Song Dots
             drawSongDots(starDots, chosenPoints, emitterObj.value);
@@ -290,7 +312,7 @@ export default {
       p.mousePressed = async () => {
         // only clickable when the emotion map is shown
         if (showMap.index !== 0) {
-          if (map_properties.status) {
+          if (mapProperties.status) {
             const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
 
             for (let i = 0; i < starDots.length; i += 1) {
@@ -365,6 +387,7 @@ export default {
 
     function searchUserPersonalisedPlaylist(datum) {
       const {
+        // eslint-disable-next-line camelcase
         title, valence, arousal, id, album_imgs, artist_details, artist_names, external_urls,
       } = datum;
       showUserPlaylist(title, valence, arousal, id,
@@ -397,7 +420,8 @@ export default {
       sadBtn,
       calmBtn,
       instantiateMap,
-      map_properties,
+      isInstructionsShown,
+      mapProperties,
     };
   },
 };

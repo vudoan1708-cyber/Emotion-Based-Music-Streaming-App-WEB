@@ -4,12 +4,6 @@
   </div>
 </template>
 
-<script>
-export default {
-
-};
-</script>
-
 <style scoped lang="scss">
 @import '@/sass/Unique/_top_pane';
 </style>

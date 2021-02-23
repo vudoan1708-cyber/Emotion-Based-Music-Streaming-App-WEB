@@ -11,6 +11,7 @@ module.exports = (app) => {
     const code = req.query.code || null;
     const state = req.query.state || null;
     const storedState = req.cookies ? req.cookies[stateKey] : null;
+    const INSTRUCTIONS = req.cookies ? req.cookies['instructions'] : null;
   
     // options instance
     if (state === null || state !== storedState) {
@@ -43,12 +44,12 @@ module.exports = (app) => {
 
           const options = {
             url: 'https://api.spotify.com/v1/me',
-            headers: { 'Authorization': 'Bearer ' + access_token },
+            headers: { 'Authorization': `Bearer ${access_token}` },
             json: true
           };
 
           // we can also pass the token to the browser to make requests from there
-          res.redirect(uri + '?access_token=' + access_token);
+          res.redirect(`${uri}?access_token=${access_token}&instructions=${INSTRUCTIONS}`);
         } else {
           res.redirect('/#' +
             querystring.stringify({

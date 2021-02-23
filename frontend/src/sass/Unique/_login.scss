@@ -9,7 +9,6 @@ $hover-color: rgb(170, 180, 170);
   #button {
     position: absolute;
     top: 0%;
-    // transform: translateY(-50%);
     z-index: 3;
     width: 100%;
     display: flex;
@@ -19,6 +18,29 @@ $hover-color: rgb(170, 180, 170);
     text-align: center;
     min-height: 100vh;
     
+    #welcome {
+      margin-bottom: 10px;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: rgb(43, 42, 42);
+
+      .checkforInstructions {
+        display: inline-block;
+        margin-right: 10px;
+      }
+
+      h3 {
+        color: white;
+      }
+      p {
+        text-align: left;
+        color:rgb(170, 180, 170);
+        margin-bottom: 10px;
+      }
+      label {
+        color:rgb(170, 180, 170);
+      }
+    }
     
     #loginBtn {
       position: relative;

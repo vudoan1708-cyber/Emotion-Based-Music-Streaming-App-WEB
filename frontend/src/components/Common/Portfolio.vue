@@ -153,7 +153,7 @@ export default {
       // Loop Through The FileList Object And Execute The Next Function
       [...files].forEach((file) => {
         // eslint-disable-next-line no-unused-expressions
-        (file.type === 'audio/mpeg' || file.type === 'audio/wav' || file.type === 'audio/ogg') ? uploadFile(file) : errorHandling();
+        (file.type === 'audio/mpeg' || file.type === 'audio/wav' || file.type === 'audio/ogg' || file.type === 'audio/x-m4a') ? uploadFile(file) : errorHandling();
       });
     }
 

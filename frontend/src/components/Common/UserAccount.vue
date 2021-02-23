@@ -73,7 +73,7 @@ export default {
 
         // eslint-disable-next-line max-len
         user.img = data.IMAGES.length > 0 ? data.IMAGES[0] : user.img;
-      } else LoginHandlers();
+      } else LoginHandlers(false);
     }
 
     function isClicked() {

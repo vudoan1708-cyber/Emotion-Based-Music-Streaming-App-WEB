@@ -2,13 +2,21 @@
   <div id="login" v-if="!isLoggedIn.value">
     <div id="bg">
     </div>
-    <div id="button">
 
+    <div id="button">
+      <div id="welcome">
+        <h3>Welcome to Muserfly</h3><br />
+        <p>As this music streaming app has a pretty unique interface,
+         we recommend you go through instructions before actually using it<br /></p>
+        <input ref="instructionCheckbox" class="checkforInstructions"
+          type="checkbox" name="instructions" id="instructions">
+        <label class="checkforInstructions" for="instructions">Please check the box if you'd like
+          to go through the instructions</label>
+      </div>
       <div id="loginBtn" @click="login">
         <div class="wrapper" id="header"><h4>CONNECT</h4></div>
         <div class="wrapper" id="spotify_logo"><img src="@/assets/spotify.png"/></div>
       </div>
-
     </div>
   </div>
 </template>
@@ -35,11 +43,12 @@ export default {
   setup() {
 
     const isLoggedIn = ref(false);
+    const instructionCheckbox = ref(null);
 
-    // binded function to a button
+    // Bind the function to a button
     async function login() {
       isLoggedIn.value = true;
-      LoginHandlers();
+      LoginHandlers(instructionCheckbox.value.checked);
     }
 
     const sketch = (p) => {
@@ -74,6 +83,7 @@ export default {
     return {
       isLoggedIn,
       login,
+      instructionCheckbox,
     };
   },
 };
