@@ -1,5 +1,5 @@
-module.exports = async function updateOneData(db, id, settings_data) {
-  settings_data = { settings_data };
+module.exports = async function updateOneData(db, id, data) {
+  data = { data };
   try {
     // find one data with the id
     const returnedItem = await db.find({
@@ -13,7 +13,7 @@ module.exports = async function updateOneData(db, id, settings_data) {
       /* update needed data */
       _id: id,
     }, {
-      $set: settings_data,
+      $set: data,
     });
   } catch (err) {
     return err;

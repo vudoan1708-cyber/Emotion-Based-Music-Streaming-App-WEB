@@ -42,7 +42,7 @@ export default {
         songInfo.attr.x = song.x;
         songInfo.attr.y = song.y;
         songInfo.title = song.title;
-        songInfo.img_url = song.album_imgs.url;
+        songInfo.img_url = song.album_imgs ? song.album_imgs.url : '#';
         songInfo.valence = song.valence;
         songInfo.arousal = song.arousal;
       } else {

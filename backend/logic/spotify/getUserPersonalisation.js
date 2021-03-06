@@ -33,19 +33,21 @@ module.exports = async function getUserPersonalisation(TOKEN, type, offset) {
     let nextURL = null;
 
     // check if an access token is still valid through JSON response
-    if (json.items.length !== 0) {
-      nextURL = json.next;
-      const items = json.items;
-
-      for (let i = 0; i < items.length; i++) {
-        ids.push(items[i].id);
-        preview_urls.push(items[i].preview_url);
-        titles.push(items[i].name);
-        external_urls.push(items[i].album.external_urls.spotify);
-        artist_names.push(items[i].album.artists[0].name);
-        artist_details.push(items[i].artists[0].uri);
-        album_imgs.push(items[i].album.images[0]);
-      }
+    if (json.items !== undefined) {
+      if (json.items.length !== 0) {
+        nextURL = json.next;
+        const items = json.items;
+  
+        for (let i = 0; i < items.length; i++) {
+          ids.push(items[i].id);
+          preview_urls.push(items[i].preview_url);
+          titles.push(items[i].name);
+          external_urls.push(items[i].album.external_urls.spotify);
+          artist_names.push(items[i].album.artists[0].name);
+          artist_details.push(items[i].artists[0].uri);
+          album_imgs.push(items[i].album.images[0]);
+        }
+      } else message = 'not success';
     } else message = 'not success';
 
     return { message, ids, preview_urls, titles, external_urls, 

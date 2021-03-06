@@ -32,6 +32,15 @@ import { ref, reactive, watch } from 'vue';
 import LoadingBar from '@/components/Common/LoadingBar.vue';
 import Playing from '@/components/Common/Playing.vue';
 
+// Algorithm
+import { indicestoCoordinates } from '@/components/Utils/logic/algorithm';
+
+// MongoDB
+import { insertData } from '@/handlers/mongdb';
+
+// JSON
+import userJourneyObj from '@/components/JSON/userJourneyObj';
+
 export default {
   name: 'BottomPane',
   props: {
@@ -64,12 +73,19 @@ export default {
     const tracks = reactive({
       total: 0,
       min: 5,
+      ids: [],
       artists: [],
       titles: [],
+      valenceScores: [],
+      arousalScores: [],
+      albumImgs: [],
     });
 
     // Props
     const emitterObj = ref(props.emitter);
+
+    // Data Obj for userJourney database
+    const dataObj = ref({});
 
     // subscribe on the 'map' event
     emitterObj.value.on('map', (map) => {
@@ -82,17 +98,37 @@ export default {
     });
 
     // Listen on the 'song_data' event
-    emitterObj.value.on('song_data', (data) => {
+    emitterObj.value.on('song_data', async (data) => {
       // handle removeAll label
       if (data.song !== undefined) {
         if (!data.beforeLoading && tracks.total < tracks.min) {
           if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user' || data.song.label === 'user_playlist') {
             tracks.total += 1;
+            tracks.ids.push(data.song.id);
             tracks.artists.push(data.song.artist_names);
             tracks.titles.push(data.song.title);
+            tracks.valenceScores.push(data.song.valence);
+            tracks.arousalScores.push(data.song.arousal);
+            tracks.albumImgs.push(data.song.album_imgs);
           }
         } else if (data.how === 'finish' && tracks.total >= tracks.min) {
           appState.stage = 3;
+          const date = new Date();
+
+          // Re-format the time
+          const h = (date.getHours() < 10 ? '0' : '') + date.getHours();
+          const m = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+          const time = `${h}:${m}`;
+
+          // Use coordinatesToIndices algorithm to convert location values to indices
+          const { x, y } = indicestoCoordinates(data.chosenIndices.i, data.chosenIndices.j,
+            window.innerWidth, window.innerHeight);
+
+          dataObj.value = userJourneyObj(x, y, data.chosenIndices.i, data.chosenIndices.j,
+            tracks.titles, tracks.artists, tracks.valenceScores, tracks.arousalScores,
+            tracks.ids, tracks.albumImgs, date, time);
+
+          await insertData(dataObj.value, 1);
         }
 
       // reset the array's length
@@ -107,8 +143,8 @@ export default {
     // Get The Minimum Number of Tracks To Fetch
     watch(props.personalisationSettings, (data) => {
       const datum = data[0];
-      tracks.min = (datum.length !== 0 && datum[datum.length - 1].settings_data !== undefined)
-        ? Number(datum[datum.length - 1].settings_data.user.personalisation.numOfTracks)
+      tracks.min = (datum.length !== 0 && datum[datum.length - 1].data !== undefined)
+        ? Number(datum[datum.length - 1].data.user.personalisation.numOfTracks)
         : tracks.min;
     });
 

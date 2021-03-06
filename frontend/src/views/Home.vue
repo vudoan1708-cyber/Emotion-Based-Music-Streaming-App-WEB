@@ -70,7 +70,7 @@ export default {
     async function getPersonalisationData() {
       try {
         // get all data from the database
-        const dataResponse = await getAllData();
+        const dataResponse = await getAllData(0);
         // get user data from spotify
         const userData = await getUserProfile();
 
@@ -78,9 +78,9 @@ export default {
           // loop backwards to get the latest data
           for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
             // compare and validate user via user's id
-            if (dataResponse[i].settings_data.user.id === userData.ID) {
+            if (dataResponse[i].data.user.id === userData.ID) {
               // eslint-disable-next-line max-len
-              const { muserfly, spotify } = dataResponse[i].settings_data.last_checked;
+              const { muserfly, spotify } = dataResponse[i].data.last_checked;
 
               // Append Settings Config to the Array
               personalisationSettings.value.push(dataResponse);

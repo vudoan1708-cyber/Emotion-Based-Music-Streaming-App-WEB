@@ -105,8 +105,8 @@ import {
 // MongoDB
 import { insertData, updateData } from '@/handlers/mongdb';
 
-// API
-import settingsObj from '@/components/API/settingsObj';
+// JSON
+import settingsObj from '@/components/JSON/settingsObj';
 
 export default {
   name: 'SettingBoard',
@@ -183,8 +183,8 @@ export default {
 
       // Insert data to MongDB Here
       props.personalisationSettings.length === 0
-        ? await insertData(dataObj.value)
-        : await updateData(dataID.value, dataObj.value);
+        ? await insertData(dataObj.value, 0)
+        : await updateData(dataID.value, dataObj.value, 0);
 
       // Refresh the entire document
       document.location.reload();
@@ -221,8 +221,8 @@ export default {
           if (i === 0) {
             datum.forEach((_, d) => {
               // Check for The Correct User
-              if (datum[d].settings_data.user.id === userDetail.value.id) {
-                const { muserfly, spotify } = datum[d].settings_data.last_checked;
+              if (datum[d].data.user.id === userDetail.value.id) {
+                const { muserfly, spotify } = datum[d].data.last_checked;
                 personalisationBtn.value.checked = muserfly;
                 spotifyBtn.value.checked = spotify;
 
@@ -233,7 +233,7 @@ export default {
                 // Replace Default Settings With The Data
                 const {
                   artists, market, numOfTracks, themes,
-                } = datum[d].settings_data.user.personalisation;
+                } = datum[d].data.user.personalisation;
                 defaultPersonalisedValues(artists, market, numOfTracks, themes);
               }
             });

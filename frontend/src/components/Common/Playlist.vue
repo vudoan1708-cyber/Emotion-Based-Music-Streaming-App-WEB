@@ -8,7 +8,7 @@
                 @mouseover="onMouseOverCollected(true)"
                 @mouseout="onMouseOverCollected(false)">
       <div class="tracks" v-for="data in acceptedSongData" :key="data.id">
-        <img :src="data.album_imgs.url"
+        <img v-if="data.album_imgs" :src="data.album_imgs.url"
               :style="{ width: data.album_imgs.width, height: data.album_imgs.height }"
               draggable="false" @dragstart="false" />
         <div class="song_detail">
@@ -25,7 +25,7 @@
               @mouseup="endDrag('all')">
       <div class="tracks tracks_all_info" v-for="data in allSongData" :key="data.id"
               @mousedown="initDrag($event, data.id)">
-        <img :src="data.album_imgs.url"
+        <img v-if="data.album_imgs" :src="data.album_imgs.url"
               :style="{ width: data.album_imgs.width, height: data.album_imgs.height }"
               draggable="false" @dragstart="false" />
         <div class="song_detail">

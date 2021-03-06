@@ -14,6 +14,7 @@
 import hashURL from '@/components/Utils/logic/hashURL';
 import sleep from '@/components/Utils/logic/sleep';
 import isEmpty from '@/components/Utils/logic/object';
+import Romanisation from '@/components/Utils/logic/string';
 import { randomCharacters, randomInt } from '@/components/Utils/logic/random';
 import { moodToCoordinates } from '@/components/Utils/logic/algorithm';
 import useFetch from '@/components/Utils/logic/useFetch';
@@ -95,7 +96,7 @@ export function getKeyword(how, text) {
   let keyword = '';
 
   // random character
-  if (how === 'random') keyword = randomCharacters(randomInt(2, 3));
+  if (how === 'random' || text === null) keyword = randomCharacters(randomInt(2, 3));
 
   // manual search input from a user
   else keyword = text;
@@ -379,7 +380,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
           // if audio features object is invalid, go back to the start of the workflow
           // this happens because, the marginal differences at the edges of the map
           // creates negative/over-scored mood values
-          console.log(results);
+          // console.log(results);
           // if the result's form is not an array
           if (results.length === undefined) {
             if (results === null || results.type === 'invalid-json') handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
@@ -399,6 +400,10 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
   
           const data = {
             song: song_data,
+            chosenIndices: {
+              i: chosenPoints[0],
+              j: chosenPoints[1],
+            },
             how: 'finish',
             isLoaded: true,
           };
@@ -525,10 +530,12 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
 
   // Get The Min Number of Tracks to Collect from User Settings Data
   minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
-            ? userSettingsData[userSettingsData.length - 1].settings_data.user.personalisation.numOfTracks
+            ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.numOfTracks
             : minTracks;
   let KEYWORD = '';
+  console.log(userSettingsData);
 
+  console.log(minTracks);
   // If The Song Track Comming in As A Valid Object
   if (trackObj !== null) {
     // Get Search Keyword based on Its Artist
@@ -541,9 +548,9 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
   } else KEYWORD = getKeyword(how, trackObj);
 
   // get songs' valence and arousal data
-  let audio_features = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
+  let audio_features = await getSongsData(Romanisation(KEYWORD), 'track');
   // error comes from no audio features values detected
-  if (audio_features === null) audio_features = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'album');
+  if (audio_features === null) audio_features = await getSongsData(Romanisation(KEYWORD), 'album');
   // error comes from JSON input
   else if (audio_features.type === 'invalid-json') handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
   else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5);

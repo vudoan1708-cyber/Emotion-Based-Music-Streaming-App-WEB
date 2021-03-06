@@ -19,7 +19,7 @@
 
   <!-- Instructions -->
   <transition name="fade">
-    <Notifications :emitter="emitterObj" v-if="isInstructionsShown" />
+    <Instructions :emitter="emitterObj" v-if="isInstructionsShown" />
   </transition>
 </template>
 
@@ -58,7 +58,7 @@ import {
 // Vue Component
 import SongData from '@/components/Common/SongData.vue';
 
-import Notifications from '@/components/Reusable/Notifications.vue';
+import Instructions from '@/components/Common/Instructions.vue';
 
 export default {
   name: 'SketchP5',
@@ -72,7 +72,7 @@ export default {
   },
   components: {
     SongData,
-    Notifications,
+    Instructions,
   },
   setup(props) {
     // indices on map
@@ -139,8 +139,8 @@ export default {
     });
 
     // Listen on the 'instructions' event
-    emitterObj.value.on('instructions', (isClose) => {
-      if (isClose) isInstructionsShown.value = false;
+    emitterObj.value.on('instructions', (isFinished) => {
+      if (isFinished) isInstructionsShown.value = false;
     });
 
     // listen to click event from the dom elements
@@ -334,6 +334,7 @@ export default {
             }
           } else {
             for (let i = 0; i < songDots.length; i += 1) {
+              // If click on a song dot on the map
               if (songDots[i].onHover()) {
                 const offsetTrack = findSongViaID(songDots[i].id);
                 await playSong(0, offsetTrack);
@@ -401,7 +402,7 @@ export default {
           datum.forEach((d) => {
             searchUserPersonalisedPlaylist(d);
           });
-        } else {
+        } else if (index === 0) {
           userSettingsData.value = datum;
         }
       });

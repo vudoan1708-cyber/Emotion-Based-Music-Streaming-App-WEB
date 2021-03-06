@@ -207,7 +207,8 @@ module.exports = (app) => {
 
       const feature_data = personalised_data.message === 'success'
           ? await getAudioFeatures(personalised_data)
-          : {'message': 'no personalised data'};
+          : ((personalised_data.message === 'not success' && personalised_data.ids.length > 0) ? await getAudioFeatures(personalised_data)
+          : {'message': 'no personalised data'});
       res.json(feature_data);
     } catch(err) {
       res.json(err);

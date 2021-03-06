@@ -38,13 +38,15 @@ module.exports = async function getRecommendation(TOKEN, ID, ARTIST_ID, MIN_VALE
     // check if an access token is still valid through JSON response
     if (json.tracks !== undefined) {
       for (let i = 0; i < json.tracks.length; i++) {
-        ids.push(json.tracks[i].id);
-        preview_urls.push(json.tracks[i].preview_url);
-        titles.push(json.tracks[i].name);
-        external_urls.push(json.tracks[i].external_urls.spotify);
-        artist_names.push(json.tracks[i].artists[0].name);
-        artist_details.push(json.tracks[i].artists[0].uri);
-        album_imgs.push(json.tracks[i].album.images[0]);
+        if (json.tracks[i].album.images || json.tracks[i].title !== '') {
+          ids.push(json.tracks[i].id);
+          preview_urls.push(json.tracks[i].preview_url);
+          titles.push(json.tracks[i].name);
+          external_urls.push(json.tracks[i].external_urls.spotify);
+          artist_names.push(json.tracks[i].artists[0].name);
+          artist_details.push(json.tracks[i].artists[0].uri);
+          album_imgs.push(json.tracks[i].album.images[0]);
+        }
       }
       return { ids, preview_urls, titles, external_urls, 
               artist_names, artist_details, album_imgs, TOKEN };
@@ -52,7 +54,7 @@ module.exports = async function getRecommendation(TOKEN, ID, ARTIST_ID, MIN_VALE
     } else {
       return null;
     }
-  }catch (err) {
+  } catch (err) {
     return err;
   }
 }
