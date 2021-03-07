@@ -23,12 +23,13 @@ module.exports = (app) => {
     const TOKEN = req.query.token;
     const KEYWORD = req.query.keyword;
     const TYPE = req.query.search_type;
+    const GENRE = req.query.genre;
     const LIMIT = req.query.limit !== 'undefined' ? req.query.limit : undefined;
     
     try {
-      const song_data = await getSongs(TOKEN, KEYWORD, TYPE, LIMIT);
+      const song_data = await getSongs(TOKEN, KEYWORD, TYPE, GENRE, LIMIT);
 
-      const feature_data = song_data.type === undefined ? await getAudioFeatures(song_data) : await getSongs(TOKEN, escape(KEYWORD), TYPE);
+      const feature_data = song_data.type === undefined ? await getAudioFeatures(song_data) : await getSongs(TOKEN, escape(KEYWORD), TYPE, GENRE, LIMIT);
       res.json(feature_data);
     } catch(err) {
       res.json(err);

@@ -64,6 +64,8 @@ import {
   getSongsData, changeVolume, skipSong,
 } from '@/handlers/spotify';
 
+import { Romanisation } from '@/components/Utils/logic/string';
+
 import Play from '@/assets/play.png';
 import Pause from '@/assets/pause.png';
 import Next from '@/assets/next.png';
@@ -219,7 +221,7 @@ export default {
     // Click To Search
     async function searchViaClick() {
       // get songs' valence and arousal data
-      const audioFeatures = await getSongsData((songPlay.artists).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
+      const audioFeatures = await getSongsData(Romanisation(songPlay.artists), 'track', '');
       // Emitted Obj
       const emitData = {
         KEYWORD: songPlay.artists,

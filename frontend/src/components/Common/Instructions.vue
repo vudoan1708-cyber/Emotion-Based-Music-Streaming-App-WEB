@@ -114,7 +114,14 @@ export default {
       } else if (instructions.stage === 4) {
         instructions.img = SettingsSection;
         instructions.header = 'Settings Section';
-        instructions.contents[0] = '';
+        instructions.subHeaders[0] = '* Minimum Number of Tracks to Play: A section where you can choose how many songs should be collected and played';
+        instructions.subHeaders[1] = '* Artists: A section where you will define any artist you like listening to (Not Yet Implemented)';
+        instructions.subHeaders[2] = '* Themes: A section where you will define any any keyword you would like the system to search for you (Not Yet Implemented)';
+        instructions.subHeaders[3] = '* Genre: A section where you will define a genre you would like to listen to';
+
+        instructions.contents[0] = 'You can choose number of tracks you would like to listen to by filling in a number in the Minimum Number of Tracks to Play section';
+        instructions.contents[1] = 'For the next 3 fields: Artists, Themes, Genres. This is tricky, since you need to define the correct artist name with their music genre if you want to define more than one field';
+        instructions.contents[2] = 'But for the system to perform a clean search, we would suggest you to define just 1 of those fields';
         instructions.buttons[0] = 'Previous';
         instructions.buttons[1] = 'Next';
       } else if (instructions.stage === 5) {

@@ -81,6 +81,9 @@ export default {
       albumImgs: [],
     });
 
+    // Get User ID
+    const userID = ref('');
+
     // Props
     const emitterObj = ref(props.emitter);
 
@@ -124,9 +127,9 @@ export default {
           const { x, y } = indicestoCoordinates(data.chosenIndices.i, data.chosenIndices.j,
             window.innerWidth, window.innerHeight);
 
-          dataObj.value = userJourneyObj(x, y, data.chosenIndices.i, data.chosenIndices.j,
-            tracks.titles, tracks.artists, tracks.valenceScores, tracks.arousalScores,
-            tracks.ids, tracks.albumImgs, date, time);
+          dataObj.value = userJourneyObj(userID.value, x, y, data.chosenIndices.i,
+            data.chosenIndices.j, tracks.titles, tracks.artists, tracks.valenceScores,
+            tracks.arousalScores, tracks.ids, tracks.albumImgs, date, time);
 
           await insertData(dataObj.value, 1);
         }
@@ -143,9 +146,13 @@ export default {
     // Get The Minimum Number of Tracks To Fetch
     watch(props.personalisationSettings, (data) => {
       const datum = data[0];
-      tracks.min = (datum.length !== 0 && datum[datum.length - 1].data !== undefined)
-        ? Number(datum[datum.length - 1].data.user.personalisation.numOfTracks)
-        : tracks.min;
+      if (datum.length !== 0 && datum[datum.length - 1].data !== undefined) {
+        tracks.min = Number(datum[datum.length - 1].data.user.personalisation.numOfTracks);
+        userID.value = datum[datum.length - 1].data.user.id;
+      } else {
+        // eslint-disable-next-line no-self-assign
+        tracks.min = tracks.min;
+      }
     });
 
     return {

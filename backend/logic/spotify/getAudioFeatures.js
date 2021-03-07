@@ -29,7 +29,7 @@ module.exports = async function getAudioFeature(data) {
 
     // otherwise, add one final ID without comma
     else concatinatedID += `${id}`;
-  })
+  });
   const FETCH_URL = `${BASE_URL}ids=${concatinatedID}`;
   // console.log(FETCH_URL)
 

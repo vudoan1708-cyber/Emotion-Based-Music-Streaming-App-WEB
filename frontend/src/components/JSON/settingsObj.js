@@ -1,5 +1,5 @@
 export default function settingsObj(userDetail,
-  numOfTracks, artists, themes, market,
+  numOfTracks, artists, themes, market, genre,
   personalisationBtn, spotifyBtn) {
   return {
     user: {
@@ -12,6 +12,7 @@ export default function settingsObj(userDetail,
         artists,
         themes,
         market,
+        genre,
       },
     },
     last_checked: {

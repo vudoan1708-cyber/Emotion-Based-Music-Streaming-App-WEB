@@ -11,6 +11,8 @@ import { onMounted, ref, watch } from 'vue';
 
 import { getKeyword, getSongsData } from '@/handlers/spotify';
 
+import { Romanisation } from '@/components/Utils/logic/string';
+
 export default {
   name: 'Search',
   props: {
@@ -30,7 +32,7 @@ export default {
 
     async function analyseResults(KEYWORD) {
       // get songs' valence and arousal data
-      const audioFeatures = await getSongsData((KEYWORD).normalize('NFD').replace(/[\u0300-\u036f]/g, ''), 'track');
+      const audioFeatures = await getSongsData(Romanisation(KEYWORD), 'track', '');
       // Emitted Obj
       const emitData = {
         KEYWORD,

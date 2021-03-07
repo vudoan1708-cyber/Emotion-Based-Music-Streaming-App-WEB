@@ -110,6 +110,7 @@ export default {
       }
     });
 
+    // Triggered on Mouse Click Event
     function plotTrackOnTheMap(track) {
       emitterObj.value.emit('plot_via_search', track);
     }

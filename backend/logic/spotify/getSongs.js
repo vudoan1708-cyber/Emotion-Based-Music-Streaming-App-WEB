@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-module.exports = async function getSongs(TOKEN, KEYWORD, TYPE, LIMIT) {
+module.exports = async function getSongs(TOKEN, KEYWORD, TYPE, GENRE, LIMIT) {
   // base URL
   const BASE_URL = 'https://api.spotify.com/v1/search?';
 
@@ -9,9 +9,11 @@ module.exports = async function getSongs(TOKEN, KEYWORD, TYPE, LIMIT) {
 
   // market
   const MARKET = 'from_token';
-  
+
+  // update KEYWORD if genre keyword is provided
+  const UPDATED_KEYWORD = GENRE !== '' ? `genre:${GENRE}` : KEYWORD;
   // query params
-  const QUERY = `${KEYWORD}&type=${TYPE}&market=${MARKET}&limit=${lim}`;
+  const QUERY = `${UPDATED_KEYWORD}&type=${TYPE}&market=${MARKET}&limit=${lim}`;
 
   // get the url
   const FETCH_URL = `${BASE_URL}q=${QUERY}`;

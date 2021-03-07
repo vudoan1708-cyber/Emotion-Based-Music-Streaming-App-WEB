@@ -73,10 +73,16 @@
         </div>
 
         <!-- Genres -->
-        <!-- <div class="fields" id="genres">
+        <div class="fields" id="genres">
           <label>Genres</label><br />
-          <input ref="genresField" type="text" placeholder="Rap, Pop,...">
-        </div> -->
+          <select ref="genresField" name="genres" id="genres">
+            <option v-for="option in options" :key="option">
+              {{ option }}
+            </option>
+          </select>
+          <!-- <input ref="genresField" type="text" placeholder="Rap, Pop,..."
+                  :value="genresValue"> -->
+        </div>
 
         <!-- Market -->
         <div class="fields" id="countries">
@@ -132,11 +138,15 @@ export default {
     const artistsField = ref(null);
     const themesField = ref(null);
     const marketField = ref(null);
+    const genresField = ref(null);
 
     const artistsValue = ref('');
     const marketValue = ref('from_token');
     const numOfTracksValue = ref('5');
     const themesValue = ref('');
+
+    // Options
+    const options = ref(['', 'Hip Hop', 'Classical / Instrumental', 'Pop', 'K-pop']);
 
     // Save Personalised Settings
     const personalisedData = ref(null);
@@ -152,6 +162,8 @@ export default {
     const dataID = ref('');
 
     function toggleBlurSettings() {
+      const { selectedIndex } = genresField.value;
+
       personalisationBtn.value.checked === true
         ? isBlur.value = false
         : (isBlur.value = true, spotifyBtn.value.checked = false,
@@ -159,7 +171,8 @@ export default {
         artistsValue.value = '',
         marketValue.value = 'from_token',
         numOfTracksValue.value = '5',
-        themesValue.value = '');
+        themesValue.value = '',
+        genresField.value.options[selectedIndex].text = '');
     }
 
     // Close The Settings Board
@@ -176,10 +189,11 @@ export default {
     async function saveSettings() {
       boardRef.value.style.display = 'none';
       // Update data obj to be sent to the database
+      const { selectedIndex } = genresField.value;
       dataObj.value = settingsObj(userDetail,
         tracksField.value.value, artistsField.value.value,
         themesField.value.value, marketField.value.value,
-        personalisationBtn, spotifyBtn);
+        genresField.value.options[selectedIndex].text, personalisationBtn, spotifyBtn);
 
       // Insert data to MongDB Here
       props.personalisationSettings.length === 0
@@ -200,11 +214,17 @@ export default {
       toggleBlurSettings();
     }
 
-    function defaultPersonalisedValues(artists, market, numOfTracks, themes) {
+    function defaultPersonalisedValues(artists, market, numOfTracks, themes, genre) {
       artistsValue.value = artists !== '' ? artists : artistsValue.value;
       marketValue.value = market !== '' ? market : 'from_market';
       numOfTracksValue.value = numOfTracks !== 0 ? numOfTracks : 5;
       themesValue.value = themes !== '' ? themes : themesValue.value;
+
+      options.value.forEach((option) => {
+        if (genre === option) {
+          genresField.value.value = option;
+        }
+      });
     }
 
     props.emitter.on('toggle_settings', (data) => {
@@ -232,9 +252,9 @@ export default {
 
                 // Replace Default Settings With The Data
                 const {
-                  artists, market, numOfTracks, themes,
+                  artists, market, numOfTracks, themes, genre,
                 } = datum[d].data.user.personalisation;
-                defaultPersonalisedValues(artists, market, numOfTracks, themes);
+                defaultPersonalisedValues(artists, market, numOfTracks, themes, genre);
               }
             });
           }
@@ -267,14 +287,17 @@ export default {
       spotifyBtn,
       isBlur,
       toggleCheckbox,
-      artistsValue,
-      marketValue,
       numOfTracksValue,
+      artistsValue,
       themesValue,
+      marketValue,
+
       tracksField,
       artistsField,
       themesField,
       marketField,
+      genresField,
+      options,
     };
   },
 };

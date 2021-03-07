@@ -319,20 +319,36 @@ export default {
               for (let j = 0; j < starDots[i].length; j += 1) {
                 const region = mapRegions(mouseIndices.i, mouseIndices.j, i, starDots);
 
+                let track = null;
+                let searchType = 'random';
+
+                if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
+                  if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
+                    songDots.forEach((song) => {
+                      if (song.onHover()) {
+                        track = song;
+                      }
+                    });
+                  } else track = null;
+                }
+
+                searchType = track === null ? 'random' : 'search';
                 // to prevent click event happens globally for all regions
                 // on clickable on one selected region
                 if (region === 1 && showMap.index === 1) {
-                  locationChosen(i, j, 'random', null);
+                  locationChosen(i, j, searchType, track);
                 } else if (region === 2 && showMap.index === 2) {
-                  locationChosen(i, j, 'random', null);
+                  locationChosen(i, j, searchType, track);
                 } else if (region === 3 && showMap.index === 3) {
-                  locationChosen(i, j, 'random', null);
+                  locationChosen(i, j, searchType, track);
                 } else if (region === 4 && showMap.index === 4) {
-                  locationChosen(i, j, 'random', null);
+                  locationChosen(i, j, searchType, track);
                 }
+
+                // isChangeable.value = true;
               }
             }
-          } else {
+          } else if (!mapProperties.status) {
             for (let i = 0; i < songDots.length; i += 1) {
               // If click on a song dot on the map
               if (songDots[i].onHover()) {

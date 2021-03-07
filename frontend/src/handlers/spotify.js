@@ -14,7 +14,7 @@
 import hashURL from '@/components/Utils/logic/hashURL';
 import sleep from '@/components/Utils/logic/sleep';
 import isEmpty from '@/components/Utils/logic/object';
-import Romanisation from '@/components/Utils/logic/string';
+import { Romanisation, isCharactersFromString } from '@/components/Utils/logic/string';
 import { randomCharacters, randomInt } from '@/components/Utils/logic/random';
 import { moodToCoordinates } from '@/components/Utils/logic/algorithm';
 import useFetch from '@/components/Utils/logic/useFetch';
@@ -28,6 +28,7 @@ let emitter = null;
 let isSearching = false;
 let playlist = [];
 let minTracks = 5;
+let chosenGenre = '';
 const personalisedPlaylist = [];
 
 // handling production and development mode
@@ -202,13 +203,13 @@ export async function seekSongPosition(ms) {
   }
 }
 
-export async function getSongsData(KEYWORD, SEARCH_TYPE, LIMIT) {
+export async function getSongsData(KEYWORD, SEARCH_TYPE, GENRE, LIMIT) {
 
   try {
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production')
-              ? `https://muserfly.herokuapp.com/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}&limit=${LIMIT}`
-              : `http://localhost:5000/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}&limit=${LIMIT}`;
+              ? `https://muserfly.herokuapp.com/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}&genre=${GENRE}&limit=${LIMIT}`
+              : `http://localhost:5000/spotify/search/?token=${TOKEN}&keyword=${KEYWORD}&search_type=${SEARCH_TYPE}&genre=${GENRE}&limit=${LIMIT}`;
 
     const response = await useFetch(URL, 'GET');
     const isObjEmpty = isEmpty(response);
@@ -275,7 +276,7 @@ export async function showUserPlaylist(title, valence, arousal, id,
                   starDots, width, height, p5, emitterObj) {
   // re-format the id
   // eslint-disable-next-line no-param-reassign
-  id = `spotify:track:${id}`;
+  id = isCharactersFromString('spotify:track', id) ? id : `spotify:track:${id}`;
   
   const isDuplicate = checkDuplicates(id, personalisedPlaylist);
 
@@ -362,8 +363,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
                                 song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
                                 how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5);
           } else {
-  
-            const id = `spotify:track:${song_data.id}`;
+            const id = isCharactersFromString('spotify:track', song_data.id) ? song_data.id : `spotify:track:${song_data.id}`;
   
             // unaccepted songs
             createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
@@ -419,9 +419,13 @@ export async function makeATempPlaylist(id, title, valence, arousal,
                   album_imgs, artist_details, artist_names, external_urls,
                   how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5) {
   // re-format the id
-  // eslint-disable-next-line no-param-reassign
-  const reformatID = `spotify:track:${id}`;
-
+  let reformatID = '';
+  if (isCharactersFromString('spotify:track', id)) {
+    reformatID = id;
+    const newID = id.split(':');
+    // eslint-disable-next-line no-param-reassign
+    id = newID[newID.length - 1];
+  } else reformatID = `spotify:track:${id}`;
   const isDuplicate = checkDuplicates(reformatID, playlist);
 
   // If There's A Duplicate of Songs
@@ -532,10 +536,12 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
   minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
             ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.numOfTracks
             : minTracks;
-  let KEYWORD = '';
-  console.log(userSettingsData);
 
-  console.log(minTracks);
+  chosenGenre = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
+              ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.genre
+              : chosenGenre;
+  let KEYWORD = '';
+
   // If The Song Track Comming in As A Valid Object
   if (trackObj !== null) {
     // Get Search Keyword based on Its Artist
@@ -548,9 +554,9 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
   } else KEYWORD = getKeyword(how, trackObj);
 
   // get songs' valence and arousal data
-  let audio_features = await getSongsData(Romanisation(KEYWORD), 'track');
+  let audio_features = await getSongsData(Romanisation(KEYWORD), 'track', chosenGenre);
   // error comes from no audio features values detected
-  if (audio_features === null) audio_features = await getSongsData(Romanisation(KEYWORD), 'album');
+  if (audio_features === null) audio_features = await getSongsData(Romanisation(KEYWORD), 'album', chosenGenre);
   // error comes from JSON input
   else if (audio_features.type === 'invalid-json') handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
   else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5);

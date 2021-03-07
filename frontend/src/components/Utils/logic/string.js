@@ -1,4 +1,4 @@
-export default function Romanisation(word) {
+export function Romanisation(word) {
   let newWord = '';
 
   const Latinise = {};
@@ -9,4 +9,11 @@ export default function Romanisation(word) {
     newWord += char.replace(/[^A-Za-z0-9\\[\] ]/g, (a) => Latinise.latin_map[a] || a);
   });
   return newWord;
+}
+
+export function isCharactersFromString(chars, string) {
+  if (string.indexOf(chars) > -1) {
+    return true;
+  }
+  return false;
 }
