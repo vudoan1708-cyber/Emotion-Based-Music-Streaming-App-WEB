@@ -537,7 +537,7 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
             ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.numOfTracks
             : minTracks;
 
-  chosenGenre = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
+  chosenGenre = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined && trackObj === null)
               ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.genre
               : chosenGenre;
   let KEYWORD = '';

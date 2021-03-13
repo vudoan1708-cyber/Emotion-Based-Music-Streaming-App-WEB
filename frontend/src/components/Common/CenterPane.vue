@@ -4,7 +4,7 @@
     <Search v-if="number === 2" :emitter="emitterObj" />
 
     <!-- Records -->
-    <Records v-else-if="number === 3" />
+    <Records v-else-if="number === 3" :userJourney="userJourneyObj" />
 
     <!-- Portfolio -->
     <Portfolio v-else :emitter="emitterObj" />
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { getSongsData } from '@/handlers/spotify';
 
@@ -66,6 +66,9 @@ export default {
     emitter: {
       type: Object,
     },
+    userJourney: {
+      type: Object,
+    },
   },
   components: {
     Search,
@@ -75,6 +78,8 @@ export default {
   setup(props) {
     // Emitter
     const emitterObj = ref(props.emitter);
+    // User Journey
+    const userJourneyObj = ref(props.userJourney);
 
     // Number to Trigger The Display of The Center Pane, By Default 0: Homepage
     const number = ref(1);
@@ -128,8 +133,13 @@ export default {
       }
     }
 
+    watch(() => props.userJourney, (data) => {
+      userJourneyObj.value = data;
+    });
+
     return {
       emitterObj,
+      userJourneyObj,
       number,
       searchResults,
       searchKeywords,

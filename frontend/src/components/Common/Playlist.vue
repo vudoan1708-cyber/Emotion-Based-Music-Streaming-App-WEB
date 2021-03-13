@@ -47,7 +47,16 @@
 
 <script>
 /* eslint-disable no-lonely-if */
-import { updatePlaylist, addSongToQueue } from '@/handlers/spotify';
+import { getUserProfile, updatePlaylist, addSongToQueue } from '@/handlers/spotify';
+
+// Algorithm
+import { indicestoCoordinates } from '@/components/Utils/logic/algorithm';
+
+// MongoDB
+import { getAllData, updateData } from '@/handlers/mongdb';
+
+// JSON
+import userJourneyObj from '@/components/JSON/userJourneyObj';
 
 import {
   ref, reactive, watch,
@@ -70,6 +79,14 @@ export default {
 
     const isPlayerActive = ref(false);
 
+    const dateData = ref('');
+    const timeData = ref('');
+
+    // Data Obj to POST to the MongoDB database
+    const dataObj = ref({});
+    const dataID = ref('');
+    const userData = ref('');
+
     const draggableElement = reactive({
       attributes: {
         pos: {
@@ -82,14 +99,80 @@ export default {
       metadata: '',
     });
 
+    const tracks = reactive({
+      chosenIndices: {
+        i: 0,
+        j: 0,
+      },
+      ids: [],
+      artists: [],
+      titles: [],
+      valenceScores: [],
+      arousalScores: [],
+      albumImgs: [],
+    });
+
+    // Talk to MongDB to GET back data about user listening journey / habit
+    // Then, send this down to other children components
+    // to visualise and configure variables' default values
+    async function getUserJourney() {
+      // get all user journey database
+      const dataResponse = await getAllData(1);
+      // get user data from spotify
+      userData.value = await getUserProfile();
+      if (dataResponse.length > 0) {
+        // loop backwards to get the latest data
+        for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
+          // compare and validate user via user's id
+          if (dataResponse[i].data.user.id === userData.value.ID) {
+            // Get Date and Time
+            if (i === dataResponse.length - 1) {
+              // Get The Data ID
+              // eslint-disable-next-line no-underscore-dangle
+              dataID.value = dataResponse[i]._id;
+              dateData.value = dataResponse[i].data.date;
+              timeData.value = dataResponse[i].data.time;
+            }
+          }
+        }
+      }
+    }
+
+    async function userJourneyDatabasePreparation(data) {
+      acceptedSongData.value.forEach((song) => {
+        tracks.ids.push(song.id);
+        tracks.artists.push(song.artist_names);
+        tracks.titles.push(song.title);
+        tracks.valenceScores.push(song.valence);
+        tracks.arousalScores.push(song.arousal);
+        tracks.albumImgs.push(song.album_imgs);
+      });
+      if (data.how === 'finish') {
+        tracks.chosenIndices.i = data.chosenIndices.i;
+        tracks.chosenIndices.j = data.chosenIndices.j;
+        // Use coordinatesToIndices algorithm to convert location values to indices
+        const { x, y } = indicestoCoordinates(tracks.chosenIndices.i, tracks.chosenIndices.j,
+          window.innerWidth, window.innerHeight);
+        dataObj.value = userJourneyObj(userData.value.ID, x, y, tracks.chosenIndices.i,
+          tracks.chosenIndices.j, tracks.titles, tracks.artists, tracks.valenceScores,
+          tracks.arousalScores, tracks.ids, tracks.albumImgs, dateData.value, timeData.value);
+      }
+    }
+
     // subscribe to the 'song_data' event
-    props.emitter.on('song_data', (data) => {
+    props.emitter.on('song_data', async (data) => {
       if (!data.beforeLoading) {
         // if a new song is added
         if (data.how === 'add') {
           // handle collected tracks, by the system or by the user
           if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user') {
             acceptedSongData.value.push(data.song);
+            // if (isPlayerActive.value) {
+            //   // Prepare data for updating user journey database
+            //   userJourneyDatabasePreparation(data);
+            //   // Update user journey database
+            //   await updateData(dataID.value, dataObj.value, 1);
+            // }
             if (collectedTracksStyling.value.style.minHeight === '30%') collectedTracksStyling.value.style.minHeight = '';
           } else {
             // eslint-disable-next-line no-unused-expressions
@@ -113,6 +196,23 @@ export default {
           // reset
           collectedTracksStyling.value.style.minHeight = '30%';
           acceptedSongData.value = [...data.playlist];
+          tracks.ids = [];
+          tracks.artists = [];
+          tracks.titles = [];
+          tracks.valenceScores = [];
+          tracks.arousalScores = [];
+          tracks.albumImgs = [];
+
+        // if the song collection is finished
+        } else if (data.how === 'finish') {
+          setTimeout(async () => {
+            await getUserJourney();
+            // Prepare data for updating user journey database
+            await userJourneyDatabasePreparation(data);
+            // Update user journey database
+            await updateData(dataID.value, dataObj.value, 1);
+            props.emitter.emit('user_journey', dataObj.value);
+          }, 1000);
         }
       } else {
         personalisedTracks.value.push(data.song);
@@ -208,7 +308,7 @@ export default {
     }
 
     // Watch Function cannot wait for a response from an execution on ASYNC/AWAIT
-    watch(isPlayerActive, (isActive) => {
+    watch((isPlayerActive), (isActive) => {
       awaitToAddSong(isActive);
     });
 

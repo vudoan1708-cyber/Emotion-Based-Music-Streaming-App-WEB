@@ -140,8 +140,10 @@ export default {
         if (songPlay.isPlaying.response !== undefined) {
           songPlay.progress_ms = songPlay.isPlaying.response.progress_ms;
           songPlay.duration_ms = songPlay.isPlaying.response.item.duration_ms;
-          // eslint-disable-next-line max-len
-          playingProgressRef.value.style.width = `${(songPlay.progress_ms / songPlay.duration_ms) * 100}%`;
+
+          if (playingProgressRef.value !== null) {
+            playingProgressRef.value.style.width = `${(songPlay.progress_ms / songPlay.duration_ms) * 100}%`;
+          }
 
           songPlay.artists = songPlay.isPlaying.response.item.artists[0].name;
           songPlay.title = songPlay.isPlaying.response.item.name;

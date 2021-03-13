@@ -5,7 +5,7 @@
     <LeftPane :emitter="emitter" />
     <BottomPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
     <RightPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
-    <CenterPane :emitter="emitter" />
+    <CenterPane :userJourney="userJourney" :emitter="emitter" />
   </div>
 </template>
 
@@ -43,6 +43,36 @@ export default {
     const personalisationSettings = ref([]);
     const prevURL = ref('');
 
+    // User Journey Data
+    const userJourney = ref([]);
+
+    // Listen on 'user_journey' event
+    // Because Center Pane or Other Children Component Cannot Receive Any Data
+    // Unless They Are Available
+    emitter.on('user_journey', (data) => {
+      userJourney.value.push(data);
+    });
+
+    // Talk to MongDB to GET back data about user listening journey / habit
+    // Then, send this down to other children components
+    // to visualise and configure variables' default values
+    async function getUserJourney() {
+      // get all user journey database
+      const dataResponse = await getAllData(1);
+      // get user data from spotify
+      const userData = await getUserProfile();
+      if (dataResponse.length > 0) {
+        // loop backwards to get the latest data
+        for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
+          // compare and validate user via user's id
+          if (dataResponse[i].data.user.id === userData.ID) {
+            // Get Date and Time
+            userJourney.value.push(dataResponse[i].data);
+          }
+        }
+      }
+    }
+
     async function checkSettings(num) {
       // if 'Allow Spotify to Recommend' button is checked, when click save,
       // it will search for personalisation API from Spotify
@@ -69,7 +99,7 @@ export default {
     // to visualise and configure variables' default values
     async function getPersonalisationData() {
       try {
-        // get all data from the database
+        // get all data from the personalisation database
         const dataResponse = await getAllData(0);
         // get user data from spotify
         const userData = await getUserProfile();
@@ -102,10 +132,12 @@ export default {
 
     onBeforeMount(async () => {
       await getPersonalisationData();
+      await getUserJourney();
     });
 
     return {
       personalisationSettings,
+      userJourney,
       emitter,
     };
   },
