@@ -192,7 +192,7 @@ function fillStarsColor(i, j, isClicked, starDots, chosenPoints, showMap, map, e
 // globally accessible functions
 export function createMap(width, height, starDots, p5) {
   // make a 2D array
-  starDots = make2dArray(Math.floor(width / 34), Math.floor(height / 34));
+  starDots = make2dArray(Math.floor(width / 45), Math.floor(height / 42));
 
   // instantiate the starDots object
   for (let i = 0; i < starDots.length; i += 1) {

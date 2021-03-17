@@ -41,10 +41,10 @@ export default class StarDots {
 
     // create new coordinate properties from those marks
     const newPos = {
-      x1: this.width / 4 + marks[0] * OFFSET,
-      x2: this.width / 4 + marks[1] * OFFSET,
-      y1: this.height / 4 + marks[2] * OFFSET,
-      y2: this.height / 4 + marks[3] * OFFSET,
+      x1: this.width / 4.35 + marks[0] * OFFSET,
+      x2: this.width / 4.35 + marks[1] * OFFSET,
+      y1: this.height / 4.5 + marks[2] * OFFSET,
+      y2: this.height / 4.5 + marks[3] * OFFSET,
     };
     return newPos;
   }

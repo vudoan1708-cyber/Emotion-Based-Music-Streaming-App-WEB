@@ -8,18 +8,21 @@ const updateOneData = require('../logic/mongodb/updateOneData');
 
 module.exports = async function databaseRouter(app) {
 
-  // configure the connection to MongoDB, default to 0 (personalisation settings)
-  let db = createConnection(0);
+  // configure the connection to MongoDB databases
+  // 0 (personalisation settings)
+  // 1 (user journey settings)
+  const personalisation_db = createConnection(0);
+  const user_journey_db = createConnection(1);
 
   // SETTINGS
   // route to get all data
   app.get('/data/get/all', async (req, res) => {
     try {
-      const NUM_oF_COLLECTION = req.query.num;
-      // re-configure the connection to MongoDB
-      db = createConnection(Number(NUM_oF_COLLECTION));
+      const NUM_OF_COLLECTION = Number(req.query.num);
 
-      const data = await getAllData(db);
+      const data = NUM_OF_COLLECTION === 0
+        ? await getAllData(personalisation_db)
+        : await getAllData(user_journey_db);
       res.json(data);
     } catch (err) {
       res.json(err);
@@ -29,12 +32,12 @@ module.exports = async function databaseRouter(app) {
   // route to create one specific data
   app.post('/data/create', async (req, res) => {
     try {
-      const NUM_oF_COLLECTION = req.query.num;
+      const NUM_OF_COLLECTION = Number(req.query.num);
       const PARAM = req.body;
-      // re-configure the connection to MongoDB
-      db = createConnection(Number(NUM_oF_COLLECTION));
   
-      const data = await createOneData(db, PARAM);
+      const data = NUM_OF_COLLECTION === 0
+        ? await createOneData(personalisation_db, PARAM)
+        : await createOneData(user_journey_db, PARAM);
       res.json(data);
     } catch (err) {
       res.json(err);
@@ -45,12 +48,12 @@ module.exports = async function databaseRouter(app) {
   app.put('/data/update', async (req, res) => {
     try {
       const ID = req.query.id;
-      const NUM_oF_COLLECTION = req.query.num;
+      const NUM_OF_COLLECTION = Number(req.query.num);
       const PARAM = req.body;
-      // re-configure the connection to MongoDB
-      db = createConnection(Number(NUM_oF_COLLECTION));
   
-      const data = await updateOneData(db, ID, PARAM);
+      const data = NUM_OF_COLLECTION === 0
+        ? await updateOneData(personalisation_db, ID, PARAM)
+        : await updateOneData(user_journey_db, ID, PARAM);
       res.json(data);
     } catch (err) {
       res.json(err);
