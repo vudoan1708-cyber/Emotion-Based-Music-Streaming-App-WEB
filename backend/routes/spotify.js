@@ -40,10 +40,10 @@ module.exports = (app) => {
     const TOKEN = req.query.token;
     const ID = req.query.id;
     const ARTIST_ID = req.query.artist_id;
-    const MIN_VALENCE = req.query.min_valence;
-    const MAX_VALENCE = req.query.max_valence;
-    const MIN_AROUSAL = req.query.min_arousal;
-    const MAX_AROUSAL = req.query.max_arousal;
+    const MIN_VALENCE = Number(req.query.min_valence) < 0 ? '0' : req.query.min_valence;
+    const MAX_VALENCE = Number(req.query.max_valence) > 1 ? '1' : req.query.max_valence;
+    const MIN_AROUSAL = Number(req.query.min_arousal) < 0 ? '0' : req.query.min_arousal;
+    const MAX_AROUSAL = Number(req.query.max_arousal) > 1 ? '1' : req.query.max_arousal;
 
     try {
       const song_data = await getRecommendation(TOKEN, ID, ARTIST_ID, MIN_VALENCE, MAX_VALENCE, MIN_AROUSAL, MAX_AROUSAL);

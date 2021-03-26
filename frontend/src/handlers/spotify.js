@@ -296,8 +296,8 @@ export async function searchRecommendation(id, artist_details, valence, arousal)
   try {
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production')
-              ? `https://muserfly.herokuapp.com/spotify/recommendation/?token=${TOKEN}&id=${id}&artist_id=${artist_id}&min_valence=${valence - 0.25}&min_arousal=${arousal - 0.25}&max_valence=${valence + 0.25}&max_arousal=${arousal + 0.25}`
-              : `http://localhost:5000/spotify/recommendation/?token=${TOKEN}&id=${id}&artist_id=${artist_id}&min_valence=${valence - 0.25}&min_arousal=${arousal - 0.25}&max_valence=${valence + 0.25}&max_arousal=${arousal + 0.25}`;
+              ? `https://muserfly.herokuapp.com/spotify/recommendation/?token=${TOKEN}&id=${id}&artist_id=${artist_id}&min_valence=${valence - 0.1}&min_arousal=${arousal - 0.1}&max_valence=${valence + 0.1}&max_arousal=${arousal + 0.1}`
+              : `http://localhost:5000/spotify/recommendation/?token=${TOKEN}&id=${id}&artist_id=${artist_id}&min_valence=${valence - 0.1}&min_arousal=${arousal - 0.1}&max_valence=${valence + 0.1}&max_arousal=${arousal + 0.1}`;
 
     const response = await useFetch(URL, 'GET');
     return response;
@@ -339,7 +339,6 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
     const song_data = audio_features[i];
 
     if (song_data.valence !== undefined && song_data.arousal !== undefined) {
-
       // if playlist array hasn't reached its end
       if (playlist.length < minTracks) {
   
@@ -386,10 +385,10 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
             if (results === null || results.type === 'invalid-json') handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
             else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
           // otherwise, it is an array
-          } else {
+          } else if (results.length > 0) {
             if (results[0].error) handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
             else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
-          }
+          } else handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
         }
       } else {
         if (isSearching) {
@@ -552,7 +551,6 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
       false, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5);
 
   } else KEYWORD = getKeyword(how, trackObj);
-
   // get songs' valence and arousal data
   let audio_features = await getSongsData(Romanisation(KEYWORD), 'track', chosenGenre);
   // error comes from no audio features values detected

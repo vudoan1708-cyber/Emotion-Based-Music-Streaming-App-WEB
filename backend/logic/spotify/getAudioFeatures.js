@@ -51,7 +51,7 @@ module.exports = async function getAudioFeature(data) {
     const audio_features = json.audio_features;
 
     // handle undefined audio_features data scenario
-    if (audio_features !== undefined) {
+    if (audio_features !== undefined && audio_features.length > 0) {
       // clean up the data from Spotify 
       // and only send what is necessary to the client
       for (let i = 0; i < audio_features.length; i++) {
@@ -71,11 +71,9 @@ module.exports = async function getAudioFeature(data) {
             nextURL: NEXT_URL !== undefined ? NEXT_URL : '',
             access_token: TOKEN,
           });
-        } else {
-          responses.push({'error': 'TypeError: null property'});
         }
       }
-    } else responses.push({'error': 'TypeError: undefined property'});;
+    } else responses.push({'error': 'TypeError: undefined property'});
     return responses;
       
   // catch for any error

@@ -146,7 +146,7 @@ export default {
     const themesValue = ref('');
 
     // Options
-    const options = ref(['', 'Hip Hop', 'Classical / Instrumental', 'Pop', 'K-pop']);
+    const options = ref(['', 'Acoustic', 'Alt-Rock', 'Anime', 'Classical / Instrumental', 'EDM', 'Hip Hop', 'K-pop', 'Metal', 'Pop', 'Rock-n-roll', 'Soundtracks']);
 
     // Save Personalised Settings
     const personalisedData = ref(null);
