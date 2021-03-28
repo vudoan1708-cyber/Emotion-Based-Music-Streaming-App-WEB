@@ -50,7 +50,7 @@ export default {
     // Because Center Pane or Other Children Component Cannot Receive Any Data
     // Unless They Are Available
     emitter.on('user_journey', (data) => {
-      userJourney.value.push(data);
+      userJourney.value.unshift(data);
     });
 
     // Talk to MongDB to GET back data about user listening journey / habit

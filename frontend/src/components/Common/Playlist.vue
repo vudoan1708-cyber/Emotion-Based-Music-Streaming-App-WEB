@@ -130,7 +130,7 @@ export default {
               // Get The Data ID
               // eslint-disable-next-line no-underscore-dangle
               dataID.value = dataResponse[i]._id;
-              dateData.value = dataResponse[i].data.date;
+              [dateData.value] = (dataResponse[i].data.date).split('T');
               timeData.value = dataResponse[i].data.time;
             }
           }
