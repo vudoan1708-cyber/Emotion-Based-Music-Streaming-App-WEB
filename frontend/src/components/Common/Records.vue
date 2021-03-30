@@ -1,53 +1,59 @@
 <!-- eslint-disable max-len -->
 <template>
   <div id="records_area">
-      <div id="records_content">
-        <!-- Records Board -->
-        <article id="records_board">
-          <section v-if="isObjEmpty" id="records_placeholder">
-            <!-- Text Placceholder At The Moment -->
-            <h2>No Record Yet!!!</h2>
-            <p>Please Use The App To Record Your Listening Activity</p>
-          </section>
+    <div v-if="!recordDetails.isOpen" id="records_content">
+      <!-- Records Board -->
+      <article id="records_board">
+        <section v-if="isObjEmpty" id="records_placeholder">
+          <!-- Text Placceholder At The Moment -->
+          <h2>No Record Yet!!!</h2>
+          <p>Please Use The App To Record Your Listening Activity</p>
+        </section>
 
-          <!-- User Journey Display -->
-          <section v-else id="records_display">
-            <div id="headers">
-              <h2>Summary</h2><br />
+        <!-- User Journey Display -->
+        <section v-else id="records_display">
+          <div id="headers">
+            <h2>Summary</h2><br />
+            <div id="dates_carousel">
               <span><p>Today</p></span>
             </div>
+          </div>
 
-            <!-- Grid System to Display User Journey -->
-            <!-- 1 Group of Reading -->
-            <div class="records_wrapper" v-for="(score, scoreKey) in moodScores" :key="scoreKey">
-              <h2 class="dates">{{ times[scoreKey] }}</h2>
+          <!-- Grid System to Display User Journey -->
+          <!-- 1 Group of Reading -->
+          <div class="records_wrapper" v-for="(score, scoreKey) in moodScores" :key="scoreKey">
+            <h2 class="dates">{{ times[scoreKey] }}</h2>
 
-              <div class="records_details">
-                <svg :width="canvas.width"
-                    :height="canvas.height">
-                  <g class="records_score"
-                    :transform="`translate(${canvas.width / 2}, ${canvas.height / 2})`">
-                    <!-- Individual Score within 1 Reading -->
-                    <circle v-for="(valence, valenceKey) in score.valence" :key="valenceKey"
-                      :cx="(50 * (valenceKey) + (10 * (valence * score.arousal[valenceKey])) * 2) - canvas.width / 2"
-                      :cy="25 * score.arousal[valenceKey] - (10 * (valence * score.arousal[valenceKey])) * 2"
-                      :r="10 * (valence * score.arousal[valenceKey])" :fill="colours[scoreKey]" :fill-opacity="score.arousal[valenceKey]"
-                      stroke-width="2" stroke="black" />
-                    <circle v-for="(valence, valenceKey) in score.valence" :key="valenceKey"
-                      :cx="(50 * (valenceKey) + (10 * (valence * score.arousal[valenceKey])) * 2) - canvas.width / 2"
-                      :cy="25 * score.arousal[valenceKey] - (10 * (valence * score.arousal[valenceKey])) * 2"
-                      :r="20 * (valence * score.arousal[valenceKey])" :fill="colours[scoreKey]" :fill-opacity="valence" />
-                      <text x="0" y="-40" text-anchor="middle" :fill="colours[scoreKey]">{{ texts[scoreKey] }}</text>
-                  </g>
-                </svg>
-              </div>
+            <div class="records_details" @click="viewRecordDetail(scoreKey)">
+              <svg :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
+                <g class="records_score"
+                  transform="scale(1, 1)">
+                  <!-- Individual Score within 1 Reading -->
+                  <!-- :cy = - (parameter) to reverse the axis -->
+                  <circle v-for="(valence, valenceKey) in score.valence" :key="valenceKey"
+                    :style="{ cx: `${canvas.width / 2 * valence + (25 * (valence * score.arousal[valenceKey])) * 2}%`,
+                              cy: `${canvas.height / 1.25 - (score.arousal[valenceKey] + (25 * (valence * score.arousal[valenceKey])) * 2)}%` }"
+                    :r="50 * (valence)" fill="white" :fill-opacity="score.arousal[valenceKey]" />
+                  <!-- :cy = canvas.height / 4 - (parameter) to reverse the axis -->
+                  <circle v-for="(valence, valenceKey) in score.valence" :key="valenceKey"
+                    :style="{ cx: `${canvas.width / 2 * valence + (25 * (valence * score.arousal[valenceKey])) * 2}%`,
+                              cy: `${canvas.height / 1.25 - (score.arousal[valenceKey] + (25 * (valence * score.arousal[valenceKey])) * 2)}%` }"
+                    :r="25 * (valence)" :fill="colours[scoreKey]" :fill-opacity="valence" />
+
+                  <text x="15" y="40" text-anchor="start" :fill="colours[scoreKey]">{{ texts[scoreKey] }}</text>
+                </g>
+              </svg>
             </div>
-
-            <!-- Show 1 Card in Detail -->
-          </section>
-        </article>
-      </div>
+          </div>
+        </section>
+      </article>
     </div>
+
+    <!-- Show 1 Card in Detail -->
+    <div v-else id="record_detail">
+      <D3 :recordDetails="recordDetails" />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -57,7 +63,11 @@ import {
 
 import isEmpty from '@/components/Utils/logic/object';
 
+// D3 Module
 import { extent, scaleQuantize } from 'd3';
+
+// Sketch
+import D3 from '@/components/Sketches/D3.vue';
 
 export default {
   name: 'Records',
@@ -65,6 +75,9 @@ export default {
     userJourney: {
       type: Object,
     },
+  },
+  components: {
+    D3,
   },
   setup(props) {
     // Emitter
@@ -76,8 +89,8 @@ export default {
     // D3
     // Canvas Width and Height
     const canvas = reactive({
-      width: window.innerWidth / 5,
-      height: window.innerHeight / 5,
+      width: 100,
+      height: 100,
     });
 
     // Extract Affective Scores
@@ -96,6 +109,7 @@ export default {
     const dates = ref([]);
     const times = ref([]);
 
+    // Show A General View of All Record Cards
     function updateAffectiveScore() {
       moodScores.value = [];
       for (let i = 0; i < userJourneyObj.value.length; i += 1) {
@@ -136,6 +150,22 @@ export default {
       });
     }
 
+    // Emotion Detail and Other Metadata for Record Display
+    const recordDetails = reactive({
+      isOpen: false,
+      which: 0,
+      journey: null,
+    });
+
+    // View Record Detail after Choosing a Record Card
+    function viewRecordDetail(key) {
+      if (!recordDetails.isOpen) {
+        recordDetails.isOpen = true;
+        recordDetails.which = key;
+        recordDetails.journey = userJourneyObj.value[recordDetails.which];
+      }
+    }
+
     onMounted(() => {
       updateAffectiveScore();
     });
@@ -156,6 +186,8 @@ export default {
       texts,
       dates,
       times,
+      viewRecordDetail,
+      recordDetails,
     };
   },
 };
@@ -175,50 +207,64 @@ export default {
     position: relative;
     text-align: center;
 
-    #records_placeholder {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    #records_display {
+    #records_board {
       position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-areas: 'myArea myArea';
-      grid-gap: 20px;
-      margin: 20px;
+      width: 100%;
+      height: 100%;
 
-      #headers {
-        grid-area: myArea;
-        width: 100%;
-        text-align: center;
-        padding: 5px;
-        background-color: rgb(32, 32, 32);
+      #records_placeholder {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
 
-      .dates {
-        margin: 20px;
-        padding: 10px;
-        background-color: rgb(15, 15, 15);
-      }
-
-      .records_details {
+      #records_display {
         position: relative;
-        margin: 20px;
-        border-radius: 10px;
-        border: 2px solid rgb(138, 138, 138);
-        box-shadow: inset 0 0 1000px rgb(138, 138, 138);
-        background-color: rgba(80, 80, 80, 0.25);
-        cursor: pointer;
-        transition: .25s all;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 'myArea myArea';
+        gap: 20px;
 
-        &:hover {
-        box-shadow: inset 0 0 10px rgb(138, 138, 138);
+        #headers {
+          grid-area: myArea;
+          width: 100%;
+          text-align: center;
+          padding: 15px;
+          background-color: rgb(51, 51, 51);
+          color: rgb(173, 173, 173);
+        }
+
+        .dates {
+          margin: 20px;
+          padding: 10px;
+          background-color: rgb(15, 15, 15);
+        }
+
+        .records_details {
+          position: relative;
+          margin: 20px;
+          border-radius: 10px;
+          border: 2px solid rgb(138, 138, 138);
+          box-shadow: inset 0 0 1000px rgb(138, 138, 138);
+          background-color: rgba(80, 80, 80, 0.25);
+          cursor: pointer;
+          transition: .25s all;
+
+          svg {
+            width: 100%;
+          }
+
+          &:hover {
+            box-shadow: inset 0 0 10px rgb(138, 138, 138);
+          }
         }
       }
     }
+  }
+
+  #record_detail {
+    @extend #records_area;
   }
 }
 </style>
