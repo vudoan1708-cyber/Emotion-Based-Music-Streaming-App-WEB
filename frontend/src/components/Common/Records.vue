@@ -31,13 +31,13 @@
                   <!-- Individual Score within 1 Reading -->
                   <!-- :cy = - (parameter) to reverse the axis -->
                   <circle v-for="(valence, valenceKey) in score.valence" :key="valenceKey"
-                    :style="{ cx: `${canvas.width / 2 * valence + (25 * (valence * score.arousal[valenceKey])) * 2}%`,
-                              cy: `${canvas.height / 1.25 - (score.arousal[valenceKey] + (25 * (valence * score.arousal[valenceKey])) * 2)}%` }"
+                    :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * score.arousal[valenceKey]))}%`,
+                              cy: `${canvas.height / 1.25 - (score.arousal[valenceKey] + (50 * (valence * score.arousal[valenceKey])))}%` }"
                     :r="50 * (valence)" fill="white" :fill-opacity="score.arousal[valenceKey]" />
                   <!-- :cy = canvas.height / 4 - (parameter) to reverse the axis -->
                   <circle v-for="(valence, valenceKey) in score.valence" :key="valenceKey"
-                    :style="{ cx: `${canvas.width / 2 * valence + (25 * (valence * score.arousal[valenceKey])) * 2}%`,
-                              cy: `${canvas.height / 1.25 - (score.arousal[valenceKey] + (25 * (valence * score.arousal[valenceKey])) * 2)}%` }"
+                    :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * score.arousal[valenceKey]))}%`,
+                              cy: `${canvas.height / 1.25 - (score.arousal[valenceKey] + (50 * (valence * score.arousal[valenceKey])))}%` }"
                     :r="25 * (valence)" :fill="colours[scoreKey]" :fill-opacity="valence" />
 
                   <text x="15" y="40" text-anchor="start" :fill="colours[scoreKey]">{{ texts[scoreKey] }}</text>
@@ -155,6 +155,7 @@ export default {
       isOpen: false,
       which: 0,
       journey: null,
+      colour: null,
     });
 
     // View Record Detail after Choosing a Record Card
@@ -163,6 +164,7 @@ export default {
         recordDetails.isOpen = true;
         recordDetails.which = key;
         recordDetails.journey = userJourneyObj.value[recordDetails.which];
+        recordDetails.colour = colours.value[recordDetails.which];
       }
     }
 
