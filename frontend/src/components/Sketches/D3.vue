@@ -1,8 +1,26 @@
 <!-- eslint-disable max-len -->
 <template>
   <div id="detail">
-    <svg :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
-        <g class="board">
+    <div class="board" id="info">
+      <div id="stacks">
+        <h2 id="header">SONGS</h2>
+        <div v-if="start > 0" class="btns" @click="changeSongDisplay(-3)">
+          <img id="prev" src="@/assets/up.png" />
+        </div>
+        <div id="song_wrapper">
+          <h4 v-for="(song, songKey) in songDisplay.titles" :key="songKey" class="songs">
+            {{ song }} - {{ songDisplay.artists[songKey] }}
+          </h4>
+        </div>
+        <div v-if="end < journey.songs.titles.length - 1" class="btns" @click="changeSongDisplay(3)">
+          <img id="next" src="@/assets/up.png" />
+        </div>
+      </div>
+    </div>
+
+    <div class="board" id="mood">
+      <svg :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
+        <g>
           <!-- Container -->
           <rect x="0" y="0" :width="`${canvas.width}%`" :height="`${canvas.height}%`" fill="black"></rect>
           <!-- Date -->
@@ -57,7 +75,8 @@
               :r="10 * (valence)" fill="white" />
           </g>
         </g>
-    </svg>
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -82,10 +101,20 @@ export default {
   setup(props) {
     // using `toRefs` to create a Reactive Reference to the `recordDetails` property of props
     const { which, journey, colour } = toRefs(props.recordDetails);
-
+    console.log(journey.value);
     // DOM Ref
     const xAxisRef = ref(null);
     const yAxisRef = ref(null);
+
+    const start = ref(0);
+    const end = ref(3);
+
+    // Song Display
+    const songDisplay = reactive({
+      artists: journey.value.songs.artists.slice(start.value, end.value),
+      // titles: journey.value.songs.titles.slice(start, end),
+      titles: journey.value.songs.titles.slice(start.value, end.value),
+    });
 
     // D3
     // Canvas Width and Height
@@ -116,6 +145,16 @@ export default {
       select(yAxisRef.value).call(axisLeft(axes.y));
     }
 
+    // Change Song Display Via Button Clicks
+    function changeSongDisplay(num) {
+      start.value += num;
+      end.value += num;
+
+      songDisplay.artists = journey.value.songs.artists.slice(start.value, end.value);
+      // songDisplay.titles = journey.value.songs.titles.slice(start.value, end.value);
+      songDisplay.titles = journey.value.songs.titles.slice(start.value, end.value);
+    }
+
     onBeforeMount(() => {
       createAxes();
     });
@@ -133,6 +172,10 @@ export default {
       axes,
       xAxisRef,
       yAxisRef,
+      songDisplay,
+      changeSongDisplay,
+      start,
+      end,
     };
   },
 };
@@ -143,5 +186,62 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+
+  .board {
+    display: inline-block;
+    position: relative;
+    height: 100%;
+  }
+
+  #info {
+    width: 20%;
+    background-color: white;
+    color: black;
+    text-align: center;
+
+    #stacks {
+      margin: 0;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+
+      .btns {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        transition: .2s filter;
+
+        #next {
+          transform: scaleY(-1);
+        }
+
+        &:hover {
+          filter: invert(50%);
+        }
+      }
+
+      #header {
+        margin: 20px;
+      }
+
+      #song_wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        .songs {
+          margin: 10px;
+          padding: 10px;
+        }
+      }
+    }
+  }
+
+  #mood {
+    float: right;
+    clear: right;
+    width: 80%;
+  }
 }
 </style>

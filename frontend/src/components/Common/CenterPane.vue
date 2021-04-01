@@ -11,8 +11,8 @@
 
     <!-- Search Result Board -->
     <div v-if="number === 2 && searchResults.length !== 0" id="results">
-      <div v-for="searchResult in searchResults" :key="searchResult.id"  class="result_details"
-        @click="plotTrackOnTheMap(searchResult)">
+      <div v-for="(searchResult, searchKey) in searchResults" :key="searchKey"
+        class="result_details" @click="plotTrackOnTheMap(searchResult)">
         <ul>
           <li><img v-if="searchResult.error === undefined"
             :src="searchResult.album_imgs.url" />
