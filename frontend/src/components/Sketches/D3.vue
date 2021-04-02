@@ -4,15 +4,18 @@
     <div class="board" id="info">
       <div id="stacks">
         <h2 id="header">SONGS</h2>
-        <div v-if="start > 0" class="btns" @click="changeSongDisplay(-3)">
+        <div v-if="start > 0" class="btns" @click="changesongInfoDisplay(-3)">
           <img id="prev" src="@/assets/up.png" />
         </div>
         <div id="song_wrapper">
-          <h4 v-for="(song, songKey) in songDisplay.titles" :key="songKey" class="songs">
-            {{ song }} - {{ songDisplay.artists[songKey] }}
+          <h4 v-for="(song, songKey) in songInfoDisplay.titles"
+             :key="songKey"
+             :class="isActive === songKey ? 'active' : 'songs'"
+             @click="replaySong(songKey)">
+            {{ song }} - {{ songInfoDisplay.artists[songKey] }}
           </h4>
         </div>
-        <div v-if="end < journey.songs.titles.length - 1" class="btns" @click="changeSongDisplay(3)">
+        <div v-if="end < journey.songs.titles.length - 1" class="btns" @click="changesongInfoDisplay(3)">
           <img id="next" src="@/assets/up.png" />
         </div>
       </div>
@@ -39,40 +42,61 @@
           </svg>
 
           <!-- Add Scatter Plot -->
-          <g>
-            <!-- Big White Circle with Opacity based on Actual Values (Visualise The Value) (Act Like Stroke) -->
-            <circle v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey"
-              :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
-                        cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
-              :r="30 * (valence)" fill="white" :fill-opacity="(valence + journey.songs.mood_scores.arousal[valenceKey]) / 2" />
-            <g v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey">
-              <line v-if="valenceKey !== journey.songs.mood_scores.valence.length - 1"
-                    :x1="`${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`"
-                    :y1="`${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%`"
-                    :x2="`${canvas.width / 2 * journey.songs.mood_scores.valence[valenceKey + 1] + (50 * (journey.songs.mood_scores.valence[valenceKey + 1] * journey.songs.mood_scores.arousal[valenceKey + 1]))}%`"
-                    :y2="`${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey + 1] + (50 * (journey.songs.mood_scores.valence[valenceKey + 1] * journey.songs.mood_scores.arousal[valenceKey + 1])))}%`"
-                    style="stroke:rgb(255,255,255); stroke-width:2" />
+          <g v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey">
+            <line v-if="valenceKey !== journey.songs.mood_scores.valence.length - 1"
+                  :x1="`${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`"
+                  :y1="`${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%`"
+                  :x2="`${canvas.width / 2 * journey.songs.mood_scores.valence[valenceKey + 1] + (50 * (journey.songs.mood_scores.valence[valenceKey + 1] * journey.songs.mood_scores.arousal[valenceKey + 1]))}%`"
+                  :y2="`${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey + 1] + (50 * (journey.songs.mood_scores.valence[valenceKey + 1] * journey.songs.mood_scores.arousal[valenceKey + 1])))}%`"
+                  style="stroke:rgb(255,255,255); stroke-width:2" />
+          </g>
+
+          <g v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey">
+            <g class="dots"
+               @mouseover="highlightDot(true, valenceKey)"
+               @mouseout="highlightDot(false, -1)">
+              <!-- Big White Circle with Opacity based on Actual Values (Visualise The Value) (Act Like Stroke) -->
+              <circle
+                :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
+                          cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
+                :r="30 * (valence)" fill="white" :fill-opacity="(valence + journey.songs.mood_scores.arousal[valenceKey]) / 2" />
+              <!-- Biggest Coloured Circle with Opacity based on Actual Values (Visualise The Value) -->
+              <circle
+                :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
+                          cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
+                :r="25 * (valence)" :fill="colour" :fill-opacity="(valence + journey.songs.mood_scores.arousal[valenceKey]) / 2" />
+              <!-- Second Biggest Red Circle with Some Opacity (Make Visualisation Look Good) -->
+              <circle
+                :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
+                          cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
+                :r="25 * (valence)" :fill="colour" :fill-opacity="(valence + journey.songs.mood_scores.arousal[valenceKey]) / 4" />
+              <!-- Third Biggest Red Circle without Opacity (Make Visualisation Look Good) -->
+              <circle
+                :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
+                          cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
+                :r="15 * (valence)" :fill="colour" />
+              <!-- White Circle at The Center -->
+              <circle
+                :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
+                          cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
+                :r="10 * (valence)" fill="white" />
             </g>
-            <!-- Biggest Coloured Circle with Opacity based on Actual Values (Visualise The Value) -->
-            <circle v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey"
-              :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
-                        cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
-              :r="25 * (valence)" :fill="colour" :fill-opacity="(valence + journey.songs.mood_scores.arousal[valenceKey]) / 2" />
-            <!-- Second Biggest Red Circle with Some Opacity (Make Visualisation Look Good) -->
-            <circle v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey"
-              :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
-                        cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
-              :r="25 * (valence)" :fill="colour" :fill-opacity="(valence + journey.songs.mood_scores.arousal[valenceKey]) / 4" />
-            <!-- Third Biggest Red Circle without Opacity (Make Visualisation Look Good) -->
-            <circle v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey"
-              :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
-                        cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
-              :r="15 * (valence)" :fill="colour" />
-            <!-- White Circle at The Center -->
-            <circle v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey"
-              :style="{ cx: `${canvas.width / 2 * valence + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey]))}%`,
-                        cy: `${canvas.height / 1.25 - (journey.songs.mood_scores.arousal[valenceKey] + (50 * (valence * journey.songs.mood_scores.arousal[valenceKey])))}%` }"
-              :r="10 * (valence)" fill="white" />
+
+            <g v-if="songDot.which !== -1"
+               class="image">
+              <image :href="songDot.image[songDot.which].url"
+                     :x="`${canvas.width / 2 - margin.bottom / 2}%`"
+                     :y="`${canvas.height - margin.bottom}%`"
+                     :height="`${margin.bottom}%`"
+                     :width="`${margin.bottom}%`" />
+
+              <!-- Song Title and Artist Name -->
+              <text :x="`${canvas.width / 2}%`"
+                    :y="`${canvas.height - margin.bottom}%`"
+                    fill="white"
+                    text-anchor="middle">{{ songDot.title[songDot.which] }} - {{ songDot.artist[songDot.which] }}
+              </text>
+            </g>
           </g>
         </g>
       </svg>
@@ -90,6 +114,9 @@ import {
 import {
   select, scaleLinear, axisBottom, axisLeft,
 } from 'd3';
+
+// Spotify
+import { playSong } from '@/handlers/spotify';
 
 export default {
   name: 'D3',
@@ -109,11 +136,25 @@ export default {
     const start = ref(0);
     const end = ref(3);
 
+    // const zoomValue = ref(1);
+
+    const isActive = ref(false);
+
     // Song Display
-    const songDisplay = reactive({
+    const songInfoDisplay = reactive({
       artists: journey.value.songs.artists.slice(start.value, end.value),
       // titles: journey.value.songs.titles.slice(start, end),
       titles: journey.value.songs.titles.slice(start.value, end.value),
+    });
+    const songDot = reactive({
+      onHover: false,
+      which: -1,
+      artist: journey.value.songs.artists,
+      title: journey.value.songs.titles,
+      valence: journey.value.songs.mood_scores.valence,
+      arousal: journey.value.songs.mood_scores.arousal,
+      image: journey.value.songs.spotify.img_urls,
+      uri: journey.value.songs.spotify.uris,
     });
 
     // D3
@@ -146,13 +187,34 @@ export default {
     }
 
     // Change Song Display Via Button Clicks
-    function changeSongDisplay(num) {
+    function changesongInfoDisplay(num) {
       start.value += num;
       end.value += num;
 
-      songDisplay.artists = journey.value.songs.artists.slice(start.value, end.value);
-      // songDisplay.titles = journey.value.songs.titles.slice(start.value, end.value);
-      songDisplay.titles = journey.value.songs.titles.slice(start.value, end.value);
+      songInfoDisplay.artists = journey.value.songs.artists.slice(start.value, end.value);
+      // songInfoDisplay.titles = journey.value.songs.titles.slice(start.value, end.value);
+      songInfoDisplay.titles = journey.value.songs.titles.slice(start.value, end.value);
+
+      isActive.value += num;
+    }
+
+    // Visualisation Interactivity
+    // Zooming
+    // function zoomMap(e) {
+    //   zoomValue.value += (e.wheelDelta / 1000);
+    //   console.log(zoomValue.value);
+    // }
+
+    // Hovering
+    function highlightDot(isHovered, num) {
+      songDot.onHover = isHovered;
+      songDot.which = num;
+    }
+
+    // Play Songs
+    async function replaySong(num) {
+      isActive.value = num;
+      await playSong(0, isActive.value + start.value, songDot.uri);
     }
 
     onBeforeMount(() => {
@@ -172,10 +234,16 @@ export default {
       axes,
       xAxisRef,
       yAxisRef,
-      songDisplay,
-      changeSongDisplay,
+      songInfoDisplay,
+      changesongInfoDisplay,
       start,
       end,
+      // zoomMap,
+      // zoomValue,
+      songDot,
+      highlightDot,
+      isActive,
+      replaySong,
     };
   },
 };
@@ -192,6 +260,11 @@ export default {
     display: inline-block;
     position: relative;
     height: 100%;
+
+    image {
+      display: block;
+      margin: 0 auto;
+    }
   }
 
   #info {
@@ -233,6 +306,19 @@ export default {
         .songs {
           margin: 10px;
           padding: 10px;
+          cursor: pointer;
+          background-color: white;
+          transition: .2s background-color;
+          &:hover {
+            background-color: rgb(221, 221, 221);
+          }
+        }
+
+        .active {
+          margin: 10px;
+          padding: 10px;
+          cursor: pointer;
+          background-color: rgb(65, 109, 230);
         }
       }
     }

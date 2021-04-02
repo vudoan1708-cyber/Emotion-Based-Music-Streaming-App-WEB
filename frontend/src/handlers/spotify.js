@@ -461,13 +461,14 @@ export async function pauseSong() {
 }
 
 // Play a track using the new device ID
-export async function playSong(position_ms, offset) {
+export async function playSong(position_ms, offset, playlistParam) {
   try {
-
+    // eslint-disable-next-line no-param-reassign
+    if (playlistParam === undefined) playlistParam = playlist;
     // https://muserfly.herokuapp.com/
     const URL = (PRODUCTION === 'production')
-              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}&position_ms=${position_ms}&offset=${offset}`
-              : `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlist}&player_id=${spotifyPlayerID}&position_ms=${position_ms}&offset=${offset}`;
+              ? `https://muserfly.herokuapp.com/player/play/?token=${TOKEN}&playlist=${playlistParam}&player_id=${spotifyPlayerID}&position_ms=${position_ms}&offset=${offset}`
+              : `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlistParam}&player_id=${spotifyPlayerID}&position_ms=${position_ms}&offset=${offset}`;
 
     const response = await useFetch(URL, 'GET');
     const errorStatus = response.error !== undefined 
