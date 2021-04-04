@@ -128,7 +128,6 @@ export default {
   setup(props) {
     // using `toRefs` to create a Reactive Reference to the `recordDetails` property of props
     const { which, journey, colour } = toRefs(props.recordDetails);
-    console.log(journey.value);
     // DOM Ref
     const xAxisRef = ref(null);
     const yAxisRef = ref(null);

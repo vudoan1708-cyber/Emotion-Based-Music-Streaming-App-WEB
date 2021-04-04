@@ -93,7 +93,7 @@ export default {
     const isDraggable = ref(true);
 
     // When mouseReleased event is Triggered, The System Searches for Song
-    const isDragging = ref(false);
+    const isReselected = ref(false);
 
     // Allow User To Choose Their Locations on The Map Without Acc Opening It
     // And Only Via Search
@@ -206,41 +206,42 @@ export default {
         });
       }
 
-      function locationChosen(i, j, how, trackObj) {
-        // Either, a click event, drag and drop events, or a search is accepted
-        if (starDots[i][j].onHover() || isSearched.value || isDragging.value) {
-          // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
-          const { valence, arousal } = indicesToMood(i, j, starDots);
+      function locationChosen(i, j, how, trackObj, counter) {
+        if (counter === 0 || counter === undefined) {
+          // Either, a click events (on the stars and songs), or a search is accepted
+          if (isSearched.value || isReselected.value) {
+            // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
+            const { valence, arousal } = indicesToMood(i, j, starDots);
 
-          isClicked = true;
-          // Reassign The Array Variable Like This For Repeated Searches, Instead Of Array Push
-          chosenPoints[0] = i;
-          chosenPoints[1] = j;
+            isClicked = true;
+            // Reassign The Array Variable Like This For Repeated Searches, Instead Of Array Push
+            chosenPoints[0] = i;
+            chosenPoints[1] = j;
+            // Refresh The Collected Playlist
+            chosenPoints.length !== 0 ? removeATempPlaylist(emitterObj.value) : undefined;
 
-          // Refresh The Collected Playlist
-          chosenPoints.length !== 0 ? removeATempPlaylist(emitterObj.value) : undefined;
+            // send data to the server via socket
+            // const data = {
+            //   i,
+            //   j,
+            //   size: starDots[i][j].size,
+            // };
+            // socket.emit('click', data);
 
-          // send data to the server via socket
-          const data = {
-            i,
-            j,
-            size: starDots[i][j].size,
-          };
-          socket.emit('click', data);
+            // manipulate data to be sent to another component file
+            mapProperties.status = false;
 
-          // manipulate data to be sent to another component file
-          mapProperties.status = false;
+            // wait for 1.5 sec before closing an event on map positions
+            setTimeout(() => { emitMapEvent('close'); }, 1500);
 
-          // wait for 1.5 sec before closing an event on map positions
-          setTimeout(() => { emitMapEvent('close'); }, 1500);
+            // HISTORICAL USERS
+            // use the history array available globally after collecting it the first time
+            // and push it t0 neighbours array as well
+            createHistoricalNeighbours(history, chosenPoints, width, height);
 
-          // HISTORICAL USERS
-          // use the history array available globally after collecting it the first time
-          // and push it t0 neighbours array as well
-          createHistoricalNeighbours(history, chosenPoints, width, height);
-
-          // get songs data from Spotify via the server
-          handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, userSettingsData.value, starDots, chosenPoints, width, height, p, emitterObj.value);
+            // get songs data from Spotify via the server
+            handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, userSettingsData.value, starDots, chosenPoints, width, height, p, emitterObj.value);
+          }
         }
       }
 
@@ -310,6 +311,10 @@ export default {
       };
 
       p.mousePressed = async () => {
+        let track = null;
+        let searchType = 'random';
+        let counter = 0;
+        isReselected.value = true;
         // only clickable when the emotion map is shown
         if (showMap.index !== 0) {
           if (mapProperties.status) {
@@ -317,18 +322,16 @@ export default {
 
             for (let i = 0; i < starDots.length; i += 1) {
               for (let j = 0; j < starDots[i].length; j += 1) {
+                counter = j;
                 const region = mapRegions(mouseIndices.i, mouseIndices.j, i, starDots);
-
-                let track = null;
-                let searchType = 'random';
 
                 if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
                   if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
-                    songDots.forEach((song) => {
-                      if (song.onHover()) {
-                        track = song;
+                    for (let k = 0; k < songDots.length; k += 1) {
+                      if (songDots[k].onHover()) {
+                        track = songDots[k];
                       }
-                    });
+                    }
                   } else track = null;
                 }
 
@@ -336,66 +339,77 @@ export default {
                 // to prevent click event happens globally for all regions
                 // on clickable on one selected region
                 if (region === 1 && showMap.index === 1) {
-                  locationChosen(i, j, searchType, track);
+                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
                 } else if (region === 2 && showMap.index === 2) {
-                  locationChosen(i, j, searchType, track);
+                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
                 } else if (region === 3 && showMap.index === 3) {
-                  locationChosen(i, j, searchType, track);
+                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
                 } else if (region === 4 && showMap.index === 4) {
-                  locationChosen(i, j, searchType, track);
+                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
                 }
 
                 // isChangeable.value = true;
               }
             }
           } else if (!mapProperties.status) {
-            for (let i = 0; i < songDots.length; i += 1) {
+            const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+            for (let k = 0; k < songDots.length; k += 1) {
               // If click on a song dot on the map
-              if (songDots[i].onHover()) {
-                const offsetTrack = findSongViaID(songDots[i].id);
-                await playSong(0, offsetTrack);
+              if (songDots[k].onHover()) {
+                const offsetTrack = findSongViaID(songDots[k].id);
+                console.log(offsetTrack);
+                if (offsetTrack !== -1) {
+                  const isplaying = await playSong(0, offsetTrack);
+                  console.log(isplaying);
+                } else {
+                  track = songDots[k];
+                  searchType = track === null ? 'random' : 'search';
+                  locationChosen(i, j, searchType, track, counter);
+                  counter += 1;
+                }
+                break;
               }
             }
           }
         }
       };
 
-      p.mouseReleased = () => {
-        if (isDragging.value) {
-          locationChosen(chosenPoints[0], chosenPoints[1], 'random', null);
-          isDragging.value = false;
-        }
-      };
+      // p.mouseReleased = () => {
+      //   if (isReselected.value) {
+      //     locationChosen(chosenPoints[0], chosenPoints[1], 'random', null);
+      //     isReselected.value = false;
+      //   }
+      // };
 
-      p.mouseDragged = () => {
-        // only draggable when the emotion map is shown, and only when a user is on Homepage section
-        if (showMap.index !== 0) {
-          if (isDraggable.value) {
-            // to get affective values
-            /// start by translating coordinates values to indices
-            const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+      // p.mouseDragged = () => {
+      //   // only draggable when the emotion map is shown, and only when a user is on Homepage section
+      //   if (showMap.index !== 0) {
+      //     if (isDraggable.value) {
+      //       // to get affective values
+      //       /// start by translating coordinates values to indices
+      //       const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
 
-            // constrain the dragable areas
-            if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
-              if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
-                removeATempPlaylist(emitterObj.value);
+      //       // constrain the dragable areas
+      //       if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
+      //         if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
+      //           removeATempPlaylist(emitterObj.value);
 
-                // convert the mapping algorithm to indices
-                // move the chosen point to other locations
-                const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-                chosenPoints[0] = i;
-                chosenPoints[1] = j;
+      //           // convert the mapping algorithm to indices
+      //           // move the chosen point to other locations
+      //           const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+      //           chosenPoints[0] = i;
+      //           chosenPoints[1] = j;
 
-                // Reassign showMap index to change colour of region based on the chosen point's location
-                showMap.index = mapRegions(chosenPoints[0], chosenPoints[1], chosenPoints[0], starDots);
+      //           // Reassign showMap index to change colour of region based on the chosen point's location
+      //           showMap.index = mapRegions(chosenPoints[0], chosenPoints[1], chosenPoints[0], starDots);
 
-                // Trigger isDragging to true to search for song when mouse is released
-                isDragging.value = true;
-              }
-            }
-          }
-        }
-      };
+      //           // Trigger isReselected to true to search for song when mouse is released
+      //           isReselected.value = true;
+      //         }
+      //       }
+      //     }
+      //   }
+      // };
 
       p.windowResized = () => {
         p.resizeCanvas(width, height);

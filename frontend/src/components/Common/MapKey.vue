@@ -39,7 +39,7 @@ import { onMounted, ref, watch } from 'vue';
 export default {
   name: 'MapKey',
   setup() {
-    const isShown = ref(false);
+    const isShown = ref(true);
     const arrow = ref('v');
 
     // Reference

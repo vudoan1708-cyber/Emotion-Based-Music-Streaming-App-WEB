@@ -14,8 +14,12 @@ export function moodToIndices(valence, arousal, starDots) {
 }
 
 export function moodToCoordinates(valence, arousal, starDots, width, height) {
-  const i = Math.floor(valence * starDots.length);
-  const j = Math.floor((1 - arousal) * starDots[i].length);
+  // const i = Math.floor(valence * starDots.length);
+  // const j = Math.floor((1 - arousal) * starDots[i].length);
+
+  // avoid rounding up decimal values for variant results
+  const i = valence * starDots.length;
+  const j = (1 - arousal) * starDots[Math.floor(i)].length;
 
   const x = width / 4.35 + i * OFFSET;
   const y = height / 4.5 + j * OFFSET;

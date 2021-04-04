@@ -109,14 +109,19 @@ export function findSongViaID(uri) {
   let offset = 0;
   let count = 0;
   // Loop through the playlist array to check offset songs
-  playlist.forEach((songID, index) => {
+  for (let index = 0; index < playlist.length; index += 1) {
+    const songID = playlist[index];
     if (songID === uri) {
       count += 1;
       if (count <= 1) {
         offset = index;
       } else updatePlaylist(songID, 'remove');
+    } else {
+      if (index === playlist.length - 1 && count === 0) {
+        offset = -1;
+      }
     }
-  });
+  }
   return offset;
 }
 
