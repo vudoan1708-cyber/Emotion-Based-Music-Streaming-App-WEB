@@ -1,3 +1,4 @@
+<!-- eslint-disable max-len -->
 <template>
 
   <!-- p5 canvas -->
@@ -12,6 +13,38 @@
       <li id="bottom_left" style="opacity: 1;" @click=instantiateMap(3) ref="sadBtn">Sad</li>
       <li id="bottom_right" style="opacity: 1;" @click=instantiateMap(4) ref="calmBtn">Calm</li>
     </ul>
+  </div>
+
+  <div id="map_layers" v-if="mapProperties.status">
+    <div id="corners">
+      <!-- Aggressive -->
+      <ul id="angryCorner" v-if="showMap.index === 1">
+        <li class="angryLayer angryBorderL low left_corner" style="opacity: 1;">Low Zone</li>
+        <li class="angryLayer angryBorderM medium left_corner" style="opacity: 1;">Medium Zone</li>
+        <li class="angryLayer angryBorderH high left_corner" style="opacity: 1;">Extreme Zone</li>
+      </ul>
+
+      <!-- Exciting -->
+      <ul id="excitingCorner" v-else-if="showMap.index === 2">
+        <li class="excitingLayer excitingBorderL low right_corner" style="opacity: 1;">Low Zone</li>
+        <li class="excitingLayer excitingBorderM medium right_corner" style="opacity: 1;">Medium Zone</li>
+        <li class="excitingLayer excitingBorderH high right_corner" style="opacity: 1;">Extreme Zone</li>
+      </ul>
+
+      <!-- Sad -->
+      <ul id="sadCorner" v-else-if="showMap.index === 3">
+        <li class="sadLayer sadBorderL low left_corner" style="opacity: 1;">Low Zone</li>
+        <li class="sadLayer sadBorderM medium left_corner" style="opacity: 1;">Medium Zone</li>
+        <li class="sadLayer sadBorderH high left_corner" style="opacity: 1;">Extreme Zone</li>
+      </ul>
+
+      <!-- Calm -->
+      <ul id="calmCorner" v-else-if="showMap.index === 4">
+        <li class="calmLayer calmL low right_corner" style="opacity: 1;">Low Zone</li>
+        <li class="calmLayer calmM medium right_corner" style="opacity: 1;">Medium Zone</li>
+        <li class="calmLayer calmH high right_corner" style="opacity: 1;">Extreme Zone</li>
+      </ul>
+    </div>
   </div>
 
   <!-- Song Info On The Map -->
@@ -89,11 +122,11 @@ export default {
     });
 
     // Draggable Location on The Emotion Map
-    // Set Default to True,, because the welcoming screen is the Homepage
-    const isDraggable = ref(true);
+    // Set Default to True, because the welcoming screen is the Homepage
+    // const isDraggable = ref(true);
 
     // When mouseReleased event is Triggered, The System Searches for Song
-    const isReselected = ref(false);
+    const isClickable = ref(true);
 
     // Allow User To Choose Their Locations on The Map Without Acc Opening It
     // And Only Via Search
@@ -134,8 +167,8 @@ export default {
 
     // Listen on the 'nav' event
     emitterObj.value.on('nav', (num) => {
-      if (num === 1) isDraggable.value = true;
-      else isDraggable.value = false;
+      if (num === 1) isClickable.value = true;
+      else isClickable.value = false;
     });
 
     // Listen on the 'instructions' event
@@ -209,7 +242,7 @@ export default {
       function locationChosen(i, j, how, trackObj, counter) {
         if (counter === 0 || counter === undefined) {
           // Either, a click events (on the stars and songs), or a search is accepted
-          if (isSearched.value || isReselected.value) {
+          if (isSearched.value || isClickable.value) {
             // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
             const { valence, arousal } = indicesToMood(i, j, starDots);
 
@@ -297,7 +330,7 @@ export default {
         if (showMap.index !== 0) {
           // For Performances Reason, Hide All Song Dots And Neighbours
           // All The Map-Related Visualisation Elements Will Always Be Drawn When Homepage is Visited
-          if (isDraggable.value) {
+          if (isClickable.value) {
             // The Emotion Map
             drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, mapProperties, emitterObj.value, p);
 
@@ -314,12 +347,10 @@ export default {
         let track = null;
         let searchType = 'random';
         let counter = 0;
-        isReselected.value = true;
-        // only clickable when the emotion map is shown
-        if (showMap.index !== 0) {
+        // only clickable when the emotion map is shown and the screen is showing the homepage
+        if (showMap.index !== 0 && isClickable.value) {
+          const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
           if (mapProperties.status) {
-            const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-
             for (let i = 0; i < starDots.length; i += 1) {
               for (let j = 0; j < starDots[i].length; j += 1) {
                 counter = j;
@@ -352,19 +383,17 @@ export default {
               }
             }
           } else if (!mapProperties.status) {
-            const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
             for (let k = 0; k < songDots.length; k += 1) {
               // If click on a song dot on the map
               if (songDots[k].onHover()) {
                 const offsetTrack = findSongViaID(songDots[k].id);
-                console.log(offsetTrack);
                 if (offsetTrack !== -1) {
                   const isplaying = await playSong(0, offsetTrack);
                   console.log(isplaying);
                 } else {
                   track = songDots[k];
                   searchType = track === null ? 'random' : 'search';
-                  locationChosen(i, j, searchType, track, counter);
+                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
                   counter += 1;
                 }
                 break;
@@ -375,9 +404,9 @@ export default {
       };
 
       // p.mouseReleased = () => {
-      //   if (isReselected.value) {
+      //   if (isClickable.value) {
       //     locationChosen(chosenPoints[0], chosenPoints[1], 'random', null);
-      //     isReselected.value = false;
+      //     isClickable.value = false;
       //   }
       // };
 
@@ -403,8 +432,8 @@ export default {
       //           // Reassign showMap index to change colour of region based on the chosen point's location
       //           showMap.index = mapRegions(chosenPoints[0], chosenPoints[1], chosenPoints[0], starDots);
 
-      //           // Trigger isReselected to true to search for song when mouse is released
-      //           isReselected.value = true;
+      //           // Trigger isClickable to true to search for song when mouse is released
+      //           isClickable.value = true;
       //         }
       //       }
       //     }
@@ -453,6 +482,7 @@ export default {
       instantiateMap,
       isInstructionsShown,
       mapProperties,
+      showMap,
     };
   },
 };

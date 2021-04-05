@@ -22,7 +22,7 @@ $radiusVal: 100px;
   ul {
     display: grid;
     grid-template-columns: 50% 50%;
-    grid-gap: 20px;
+    gap: 20px;
     padding: 10px;
 
     li {
@@ -79,6 +79,201 @@ $radiusVal: 100px;
       &:hover {
         @include mapCoverHover(5px, 5px);
       }
+    }
+  }
+}
+
+#map_layers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 75%;
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  // @extend #map_cover;
+  z-index: 0;
+  
+  #corners {
+    position: relative;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    gap: 20px;
+    padding: 10px;
+
+    ul {
+      position: relative;
+      display: block;
+      list-style: none;
+      width: 100%;
+      height: 70%;
+      
+      li {
+        position: relative;
+        display: block;
+        color: white;
+        cursor: pointer;
+        @include transitionProperties(all, 0.25s);
+        @include userSelect(none);
+      }
+    }
+    #excitingCorner,
+    #calmCorner {
+      margin-left: 20px;
+      transform: translateX(100%);
+    }
+
+    .left_corner {
+      position: absolute;
+      right: 0;
+      text-align: left;
+    }
+    .right_corner {
+      position: absolute;
+      left: 0;
+      text-align: right;
+    }
+
+    // Size
+    .low {
+      width: 25%;
+      // min-height: 30%;
+      display: block;
+      // overflow: hidden;
+      padding: 7.5% 0;
+      // transform: scaleY(10);
+      z-index: 0;
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+    .medium {
+      width: 50%;
+      // min-height: 60%;
+      display: block;
+      // overflow: hidden;
+      padding: 10% 0;
+      // transform: scaleY(10);
+      z-index: -1;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .high {
+      width: 75%;
+      // min-height: 90%;
+      display: block;
+      // overflow: hidden;
+      padding: 15% 0;
+      // transform: scaleY(10);
+      z-index: -2;
+      background-color: rgba(0, 0, 0, 0.75);
+    }
+
+    // Individual Layer
+    // Aggressive
+    .angryLayer {
+      bottom: 0;
+      border-top-left-radius: $radiusVal;
+      -ms-transform-origin: bottom right; /* IE 9 */
+      transform-origin: bottom right;
+
+      &:hover {
+        border-top: 4px solid rgb(245, 45, 45);
+        border-left: 4px solid rgb(245, 45, 45);
+      }
+    }
+
+    // Aggressive Border
+    .angryBorderL {
+      border-top: 4px solid rgba(245, 45, 45, 0.25);
+      border-left: 4px solid rgba(245, 45, 45, 0.25);
+    }
+    .angryBorderM {
+      border-top: 4px solid rgba(245, 45, 45, 0.5);
+      border-left: 4px solid rgba(245, 45, 45, 0.5);
+    }
+    .angryBorderH {
+      border-top: 4px solid rgba(245, 45, 45, 0.75);
+      border-left: 4px solid rgba(245, 45, 45, 0.75);
+    }
+    
+    // Sad
+    .sadLayer {
+      top: 0;
+      border-bottom-left-radius: $radiusVal;
+      -ms-transform-origin: top right; /* IE 9 */
+      transform-origin: top right;
+      
+      &:hover {
+        border-bottom: 4px solid rgb(45, 92, 245);
+        border-left: 4px solid rgb(45, 92, 245);
+      }
+    }
+
+    // Sad Border
+    .sadBorderL {
+      border-bottom: 4px solid rgba(45, 92, 245, 0.25);
+      border-left: 4px solid rgba(45, 92, 245, 0.25);
+    }
+    .sadBorderM {
+      border-bottom: 4px solid rgba(45, 92, 245, 0.5);
+      border-left: 4px solid rgba(45, 92, 245, 0.5);
+    }
+    .sadBorderH {
+      border-bottom: 4px solid rgba(45, 92, 245, 0.75);
+      border-left: 4px solid rgba(45, 92, 245, 0.75);
+    }
+
+    // Exciting
+    .excitingLayer {
+      bottom: 0;
+      border-top-right-radius: $radiusVal;
+      -ms-transform-origin: bottom left; /* IE 9 */
+      transform-origin: bottom left;
+      
+      &:hover {
+        border-top: 4px solid rgb(45, 245, 62);
+        border-right: 4px solid rgb(45, 245, 62);
+      }
+    }
+
+    // Exciting Border
+    .excitingBorderL {
+      border-top: 4px solid rgba(45, 245, 62, 0.25);
+      border-right: 4px solid rgba(45, 245, 62, 0.25);
+    }
+    .excitingBorderM {
+      border-top: 4px solid rgba(45, 245, 62, 0.5);
+      border-right: 4px solid rgba(45, 245, 62, 0.5);
+    }
+    .excitingBorderH {
+      border-top: 4px solid rgba(45, 245, 62, 0.75);
+      border-right: 4px solid rgba(45, 245, 62, 0.75);
+    }
+
+    // Calm
+    .calmLayer {
+      top: 0;
+      border-bottom-right-radius: $radiusVal;
+      -ms-transform-origin: top right; /* IE 9 */
+      transform-origin: top right;
+      
+      &:hover {
+        border-bottom: 4px solid rgb(122, 45, 245);
+        border-right: 4px solid rgb(122, 45, 245);
+      }
+    }
+
+    // Calm Border
+    .calmL {
+      border-bottom: 4px solid rgba(122, 45, 245, 0.25);
+      border-right: 4px solid rgba(122, 45, 245, 0.25);
+    }
+    .calmM {
+      border-bottom: 4px solid rgba(122, 45, 245, 0.5);
+      border-right: 4px solid rgba(122, 45, 245, 0.5);
+    }
+    .calmH {
+      border-bottom: 4px solid rgba(122, 45, 245, 0.75);
+      border-right: 4px solid rgba(122, 45, 245, 0.75);
     }
   }
 }
