@@ -83,6 +83,8 @@ $radiusVal: 100px;
   }
 }
 
+$offset: 50%;
+
 #map_layers {
   display: flex;
   flex-direction: column;
@@ -98,6 +100,7 @@ $radiusVal: 100px;
   #corners {
     position: relative;
     display: grid;
+    height: 100%;
     grid-template-columns: 50% 50%;
     gap: 20px;
     padding: 10px;
@@ -107,7 +110,7 @@ $radiusVal: 100px;
       display: block;
       list-style: none;
       width: 100%;
-      height: 70%;
+      height: 100%;
       
       li {
         position: relative;
@@ -139,9 +142,10 @@ $radiusVal: 100px;
     .low {
       width: 25%;
       // min-height: 30%;
-      display: block;
+      // display: block;
       // overflow: hidden;
-      padding: 7.5% 0;
+      // padding: 7.5% 0;
+      height: calc(100% / 6.5);
       // transform: scaleY(10);
       z-index: 0;
       background-color: rgba(0, 0, 0, 0.25);
@@ -149,9 +153,10 @@ $radiusVal: 100px;
     .medium {
       width: 50%;
       // min-height: 60%;
-      display: block;
+      // display: block;
       // overflow: hidden;
-      padding: 10% 0;
+      // padding: 10% 0;
+      height: calc(100% / 5);
       // transform: scaleY(10);
       z-index: -1;
       background-color: rgba(0, 0, 0, 0.5);
@@ -159,9 +164,10 @@ $radiusVal: 100px;
     .high {
       width: 75%;
       // min-height: 90%;
-      display: block;
+      // display: block;
       // overflow: hidden;
-      padding: 15% 0;
+      // padding: 15% 0;
+      height: calc(100% / 4);
       // transform: scaleY(10);
       z-index: -2;
       background-color: rgba(0, 0, 0, 0.75);
@@ -170,7 +176,7 @@ $radiusVal: 100px;
     // Individual Layer
     // Aggressive
     .angryLayer {
-      bottom: 0;
+      bottom: $offset;
       border-top-left-radius: $radiusVal;
       -ms-transform-origin: bottom right; /* IE 9 */
       transform-origin: bottom right;
@@ -197,7 +203,7 @@ $radiusVal: 100px;
     
     // Sad
     .sadLayer {
-      top: 0;
+      top: $offset;
       border-bottom-left-radius: $radiusVal;
       -ms-transform-origin: top right; /* IE 9 */
       transform-origin: top right;
@@ -224,7 +230,7 @@ $radiusVal: 100px;
 
     // Exciting
     .excitingLayer {
-      bottom: 0;
+      bottom: $offset;
       border-top-right-radius: $radiusVal;
       -ms-transform-origin: bottom left; /* IE 9 */
       transform-origin: bottom left;
@@ -251,7 +257,7 @@ $radiusVal: 100px;
 
     // Calm
     .calmLayer {
-      top: 0;
+      top: $offset;
       border-bottom-right-radius: $radiusVal;
       -ms-transform-origin: top right; /* IE 9 */
       transform-origin: top right;

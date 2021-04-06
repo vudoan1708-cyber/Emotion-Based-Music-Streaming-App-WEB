@@ -137,7 +137,8 @@ export default {
     async function liveUpdatePlayerBar() {
       if (images.value === Play && !seeker.isDragged) {
         songPlay.isPlaying = await getSongIsPlaying();
-        if (songPlay.isPlaying.response !== undefined) {
+        if (songPlay.isPlaying.response !== undefined
+          && songPlay.isPlaying.response.item !== undefined) {
           songPlay.progress_ms = songPlay.isPlaying.response.progress_ms;
           songPlay.duration_ms = songPlay.isPlaying.response.item.duration_ms;
 
@@ -147,7 +148,7 @@ export default {
 
           songPlay.artists = songPlay.isPlaying.response.item.artists[0].name;
           songPlay.title = songPlay.isPlaying.response.item.name;
-        }
+        } else playSong(0);
         setTimeout(liveUpdatePlayerBar, 1000);
       }
     }

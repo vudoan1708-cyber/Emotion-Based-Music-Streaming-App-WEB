@@ -25,7 +25,7 @@ import { createSongDots } from '@/components/Utils/p5/songVisualisation';
 let spotifyPlayerID = null;
 let isPlaying = null;
 let emitter = null;
-let isSearching = false;
+let isSearching = true;
 let playlist = [];
 let minTracks = 5;
 let chosenGenre = '';
@@ -133,9 +133,8 @@ export async function getSongIsPlaying() {
               : `http://localhost:5000/player/is-playing/?token=${TOKEN}`;
 
     const response = await useFetch(URL, 'GET');
-
     // Find Songs Via Their IDs
-    const offset = findSongViaID(response.item.uri);
+    const offset = response.item !== undefined ? findSongViaID(response.item.uri) : 0;
 
     const responseData = {
       offset,
@@ -394,11 +393,11 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
             if (results[0].error) handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
             else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
           } else handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+          break;
         }
       } else {
         if (isSearching) {
           isSearching = false;
-
           console.log(`End The Loop With ${playlist.length} songs`);
           isPlaying = await playSong(0);
   
@@ -534,34 +533,35 @@ export async function getUserPersonalisation(type, offsetNum) {
 
 // Song Fetch
 export async function handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitterObj) {
-  isSearching = true;
-  emitter = emitterObj;
-
-  // Get The Min Number of Tracks to Collect from User Settings Data
-  minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
-            ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.numOfTracks
-            : minTracks;
-
-  chosenGenre = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined && trackObj === null)
-              ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.genre
-              : chosenGenre;
-  let KEYWORD = '';
-
-  // If The Song Track Comming in As A Valid Object
-  if (trackObj !== null) {
-    // Get Search Keyword based on Its Artist
-    KEYWORD = getKeyword(how, trackObj.artist_names);
-
-    makeATempPlaylist(trackObj.id, trackObj.title, valence, arousal, 
-      trackObj.album_imgs, trackObj.artist_details, trackObj.artist_names, trackObj.external_urls,
-      false, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5);
-
-  } else KEYWORD = getKeyword(how, trackObj);
-  // get songs' valence and arousal data
-  let audio_features = await getSongsData(Romanisation(KEYWORD), 'track', chosenGenre);
-  // error comes from no audio features values detected
-  if (audio_features === null) audio_features = await getSongsData(Romanisation(KEYWORD), 'album', chosenGenre);
-  // error comes from JSON input
-  else if (audio_features.type === 'invalid-json') handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
-  else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5);
+  if (isSearching) {
+    emitter = emitterObj;
+  
+    // Get The Min Number of Tracks to Collect from User Settings Data
+    minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
+              ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.numOfTracks
+              : minTracks;
+  
+    chosenGenre = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined && trackObj === null)
+                ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.genre
+                : chosenGenre;
+    let KEYWORD = '';
+  
+    // If The Song Track Comming in As A Valid Object
+    if (trackObj !== null) {
+      // Get Search Keyword based on Its Artist
+      KEYWORD = getKeyword(how, trackObj.artist_names);
+  
+      makeATempPlaylist(trackObj.id, trackObj.title, valence, arousal, 
+        trackObj.album_imgs, trackObj.artist_details, trackObj.artist_names, trackObj.external_urls,
+        false, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5);
+  
+    } else KEYWORD = getKeyword(how, trackObj);
+    // get songs' valence and arousal data
+    let audio_features = await getSongsData(Romanisation(KEYWORD), 'track', chosenGenre);
+    // error comes from no audio features values detected
+    if (audio_features === null) audio_features = await getSongsData(Romanisation(KEYWORD), 'album', chosenGenre);
+    // error comes from JSON input
+    else if (audio_features.type === 'invalid-json') handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+    else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5);
+  }
 }
