@@ -152,7 +152,8 @@ export default {
           songPlay.title = songPlay.isPlaying.response.item.name;
         } else {
           // eslint-disable-next-line no-lonely-if
-          if (songPlay.artists === '' && songPlay.title === ''
+          if (songPlay.artists === ''
+            && songPlay.title === ''
             && isEmpty(songPlay.isPlaying)) {
             playSong(0);
           } else playSong(songPlay.progress_ms, songPlay.offset);
