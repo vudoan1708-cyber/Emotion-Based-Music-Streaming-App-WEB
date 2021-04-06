@@ -151,10 +151,13 @@ export default {
           songPlay.artists = songPlay.isPlaying.response.item.artists[0].name;
           songPlay.title = songPlay.isPlaying.response.item.name;
         } else {
+          // Only Handle The Error Case At The Beginning of The Song Play, Not During
+          // Checking Empty Strings and Empty Object Will Help With That
           // eslint-disable-next-line no-lonely-if
           if (songPlay.artists === ''
             && songPlay.title === ''
             && isEmpty(songPlay.isPlaying)) {
+            // If There is an Error, Play The First Song in The Playlist Anyway
             playSong(0);
           } else playSong(songPlay.progress_ms, songPlay.offset);
         }

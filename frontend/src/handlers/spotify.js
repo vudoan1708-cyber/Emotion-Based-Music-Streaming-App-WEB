@@ -533,7 +533,8 @@ export async function getUserPersonalisation(type, offsetNum) {
 
 // Song Fetch
 export async function handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitterObj) {
-  if (isSearching) {
+  if (isSearching || playlist.length < minTracks) {
+    isSearching = true;
     emitter = emitterObj;
   
     // Get The Min Number of Tracks to Collect from User Settings Data

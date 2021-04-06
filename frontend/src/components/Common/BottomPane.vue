@@ -90,8 +90,6 @@ export default {
     // Data Obj for userJourney database
     const dataObj = ref({});
 
-    const isDataInserted = ref(false);
-
     // subscribe on the 'map' event
     emitterObj.value.on('map', (map) => {
       mapProperties.coords.x = map.i;
@@ -116,9 +114,7 @@ export default {
             tracks.arousalScores.push(data.song.arousal);
             tracks.albumImgs.push(data.song.album_imgs);
           }
-        } else if (!isDataInserted.value && data.how === 'finish' && tracks.total >= tracks.min) {
-          isDataInserted.value = true;
-
+        } else if (data.how === 'finish' && tracks.total >= tracks.min) {
           appState.stage = 3;
           const date = new Date();
 
