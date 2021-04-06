@@ -66,6 +66,8 @@ import {
 
 import { Romanisation } from '@/components/Utils/logic/string';
 
+import isEmpty from '@/components/Utils/logic/object';
+
 import Play from '@/assets/play.png';
 import Pause from '@/assets/pause.png';
 import Next from '@/assets/next.png';
@@ -137,7 +139,8 @@ export default {
     async function liveUpdatePlayerBar() {
       if (images.value === Play && !seeker.isDragged) {
         songPlay.isPlaying = await getSongIsPlaying();
-        if (songPlay.isPlaying.response !== undefined) {
+        if (songPlay.isPlaying.response !== undefined
+          && songPlay.isPlaying.response.item !== undefined) {
           songPlay.progress_ms = songPlay.isPlaying.response.progress_ms;
           songPlay.duration_ms = songPlay.isPlaying.response.item.duration_ms;
 
@@ -147,6 +150,12 @@ export default {
 
           songPlay.artists = songPlay.isPlaying.response.item.artists[0].name;
           songPlay.title = songPlay.isPlaying.response.item.name;
+        } else {
+          // eslint-disable-next-line no-lonely-if
+          if (songPlay.artists === '' && songPlay.title === ''
+            && isEmpty(songPlay.isPlaying)) {
+            playSong(0);
+          } else playSong(songPlay.progress_ms, songPlay.offset);
         }
         setTimeout(liveUpdatePlayerBar, 1000);
       }
