@@ -19,7 +19,7 @@ export function createSongDots(label, title, valence, arousal, id,
 
   const song = new SongDots(label, title, id, valence, arousal,
                             album_imgs, artist_details, artist_names, external_urls,
-                            coordinates.x, coordinates.y, 10, p5);
+                            coordinates.x, coordinates.y, p5.random(3, 5), width, height, p5);
 
   songDots.push(song);
   songLoaded = true;

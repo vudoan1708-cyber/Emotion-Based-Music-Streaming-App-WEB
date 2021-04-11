@@ -6,12 +6,33 @@
         <!-- Your Playlists -->
         <li>
           <img class="key_sections" src="@/assets/Map_YourPlaylists.png" />
-          <label class="key_sections" >Your Spotify Playlists</label>
+          <label class="key_sections" >Your Spotify Playlist</label>
         </li>
         <!-- Other Tracks -->
+        <!-- Aggressive -->
         <li>
-          <img class="key_sections" src="@/assets/Map_Other.png" />
-          <label class="key_sections" >All Fetched Tracks</label>
+          <img class="key_sections" src="@/assets/Map_A.png" />
+          <label class="key_sections" >Aggressive</label>
+        </li>
+        <!-- Exciting -->
+        <li>
+          <img class="key_sections" src="@/assets/Map_E.png" />
+          <label class="key_sections" >Exciting</label>
+        </li>
+        <!-- Sad -->
+        <li>
+          <img class="key_sections" src="@/assets/Map_S.png" />
+          <label class="key_sections" >Sad</label>
+        </li>
+        <!-- Calm -->
+        <li>
+          <img class="key_sections" src="@/assets/Map_C.png" />
+          <label class="key_sections" >Calm</label>
+        </li>
+        <!-- Chosen Tracks By Users -->
+        <li>
+          <img class="key_sections" src="@/assets/Map_Chosen.png" />
+          <label class="key_sections" >Chosen by User</label>
         </li>
         <!-- Collected Tracks -->
         <li>
@@ -19,10 +40,10 @@
           <label class="key_sections" >Collected Tracks</label>
         </li>
         <!-- Neighbours -->
-        <li>
+        <!-- <li>
           <img class="key_sections" src="@/assets/Map_NeighbourDot.png" />
           <label  class="key_sections">Your Neighbours</label>
-        </li>
+        </li> -->
       </ul>
     </div>
 

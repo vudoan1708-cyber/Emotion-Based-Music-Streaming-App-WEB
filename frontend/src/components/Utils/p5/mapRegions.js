@@ -1,29 +1,56 @@
 /* eslint-disable camelcase */
 /* eslint-disable consistent-return */
 /* eslint-disable no-else-return */
-export default function mapRegions(i, j, star_i, starDots) {
+// export default function mapRegions(i, j, star_i, starDots) {
+//   // the centred dot
+//   if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[star_i].length / 2)) {
+//     return 0;
+
+//   // TOP LEFT (ANGRY)
+//   } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+//     && j >= 0 && j < Math.floor(starDots[star_i].length / 2)) {
+//     return 1;
+
+//   // TOP RIGHT (HAPPY / EXCITED)
+//   } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+//     && j >= 0 && j < Math.floor(starDots[star_i].length / 2)) {
+//     return 2;
+
+//   // BOTTOM LEFT (SAD)
+//   } else if (i >= 0 && i < Math.floor(starDots.length / 2)
+//     && j > Math.floor(starDots[star_i].length / 2) && j < starDots[star_i].length) {
+//     return 3;
+
+//   // BOTTOM RIGHT (CALM / RELAXED)
+//   } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
+//     && j > Math.floor(starDots[star_i].length / 2) && j < starDots[star_i].length) {
+//     return 4;
+//   }
+// }
+
+export default function mapRegions(x, y, width, height) {
   // the centred dot
-  if (i === Math.floor(starDots.length / 2) && j === Math.floor(starDots[star_i].length / 2)) {
+  if (x === (width / 2) && y === (height / 2)) {
     return 0;
 
   // TOP LEFT (ANGRY)
-  } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-    && j >= 0 && j < Math.floor(starDots[star_i].length / 2)) {
+  } else if (x >= 0 && x <= (width / 2)
+    && y >= 0 && y <= (height / 2)) {
     return 1;
 
   // TOP RIGHT (HAPPY / EXCITED)
-  } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-    && j >= 0 && j < Math.floor(starDots[star_i].length / 2)) {
+  } else if (x >= (width / 2) && x < width
+    && y >= 0 && y <= (height / 2)) {
     return 2;
 
   // BOTTOM LEFT (SAD)
-  } else if (i >= 0 && i < Math.floor(starDots.length / 2)
-    && j > Math.floor(starDots[star_i].length / 2) && j < starDots[star_i].length) {
+  } else if (x >= 0 && x <= (width / 2)
+    && y >= (height / 2) && y < height) {
     return 3;
 
   // BOTTOM RIGHT (CALM / RELAXED)
-  } else if (i > Math.floor(starDots.length / 2) && i < starDots.length
-    && j > Math.floor(starDots[star_i].length / 2) && j < starDots[star_i].length) {
+  } else if (x >= (width / 2) && x < width
+    && y >= (height / 2) && y < height) {
     return 4;
   }
 }

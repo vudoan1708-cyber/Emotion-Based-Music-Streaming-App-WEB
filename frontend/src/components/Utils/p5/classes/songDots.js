@@ -1,18 +1,19 @@
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 /* eslint-disable indent */
-/* eslint-disable max-len */
 /* eslint-disable padded-blocks */
 /* eslint-disable operator-linebreak */
 /* eslint-disable no-trailing-spaces */
 /* eslint-disable consistent-return */
+import star from '@/components/Utils/p5/star';
 // eslint-disable-next-line import/no-cycle
 import { updatePlaylist } from '@/handlers/spotify';
+import mapRegions from '@/components/Utils/p5/mapRegions';
 
 export default class SongDots {
   constructor(label, title, id, valence, arousal,
               album_imgs, artist_details, artist_names, external_urls,
-              x, y, size, p5) {
+              x, y, size, width, height, p5) {
     this.label = label;
     this.title = title;
     this.id = id;
@@ -26,12 +27,16 @@ export default class SongDots {
     this.y = y;
     this.size = size;
 
+    this.region = mapRegions(this.x, this.y, width, height);
+
     this.p5 = p5;
   }
 
   onHover() {
-    if (this.p5.mouseX > this.x - this.size / 2 && this.p5.mouseX < this.x + this.size / 2) {
-      if (this.p5.mouseY > this.y - this.size / 2 && this.p5.mouseY < this.y + this.size / 2) {
+    if (this.p5.mouseX > this.x - (this.size * 3) / 2
+      && this.p5.mouseX < this.x + (this.size * 3) / 2) {
+      if (this.p5.mouseY > this.y - (this.size * 3) / 2
+        && this.p5.mouseY < this.y + (this.size * 3) / 2) {
         return true;
       }
     } return false;
@@ -48,19 +53,30 @@ export default class SongDots {
     // effects
     this.p5.noStroke();
     this.p5.fill(200, 75);
-    this.p5.ellipse(this.x, this.y, updatedSize + 5);
+    // this.p5.ellipse(this.x, this.y, updatedSize + 5);
+    star(this.x, this.y, updatedSize * 3, updatedSize / 3, 4, this.p5);
 
     this.p5.stroke(0);
-    // if accepted by the system: green, by user: yellow, not accepted: gray, by user personalised playlist: red
-    if (this.label === 'accepted') { this.p5.fill(0, 225, 0); }
+    // if accepted by the system: green,
+    // by user: yellow, not accepted: gray,
+    // by user personalised playlist: red
+    if (this.label === 'accepted') { this.p5.fill(225, 225, 225); }
     else if (this.label === 'accepted_by_user') { this.p5.fill(255, 255, 0); }
-    else if (this.label === 'user_playlist') { this.p5.fill(255, 0, 0, 200); }
-    else this.p5.fill(150);
-    this.p5.ellipse(this.x, this.y, updatedSize);
+    else if (this.label === 'user_playlist') { this.p5.fill(50, 50, 50, 200); }
+    else {
+      // eslint-disable-next-line no-lonely-if
+      if (this.region === 1) { this.p5.fill(200, 20, 0, 150); }
+      else if (this.region === 2) { this.p5.fill(20, 200, 0, 150); }
+      else if (this.region === 3) { this.p5.fill(20, 20, 200, 150); }
+      else if (this.region === 4) { this.p5.fill(122, 45, 245, 150); }
+      // this.p5.fill(150);
+    }
+    // this.p5.ellipse(this.x, this.y, updatedSize);
+    star(this.x, this.y, updatedSize * 1.5, updatedSize / 1.5, 4, this.p5);
 
     // effects
-    this.p5.fill(200, 75);
-    this.p5.ellipse(this.x, this.y, updatedSize - 5);
+    // this.p5.fill(200, 75);
+    // this.p5.ellipse(this.x, this.y, updatedSize - 5);
     this.p5.pop();
   }
 

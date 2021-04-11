@@ -78,7 +78,10 @@ import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMapVi
 import { songDots, drawSongDots } from '@/components/Utils/p5/songVisualisation';
 import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
-import { indicesToMood, moodToIndices, coordinatesToIndices } from '@/components/Utils/logic/algorithm';
+import {
+  indicesToMood, moodToIndices,
+  coordinatesToIndices, indicestoCoordinates,
+} from '@/components/Utils/logic/algorithm';
 import hashURL from '@/components/Utils/logic/hashURL';
 
 import changeMap from '@/components/Utils/dom/changeMap';
@@ -285,13 +288,15 @@ export default {
 
         // Get Indices of The Searched Tracks Via Its Mood Values
         const trackMood = moodToIndices(track.valence, track.arousal, starDots);
+        // Get Coordinates of The Searched Tracks Via Its Indices
+        const trackCoord = indicestoCoordinates(trackMood.i, trackMood.j, width, height);
         locationChosen(trackMood.i, trackMood.j, 'search', track);
 
         // Get The Regions Values
         let region = null;
         for (let i = 0; i < starDots.length; i += 1) {
           for (let j = 0; j < starDots[i].length; j += 1) {
-            region = mapRegions(trackMood.i, trackMood.j, i, starDots);
+            region = mapRegions(trackCoord.x, trackCoord.y, width, height);
           }
         }
         // Show The Map, Only Applicable When The Map Is Not Shown Yet
@@ -354,7 +359,7 @@ export default {
             for (let i = 0; i < starDots.length; i += 1) {
               for (let j = 0; j < starDots[i].length; j += 1) {
                 counter = j;
-                const region = mapRegions(mouseIndices.i, mouseIndices.j, i, starDots);
+                const region = mapRegions(p.mouseX, p.mouseY, width, height);
 
                 if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
                   if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
