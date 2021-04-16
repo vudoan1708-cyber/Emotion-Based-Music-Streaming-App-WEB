@@ -28,29 +28,31 @@
 //   }
 // }
 
+const CONSTRAINTS = 200;
+
 export default function mapRegions(x, y, width, height) {
   // the centred dot
   if (x === (width / 2) && y === (height / 2)) {
     return 0;
 
   // TOP LEFT (ANGRY)
-  } else if (x >= 0 && x <= (width / 2)
-    && y >= 0 && y <= (height / 2)) {
+  } else if (x >= CONSTRAINTS && x <= (width / 2)
+    && y >= CONSTRAINTS && y <= (height / 2)) {
     return 1;
 
   // TOP RIGHT (HAPPY / EXCITED)
-  } else if (x >= (width / 2) && x < width
-    && y >= 0 && y <= (height / 2)) {
+  } else if (x >= (width / 2) && x < width - CONSTRAINTS
+    && y >= CONSTRAINTS && y <= (height / 2)) {
     return 2;
 
   // BOTTOM LEFT (SAD)
-  } else if (x >= 0 && x <= (width / 2)
-    && y >= (height / 2) && y < height) {
+  } else if (x >= CONSTRAINTS && x <= (width / 2)
+    && y >= (height / 2) && y < height - CONSTRAINTS) {
     return 3;
 
   // BOTTOM RIGHT (CALM / RELAXED)
-  } else if (x >= (width / 2) && x < width
-    && y >= (height / 2) && y < height) {
+  } else if (x >= (width / 2) && x < width - CONSTRAINTS
+    && y >= (height / 2) && y < height - CONSTRAINTS) {
     return 4;
   }
 }

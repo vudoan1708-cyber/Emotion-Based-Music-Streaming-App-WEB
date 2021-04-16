@@ -148,7 +148,7 @@ $offset: 50%;
       height: calc(100% / 6.5);
       // transform: scaleY(10);
       z-index: 0;
-      background-color: rgba(0, 0, 0, 0.15);
+      background-color: rgba(0, 0, 0, 0.05);
     }
     .medium {
       width: 50%;
@@ -159,7 +159,7 @@ $offset: 50%;
       height: calc(100% / 5);
       // transform: scaleY(10);
       z-index: -1;
-      background-color: rgba(0, 0, 0, 0.15);
+      background-color: rgba(0, 0, 0, 0.05);
     }
     .high {
       width: 75%;
@@ -170,7 +170,7 @@ $offset: 50%;
       height: calc(100% / 4);
       // transform: scaleY(10);
       z-index: -2;
-      background-color: rgba(0, 0, 0, 0.15);
+      background-color: rgba(0, 0, 0, 0.05);
     }
 
     // Individual Layer

@@ -349,62 +349,64 @@ export default {
       };
 
       p.mousePressed = async () => {
-        let track = null;
-        let searchType = 'random';
-        let counter = 0;
-        // only clickable when the emotion map is shown and the screen is showing the homepage
-        if (showMap.index !== 0 && isClickable.value) {
-          const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-          if (mapProperties.status) {
-            for (let i = 0; i < starDots.length; i += 1) {
-              for (let j = 0; j < starDots[i].length; j += 1) {
-                counter = j;
-                const region = mapRegions(p.mouseX, p.mouseY, width, height);
-
-                if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
-                  if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
-                    for (let k = 0; k < songDots.length; k += 1) {
-                      if (songDots[k].onHover()) {
-                        track = songDots[k];
+        const mood = posOnMap(width, height, starDots, p);
+        if (typeof (mood.valence) === 'number' && typeof (mood.arousal) === 'number') {
+          let track = null;
+          let searchType = 'random';
+          let counter = 0;
+          // only clickable when the emotion map is shown and the screen is showing the homepage
+          if (showMap.index !== 0 && isClickable.value) {
+            const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
+            if (mapProperties.status) {
+              for (let i = 0; i < starDots.length; i += 1) {
+                for (let j = 0; j < starDots[i].length; j += 1) {
+                  counter = j;
+                  const region = mapRegions(p.mouseX, p.mouseY, width, height);
+                  if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
+                    if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
+                      for (let k = 0; k < songDots.length; k += 1) {
+                        if (songDots[k].onHover()) {
+                          track = songDots[k];
+                        }
                       }
-                    }
-                  } else track = null;
-                }
-
-                searchType = track === null ? 'random' : 'search';
-                // to prevent click event happens globally for all regions
-                // on clickable on one selected region
-                if (region === 1 && showMap.index === 1) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                } else if (region === 2 && showMap.index === 2) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                } else if (region === 3 && showMap.index === 3) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                } else if (region === 4 && showMap.index === 4) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                }
-
-                // isChangeable.value = true;
-              }
-            }
-          } else if (!mapProperties.status) {
-            for (let k = 0; k < songDots.length; k += 1) {
-              // If click on a song dot on the map
-              if (songDots[k].onHover()) {
-                const offsetTrack = findSongViaID(songDots[k].id);
-                if (offsetTrack !== -1) {
-                  const isplaying = await playSong(0, offsetTrack);
-                  console.log(isplaying);
-                } else {
-                  track = songDots[k];
+                    } else track = null;
+                  }
                   searchType = track === null ? 'random' : 'search';
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                  counter += 1;
+                  // to prevent click event happens globally for all regions
+                  // on clickable on one selected region
+                  if (region === 1 && showMap.index === 1) {
+                    locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+                  } else if (region === 2 && showMap.index === 2) {
+                    locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+                  } else if (region === 3 && showMap.index === 3) {
+                    locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+                  } else if (region === 4 && showMap.index === 4) {
+                    locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+                  }
+                  // isChangeable.value = true;
                 }
-                break;
+              }
+            } else if (!mapProperties.status) {
+              for (let k = 0; k < songDots.length; k += 1) {
+                // If click on a song dot on the map
+                if (songDots[k].onHover()) {
+                  const offsetTrack = findSongViaID(songDots[k].id);
+                  if (offsetTrack !== -1) {
+                    const isplaying = await playSong(0, offsetTrack);
+                    console.log(isplaying);
+                  } else {
+                    track = songDots[k];
+                    searchType = track === null ? 'random' : 'search';
+                    locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+                    counter += 1;
+                  }
+                  break;
+                }
               }
             }
           }
+        } else {
+          console.log('OUT OF BOUND');
         }
       };
 
