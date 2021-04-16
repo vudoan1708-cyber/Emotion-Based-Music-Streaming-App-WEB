@@ -3,7 +3,8 @@
 
 #center_pane {
   @include positionProperties(absolute, 205px, '', 0, '');
-  width: 66.75%;
+  // 100% - 20% (right pane size) - 205px (left pane size)
+  width: calc(80% - 205px);
   height: 82%;
   background: rgba(0, 0, 0, 0.9);
   z-index: 4;

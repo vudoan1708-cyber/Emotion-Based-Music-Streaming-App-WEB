@@ -3,7 +3,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-param-reassign */
 import StarDots from '@/components/Utils/p5/classes/starDots';
-import star from '@/components/Utils/p5/star';
 // import mapRegions from '@/components/Utils/p5/mapRegions';
 
 import make2dArray from '@/components/Utils/logic/array';
@@ -227,11 +226,6 @@ export function drawMap(width, height, isClicked, starDots, chosenPoints, showMa
 
         // zone of the accepted
         starDots[chosenPoints[0]][chosenPoints[1]].showZoneofTheAccepted(width, height);
-
-        // red star on top
-        p5.fill(255, 0, 0);
-        star(starDots[chosenPoints[0]][chosenPoints[1]].x, starDots[chosenPoints[0]][chosenPoints[1]].y,
-          starDots[chosenPoints[0]][chosenPoints[1]].size / 2, starDots[chosenPoints[0]][chosenPoints[1]].size / 4, 4, p5);
       }
     }
   }

@@ -148,8 +148,16 @@ export default {
             playingProgressRef.value.style.width = `${(songPlay.progress_ms / songPlay.duration_ms) * 100}%`;
           }
 
+          // Artists and Titles
           songPlay.artists = songPlay.isPlaying.response.item.artists[0].name;
           songPlay.title = songPlay.isPlaying.response.item.name;
+
+          // If No Song Is Playing Anymore, Stop The Loop, and Change The Player to Pause
+          setTimeout(async () => {
+            songPlay.isPlaying = await getSongIsPlaying();
+            if (!songPlay.isPlaying.response.is_playing
+              && images.value === Play) images.value = Pause;
+          }, 1100);
         } else {
           // Only Handle The Error Case At The Beginning of The Song Play, Not During
           // Checking Empty Strings and Empty Object Will Help With That

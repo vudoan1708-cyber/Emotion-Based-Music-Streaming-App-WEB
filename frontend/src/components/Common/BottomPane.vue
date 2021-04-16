@@ -90,7 +90,7 @@ export default {
     // Data Obj for userJourney database
     const dataObj = ref({});
 
-    // subscribe on the 'map' event
+    // Listen on the 'map' event
     emitterObj.value.on('map', (map) => {
       mapProperties.coords.x = map.i;
       mapProperties.coords.y = map.j;

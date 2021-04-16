@@ -101,7 +101,7 @@
     width: 5%;
 
     .playing_mode {
-      display: inline-block;
+      display: block;
       margin: 10px;
       width: 40%;
       filter: invert(50%);
@@ -128,11 +128,14 @@
     }
     
     #volume {
-      @include positionProperties(absolute, '', -100%, 50%, '');
-      display: inline-block;
-      -ms-transform: translateY(-50%) rotate(270deg); /* IE 9 */
-      transform: translateY(-50%) rotate(270deg);
-      margin: 0 10px 0 20px;
+      position: relative;
+      display: block;
+      float: right;
+      clear: right;
+      transform-origin: center;
+      -ms-transform: translateY(-50%); /* IE 9 */
+      transform: translateY(-50%);
+      margin: 0 10px;
 
       input[type=range] {
         overflow: hidden;

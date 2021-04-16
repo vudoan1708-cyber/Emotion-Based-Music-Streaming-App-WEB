@@ -28,7 +28,7 @@
 //   }
 // }
 
-const CONSTRAINTS = 200;
+const CONSTRAINTS = 0;
 
 export default function mapRegions(x, y, width, height) {
   // the centred dot
