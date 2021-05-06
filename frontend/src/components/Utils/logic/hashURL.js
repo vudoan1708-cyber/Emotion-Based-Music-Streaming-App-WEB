@@ -1,5 +1,11 @@
 export default function hashURL(URL, which) {
   const splittedString = URL.split('=');
-  const result = splittedString[splittedString.length - which];
+
+  if (splittedString[which] === undefined) {
+    return '';
+  }
+  const result = splittedString[which].includes('&')
+    ? splittedString[which].split('&')[0]
+    : splittedString[which];
   return result;
 }

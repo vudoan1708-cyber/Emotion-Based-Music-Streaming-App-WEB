@@ -33,7 +33,7 @@ const personalisedPlaylist = [];
 
 // handling production and development mode
 const PRODUCTION = process.env.NODE_ENV;
-const TOKEN = hashURL(window.location.href, 2);
+const TOKEN = hashURL(window.location.href, 1);
 
 export function LoginHandlers(instructions) {
 

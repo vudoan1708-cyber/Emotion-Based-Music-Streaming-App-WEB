@@ -125,6 +125,7 @@ export default {
     // Props
     const emitterObj = ref(props.emitter);
 
+    // Toggle Play / Pause Features
     function togglePlayPause() {
       if (images.value === Play) {
         images.value = Pause;
@@ -135,7 +136,15 @@ export default {
         playSong(songPlay.progress_ms, songPlay.offset);
       }
     }
+    // via spacebar
+    document.body.onkeyup = (e) => {
+      // 'Spacebar' for IE
+      if (e.keyCode === 32 || e.key === ' ' || e.key === 'Spacebar') {
+        togglePlayPause();
+      }
+    };
 
+    // Update the progress bar
     async function liveUpdatePlayerBar() {
       if (images.value === Play && !seeker.isDragged) {
         songPlay.isPlaying = await getSongIsPlaying();
@@ -157,7 +166,7 @@ export default {
             songPlay.isPlaying = await getSongIsPlaying();
             if (!songPlay.isPlaying.response.is_playing
               && images.value === Play) images.value = Pause;
-          }, 1100);
+          }, 1200);
         } else {
           // Only Handle The Error Case At The Beginning of The Song Play, Not During
           // Checking Empty Strings and Empty Object Will Help With That

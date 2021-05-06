@@ -76,6 +76,7 @@
   #play_song_details {
     @include positionProperties(absolute, 50%, '', 50%, '');
     transform: translate(-50%, -50%);
+    pointer-events: none;
 
     h2 {
       color: rgb(212, 212, 212);
@@ -86,6 +87,7 @@
       color: rgb(110, 109, 109);
       cursor: pointer;
       margin-bottom: 15px;
+      pointer-events: initial;
 
       &:hover {
         color: rgb(196, 196, 196);
@@ -99,13 +101,15 @@
     transform: translateY(-50%);
     margin-right: 20px;
     width: 5%;
+    pointer-events: none;
 
     .playing_mode {
       display: block;
-      margin: 10px;
+      margin: 20px;
       width: 40%;
       filter: invert(50%);
       cursor: pointer;
+      pointer-events: initial;
       @include transitionProperties(filter, 0.2s);
 
       img {
@@ -128,14 +132,15 @@
     }
     
     #volume {
-      position: relative;
       display: block;
+      position: relative;
+      bottom: 0;
       float: right;
       clear: right;
-      transform-origin: center;
       -ms-transform: translateY(-50%); /* IE 9 */
       transform: translateY(-50%);
       margin: 0 10px;
+      pointer-events: initial;
 
       input[type=range] {
         overflow: hidden;

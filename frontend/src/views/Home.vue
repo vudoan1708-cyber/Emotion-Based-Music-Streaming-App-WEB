@@ -88,8 +88,9 @@ export default {
       // Keep Track of URLs
       prevURL.value = prevURL.value !== nextURL ? nextURL : null;
 
-      if (nextURL !== null && prevURL.value !== null) {
-        const OFFSET = hashURL(nextURL);
+      if (nextURL !== null && nextURL !== undefined
+        && prevURL.value !== null && prevURL.value !== undefined) {
+        const OFFSET = hashURL(nextURL, 2);
         checkSettings(OFFSET);
       }
     }
