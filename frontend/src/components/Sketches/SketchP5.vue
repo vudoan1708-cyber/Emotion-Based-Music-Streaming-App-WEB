@@ -406,42 +406,14 @@ export default {
         }
       };
 
-      // p.mouseReleased = () => {
-      //   if (isClickable.value) {
-      //     locationChosen(chosenPoints[0], chosenPoints[1], 'random', null);
-      //     isClickable.value = false;
-      //   }
-      // };
-
-      // p.mouseDragged = () => {
-      //   // only draggable when the emotion map is shown, and only when a user is on Homepage section
-      //   if (showMap.index !== 0) {
-      //     if (isDraggable.value) {
-      //       // to get affective values
-      //       /// start by translating coordinates values to indices
-      //       const indices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-
-      //       // constrain the dragable areas
-      //       if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
-      //         if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
-      //           removeATempPlaylist(emitterObj.value);
-
-      //           // convert the mapping algorithm to indices
-      //           // move the chosen point to other locations
-      //           const { i, j } = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-      //           chosenPoints[0] = i;
-      //           chosenPoints[1] = j;
-
-      //           // Reassign showMap index to change colour of region based on the chosen point's location
-      //           showMap.index = mapRegions(chosenPoints[0], chosenPoints[1], chosenPoints[0], starDots);
-
-      //           // Trigger isClickable to true to search for song when mouse is released
-      //           isClickable.value = true;
-      //         }
-      //       }
-      //     }
-      //   }
-      // };
+      p.mouseWheel = (event) => {
+        if (isClickable.value) {
+          for (let i = 0; i < songDots.length; i += 1) {
+            // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY);
+            songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY);
+          }
+        }
+      };
 
       p.windowResized = () => {
         p.resizeCanvas(width, height);

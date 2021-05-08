@@ -28,11 +28,14 @@ export default class SongDots {
     this.size = size;
 
     this.region = mapRegions(this.x, this.y, width, height);
-
+    
+    // this.scaleFactor = 1;
     this.p5 = p5;
   }
 
   onHover() {
+    // * by 3 is because in the show() method
+    // the variable updatedSize * by 3
     if (this.p5.mouseX > this.x - (this.size * 3) / 2
       && this.p5.mouseX < this.x + (this.size * 3) / 2) {
       if (this.p5.mouseY > this.y - (this.size * 3) / 2
@@ -42,6 +45,40 @@ export default class SongDots {
     } return false;
   }
 
+  zoom(zoomFactor, mx, my) {
+    // this.p5.push();
+    this.size += zoomFactor;
+
+    // Calculate the distance between the mouse coordinates and each song dot's coordinates
+    const d = this.p5.dist(mx, my, this.x, this.y) / 20;
+
+    // Check for the sign of the zoomFactor argument
+    // if it is positive, which means, zooming in (for now)
+    if (Math.sign(zoomFactor) === 1) {
+      if (this.x < mx) {
+        this.x -= d;
+      } else if (this.x > mx) this.x += d;
+  
+      if (this.y < my) {
+        this.y -= d;
+      } else if (this.y > mx) this.y += d;
+    
+    // otherwise, if it is negative, which means, zooming out
+    } else {
+      if (this.x < mx) {
+        this.x += d;
+      } else if (this.x > mx) this.x -= d;
+  
+      if (this.y < my) {
+        this.y += d;
+      } else if (this.y > mx) this.y -= d;
+    }
+    // console.log(this.x, this.y);
+    
+    // this.zoomX += this.p5.mouseX;
+    // this.zoomY += this.p5.mouseY;
+  }
+
   show() {
     // responses
     let updatedSize = this.size;
@@ -49,12 +86,13 @@ export default class SongDots {
     else updatedSize = this.size;
 
     this.p5.push();
-
+    this.p5.translate(this.x, this.y);
+    // this.p5.scale(this.scaleFactor);
     // effects
     this.p5.noStroke();
     this.p5.fill(200, 75);
     // this.p5.ellipse(this.x, this.y, updatedSize + 5);
-    star(this.x, this.y, updatedSize * 3, updatedSize / 3, 4, this.p5);
+    star(0, 0, updatedSize * 3, updatedSize / 3, 4, this.p5);
 
     this.p5.stroke(0);
     // if accepted by the system: green,
@@ -72,7 +110,7 @@ export default class SongDots {
       // this.p5.fill(150);
     }
     // this.p5.ellipse(this.x, this.y, updatedSize);
-    star(this.x, this.y, updatedSize * 1.5, updatedSize / 1.5, 4, this.p5);
+    star(0, 0, updatedSize * 1.5, updatedSize / 1.5, 4, this.p5);
 
     // effects
     // this.p5.fill(200, 75);
