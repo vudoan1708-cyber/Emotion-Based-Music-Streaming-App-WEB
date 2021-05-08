@@ -406,6 +406,7 @@ export default {
         }
       };
 
+      // CURRENTLY NOT FULLY IMPLEMENTED
       p.mouseWheel = (event) => {
         if (isClickable.value) {
           for (let i = 0; i < songDots.length; i += 1) {

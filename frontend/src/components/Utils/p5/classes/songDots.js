@@ -50,7 +50,7 @@ export default class SongDots {
     this.size += zoomFactor;
 
     // Calculate the distance between the mouse coordinates and each song dot's coordinates
-    const d = this.p5.dist(mx, my, this.x, this.y) / 20;
+    const d = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
 
     // Check for the sign of the zoomFactor argument
     // if it is positive, which means, zooming in (for now)
