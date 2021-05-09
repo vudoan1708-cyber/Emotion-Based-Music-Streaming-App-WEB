@@ -137,12 +137,12 @@ export default {
       }
     }
     // via spacebar
-    document.body.onkeyup = (e) => {
-      // 'Spacebar' for IE
-      if (e.keyCode === 32 || e.key === ' ' || e.key === 'Spacebar') {
-        togglePlayPause();
-      }
-    };
+    // document.body.onkeyup = (e) => {
+    //   // 'Spacebar' for IE
+    //   if (e.keyCode === 32 || e.key === ' ' || e.key === 'Spacebar') {
+    //     togglePlayPause();
+    //   }
+    // };
 
     // Update the progress bar
     async function liveUpdatePlayerBar() {

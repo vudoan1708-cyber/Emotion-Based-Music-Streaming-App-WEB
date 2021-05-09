@@ -57,8 +57,8 @@
 
   <!-- Diary -->
   <transition name="fade">
-    <!-- <Diary :emitter="emitterObj" v-if="diary.isShown" /> -->
-    <Diary :emitter="emitterObj" :diary="diary" />
+    <Diary :emitter="emitterObj" :diary="diary" v-if="diary.isShown" />
+    <!-- <Diary :emitter="emitterObj" :diary="diary" /> -->
   </transition>
 </template>
 
@@ -300,10 +300,19 @@ export default {
       // Listen on the 'song_data' event
       // To know when the song collection process finishes,
       // The show the diary
-      emitterObj.value.on('song_data', async (data) => {
+      emitterObj.value.on('song_data', (data) => {
         if (data.how === 'finish') {
-          diary.isShown = true;
+          setTimeout(async () => {
+            diary.isShown = true;
+          }, 1200);
         }
+      });
+
+      // Listen on the 'user_journey' event
+      // To know when a diary is created,
+      // And exit the section
+      emitterObj.value.on('user_journey', () => {
+        diary.isShown = false;
       });
 
       // Listen on the 'plot_via_search' event

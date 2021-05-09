@@ -82,7 +82,7 @@ export default {
     const dateData = ref('');
     const timeData = ref('');
 
-    // Data Obj to POST to the MongoDB database
+    // Data Obj to UPDATE to the MongoDB database
     const dataObj = ref({});
     const dataID = ref('');
     const userData = ref('');
@@ -154,7 +154,7 @@ export default {
         const { x, y } = indicestoCoordinates(tracks.chosenIndices.i, tracks.chosenIndices.j,
           window.innerWidth, window.innerHeight);
         dataObj.value = userJourneyObj(userData.value.ID, x, y, tracks.chosenIndices.i,
-          tracks.chosenIndices.j, tracks.titles, tracks.artists, tracks.valenceScores,
+          tracks.chosenIndices.j, 'No Title', 'No Content', tracks.titles, tracks.artists, tracks.valenceScores,
           tracks.arousalScores, tracks.ids, tracks.albumImgs, dateData.value, timeData.value);
       }
     }
@@ -213,7 +213,7 @@ export default {
             await userJourneyDatabasePreparation(data);
             // Update user journey database
             await updateData(dataID.value, dataObj.value, 1);
-            props.emitter.emit('user_journey', dataObj.value);
+            // props.emitter.emit('user_journey', dataObj.value);
           }, 1000);
         }
       } else {

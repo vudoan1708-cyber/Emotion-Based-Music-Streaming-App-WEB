@@ -1,4 +1,4 @@
-export default function userJourneyObj(id, x, y, i, j,
+export default function userJourneyObj(id, x, y, i, j, title, content,
   titles, artists, valenceScores, arousalScores,
   uris, imgUrls, date, time) {
   return {
@@ -11,6 +11,10 @@ export default function userJourneyObj(id, x, y, i, j,
       indices: {
         i,
         j,
+      },
+      diary: {
+        title,
+        content,
       },
     },
     // Arrays

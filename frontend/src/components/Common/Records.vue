@@ -22,7 +22,7 @@
           <!-- Grid System to Display User Journey -->
           <!-- 1 Group of Reading -->
           <div class="records_wrapper" v-for="(score, scoreKey) in moodScores" :key="scoreKey">
-            <h2 class="dates">{{ times[scoreKey] }}</h2>
+            <h2 class="diary_title">{{ diary.titles[scoreKey] }}</h2>
 
             <div class="records_details" @click="viewRecordDetail(scoreKey)">
               <svg :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
@@ -41,6 +41,8 @@
                     :r="25 * (valence)" :fill="colours[scoreKey]" :fill-opacity="valence" />
 
                   <text x="15" y="40" text-anchor="start" :fill="colours[scoreKey]">{{ texts[scoreKey] }}</text>
+                  <text x="15" y="40" text-anchor="start" :fill="colours[scoreKey]">{{ texts[scoreKey] }}</text>
+                   <!-- ({{ times[scoreKey] }}) -->
                 </g>
               </svg>
             </div>
@@ -112,6 +114,12 @@ export default {
     const dates = ref([]);
     const times = ref([]);
 
+    // Display Diary Title and Content
+    const diary = reactive({
+      titles: [],
+      contents: [],
+    });
+
     // Show A General View of All Record Cards
     function updateAffectiveScore() {
       moodScores.value = [];
@@ -121,6 +129,10 @@ export default {
         // Get the Date Values
         dates.value.push(userJourneyObj.value[i].date);
         times.value.push(userJourneyObj.value[i].time);
+
+        // Get the Diary Data
+        diary.titles.push(userJourneyObj.value[i].user.diary.title);
+        diary.contents.push(userJourneyObj.value[i].user.diary.content);
 
         // Get the Mood Scores
         moodScores.value.push(mood);
@@ -199,6 +211,7 @@ export default {
       times,
       viewRecordDetail,
       recordDetails,
+      diary,
     };
   },
 };
@@ -246,7 +259,7 @@ export default {
           color: rgb(173, 173, 173);
         }
 
-        .dates {
+        .diary_title {
           margin: 20px;
           padding: 10px;
           background-color: rgb(15, 15, 15);

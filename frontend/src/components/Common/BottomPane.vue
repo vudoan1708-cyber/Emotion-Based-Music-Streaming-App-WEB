@@ -128,7 +128,7 @@ export default {
             window.innerWidth, window.innerHeight);
 
           dataObj.value = userJourneyObj(userID.value, x, y, data.chosenIndices.i,
-            data.chosenIndices.j, tracks.titles, tracks.artists, tracks.valenceScores,
+            data.chosenIndices.j, 'No Title', 'No Content', tracks.titles, tracks.artists, tracks.valenceScores,
             tracks.arousalScores, tracks.ids, tracks.albumImgs, date, time);
 
           await insertData(dataObj.value, 1);
