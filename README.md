@@ -4,8 +4,8 @@ This project makes use of 3 technologies: Vue.js, p5.js and D3.js
 # Use case
 There are 2 ways that you can run the code. 
 
-## 1st Step
-This step requires you to have two terminals to run your frontend and backend separately.
+## 1st Way
+This way requires you to have two terminals to run your frontend and backend separately.
 
 ### Frontend
 Change your working directory on your 1st terminal to the frontend folder
@@ -62,11 +62,14 @@ npm install
 npm run serve
 ```
 
-## 2nd Step
-Alternatively, this step only requires you to have one terminal to run your frontend and backend concurrently.
+## 2nd Way
+Alternatively, this way only requires you to have one terminal to run your frontend and backend concurrently.
 
 ### Concurrently NPM Package
 This npm package is used to perform a concurrent execution for two or more entities efficiently.
+
+#### Project setup (Concurrently)
+Make sure that you have installed dependencies for both frontend and backend code before proceeding to the next steps below. Reference Project setup (Vue) and Project setup (Node.js)
 
 #### Change Working Directory (Concurrently)
 From the root directory, do

@@ -160,6 +160,8 @@ export default {
     }
 
     // subscribe to the 'song_data' event
+    // To Update the database when the number of collected songs exceeds
+    // the limited amount provided by the users
     props.emitter.on('song_data', async (data) => {
       if (!data.beforeLoading) {
         // if a new song is added

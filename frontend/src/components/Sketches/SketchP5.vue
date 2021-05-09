@@ -54,6 +54,12 @@
   <transition name="fade">
     <Instructions :emitter="emitterObj" v-if="isInstructionsShown" />
   </transition>
+
+  <!-- Diary -->
+  <transition name="fade">
+    <!-- <Diary :emitter="emitterObj" v-if="diary.isShown" /> -->
+    <Diary :emitter="emitterObj" :diary="diary" />
+  </transition>
 </template>
 
 <script>
@@ -96,6 +102,8 @@ import SongData from '@/components/Common/SongData.vue';
 
 import Instructions from '@/components/Common/Instructions.vue';
 
+import Diary from '@/components/Common/Diary.vue';
+
 export default {
   name: 'SketchP5',
   props: {
@@ -109,6 +117,7 @@ export default {
   components: {
     SongData,
     Instructions,
+    Diary,
   },
   setup(props) {
     // indices on map
@@ -146,6 +155,13 @@ export default {
     const happyBtn = ref(null);
     const sadBtn = ref(null);
     const calmBtn = ref(null);
+
+    // Diary-related vaiables
+    const diary = reactive({
+      isShown: false,
+      title: 'No Title',
+      content: 'No Content',
+    });
 
     // Delay Time To Display The Instruction Board
     const isInstructionsShown = ref(false);
@@ -281,6 +297,15 @@ export default {
         }
       }
 
+      // Listen on the 'song_data' event
+      // To know when the song collection process finishes,
+      // The show the diary
+      emitterObj.value.on('song_data', async (data) => {
+        if (data.how === 'finish') {
+          diary.isShown = true;
+        }
+      });
+
       // Listen on the 'plot_via_search' event
       emitterObj.value.on('plot_via_search', (track) => {
         // Switch The Variable To True In Order To Allow Opening Up The Zone of The Accepted
@@ -410,8 +435,10 @@ export default {
       p.mouseWheel = (event) => {
         if (isClickable.value) {
           for (let i = 0; i < songDots.length; i += 1) {
-            // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY);
-            songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY);
+            if (i !== 0) {
+              // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY, songDots[i - 1]);
+              songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY);
+            }
           }
         }
       };
@@ -459,6 +486,7 @@ export default {
       isInstructionsShown,
       mapProperties,
       showMap,
+      diary,
     };
   },
 };

@@ -42,7 +42,7 @@ import NavigationSection from '@/assets/instructions_nav.png';
 import SettingsSection from '@/assets/instructions_settings.png';
 
 export default {
-  name: 'Notifications',
+  name: 'Instructions',
   props: {
     emitter: {
       type: Object,

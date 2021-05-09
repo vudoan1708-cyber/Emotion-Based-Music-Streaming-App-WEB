@@ -51,7 +51,7 @@
 
     <!-- Show 1 Card in Detail -->
     <div v-else id="record_detail">
-      <D3 :recordDetails="recordDetails" />
+      <D3 :emitter="emitterObj" :recordDetails="recordDetails" />
     </div>
   </div>
 </template>
@@ -72,6 +72,9 @@ import D3 from '@/components/Sketches/D3.vue';
 export default {
   name: 'Records',
   props: {
+    emitter: {
+      type: Object,
+    },
     userJourney: {
       type: Object,
     },
@@ -81,7 +84,7 @@ export default {
   },
   setup(props) {
     // Emitter
-    // const emitterObj = ref(props.emitter);
+    const emitterObj = ref(props.emitter);
     // userJourney
     const userJourneyObj = ref(props.userJourney);
     const isObjEmpty = ref(isEmpty(userJourneyObj.value));
@@ -158,6 +161,11 @@ export default {
       colour: null,
     });
 
+    // Listen on 'record_detail_window' event to detect record detail window being closed
+    emitterObj.value.on('record_detail_window', (val) => {
+      recordDetails.isOpen = val;
+    });
+
     // View Record Detail after Choosing a Record Card
     function viewRecordDetail(key) {
       if (!recordDetails.isOpen) {
@@ -180,6 +188,7 @@ export default {
     });
 
     return {
+      emitterObj,
       userJourneyObj,
       moodScores,
       isObjEmpty,

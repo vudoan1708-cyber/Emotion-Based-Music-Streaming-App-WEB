@@ -100,6 +100,11 @@
           </g>
         </g>
       </svg>
+
+      <!-- Close Button -->
+      <div id="close_btn" @click="closeRecordDetailWindow">
+        <h2>X</h2>
+      </div>
     </div>
   </div>
 </template>
@@ -121,6 +126,9 @@ import { playSong } from '@/handlers/spotify';
 export default {
   name: 'D3',
   props: {
+    emitter: {
+      type: Object,
+    },
     recordDetails: {
       type: Object,
     },
@@ -185,6 +193,11 @@ export default {
       select(yAxisRef.value).call(axisLeft(axes.y));
     }
 
+    // Close Record Detail Window
+    function closeRecordDetailWindow() {
+      props.emitter.emit('record_detail_window', false);
+    }
+
     // Change Song Display Via Button Clicks
     function changesongInfoDisplay(num) {
       start.value += num;
@@ -243,6 +256,7 @@ export default {
       highlightDot,
       isActive,
       replaySong,
+      closeRecordDetailWindow,
     };
   },
 };
@@ -327,6 +341,25 @@ export default {
     float: right;
     clear: right;
     width: 80%;
+
+    #close_btn {
+      position: absolute;
+      right: 0;
+      top: 0;
+      border-radius: 50%;
+      border: 5px dashed white;
+      background-color: black;
+      color: white;
+      padding: 10px;
+      z-index: 5;
+      cursor: pointer;
+      transition: .2s all;
+
+      &:hover {
+        border: 5px dashed rgb(173, 173, 173);
+        color: rgb(173, 173, 173);
+      }
+    }
   }
 }
 </style>

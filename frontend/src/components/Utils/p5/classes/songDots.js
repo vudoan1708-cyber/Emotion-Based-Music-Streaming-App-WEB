@@ -26,6 +26,7 @@ export default class SongDots {
     this.x = x;
     this.y = y;
     this.size = size;
+    this.oldSize = this.size;
 
     this.region = mapRegions(this.x, this.y, width, height);
     
@@ -50,7 +51,14 @@ export default class SongDots {
     this.size += zoomFactor;
 
     // Calculate the distance between the mouse coordinates and each song dot's coordinates
+    // const dMouseCurrent = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
+    // const dMousePrev = Math.floor(this.p5.dist(mx, my, prevNode.x, prevNode.y) / 20);
+    // const dCurrentPrev = Math.floor(this.p5.dist(this.x, this.y, prevNode.x, prevNode.y) / 20);
     const d = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
+
+    // Find distance ratio between the current node and the previous node
+    // const ratio = dMouseCurrent / dMousePrev;
+    // console.log(ratio, dCurrentPrev);
 
     // Check for the sign of the zoomFactor argument
     // if it is positive, which means, zooming in (for now)

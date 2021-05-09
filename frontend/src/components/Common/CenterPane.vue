@@ -4,7 +4,7 @@
     <Search v-if="number === 2" :emitter="emitterObj" />
 
     <!-- Records -->
-    <Records v-else-if="number === 3" :userJourney="userJourneyObj" />
+    <Records v-else-if="number === 3" :emitter="emitterObj" :userJourney="userJourneyObj" />
 
     <!-- Portfolio -->
     <Portfolio v-else :emitter="emitterObj" />
