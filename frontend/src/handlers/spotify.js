@@ -337,7 +337,7 @@ function checkDuplicates(id, playlists) {
   return response;
 }
 
-async function checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5) {
+async function checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, transition) {
   for (let i = 0; i < audio_features.length; i += 1) {
 
     const song_data = audio_features[i];
@@ -364,7 +364,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
               // make a temporary playlist based on the mood
               await makeATempPlaylist(song_data.id, song_data.title, song_data.valence, song_data.arousal,
                                 song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
-                                how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5);
+                                how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5, transition);
           } else {
             const id = isCharactersFromString('spotify:track', song_data.id) ? song_data.id : `spotify:track:${song_data.id}`;
   
@@ -386,13 +386,13 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
           // console.log(results);
           // if the result's form is not an array
           if (results.length === undefined) {
-            if (results === null || results.type === 'invalid-json') handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
-            else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
+            if (results === null || results.type === 'invalid-json') handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter, transition);
+            else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, transition);
           // otherwise, it is an array
           } else if (results.length > 0) {
-            if (results[0].error) handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
-            else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5);
-          } else handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
+            if (results[0].error) handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter, transition);
+            else checkCloselyMatched(results, valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, transition);
+          } else handlingSongsData(valence, arousal, how, null, userSettingsData, starDots, chosenPoints, width, height, p5, emitter, transition);
           break;
         }
       } else {
@@ -408,6 +408,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
               j: chosenPoints[1],
             },
             how: 'finish',
+            transition,
             isLoaded: true,
           };
           emitter.emit('song_data', data);
@@ -420,7 +421,7 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
 
 export async function makeATempPlaylist(id, title, valence, arousal, 
                   album_imgs, artist_details, artist_names, external_urls,
-                  how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5) {
+                  how, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5, transition) {
   // re-format the id
   let reformatID = '';
   if (isCharactersFromString('spotify:track', id)) {
@@ -436,7 +437,7 @@ export async function makeATempPlaylist(id, title, valence, arousal,
 
     // redo the workflow
     const audioFeature = await searchRecommendation(id, artist_details, valence, arousal);
-    checkCloselyMatched(audioFeature, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5);
+    checkCloselyMatched(audioFeature, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, transition);
   // Otherwise
   } else {
 
@@ -532,7 +533,7 @@ export async function getUserPersonalisation(type, offsetNum) {
 }
 
 // Song Fetch
-export async function handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitterObj) {
+export async function handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitterObj, transition) {
   if (isSearching || playlist.length < minTracks) {
     isSearching = true;
     emitter = emitterObj;
@@ -554,7 +555,7 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
   
       makeATempPlaylist(trackObj.id, trackObj.title, valence, arousal, 
         trackObj.album_imgs, trackObj.artist_details, trackObj.artist_names, trackObj.external_urls,
-        false, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5);
+        false, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5, transition);
   
     } else KEYWORD = getKeyword(how, trackObj);
     // get songs' valence and arousal data
@@ -562,7 +563,7 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
     // error comes from no audio features values detected
     if (audio_features === null) audio_features = await getSongsData(Romanisation(KEYWORD), 'album', chosenGenre);
     // error comes from JSON input
-    else if (audio_features.type === 'invalid-json') handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter);
-    else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5);
+    else if (audio_features.type === 'invalid-json') handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitter, transition);
+    else checkCloselyMatched(audio_features, valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, transition);
   }
 }

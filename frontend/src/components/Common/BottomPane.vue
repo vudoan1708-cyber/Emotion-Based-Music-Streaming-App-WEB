@@ -115,23 +115,33 @@ export default {
             tracks.albumImgs.push(data.song.album_imgs);
           }
         } else if (data.how === 'finish' && tracks.total >= tracks.min) {
+          // Show the player
           appState.stage = 3;
-          const date = new Date();
+          // If listeners just start listening to music using the emotion map
+          // (transition is null or undefined)
+          if (data.transition !== 'transition') {
+            const date = new Date();
 
-          // Re-format the time
-          const h = (date.getHours() < 10 ? '0' : '') + date.getHours();
-          const m = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-          const time = `${h}:${m}`;
+            // Re-format the time
+            const h = (date.getHours() < 10 ? '0' : '') + date.getHours();
+            const m = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+            const time = `${h}:${m}`;
 
-          // Use coordinatesToIndices algorithm to convert location values to indices
-          const { x, y } = indicestoCoordinates(data.chosenIndices.i, data.chosenIndices.j,
-            window.innerWidth, window.innerHeight);
+            // Use coordinatesToIndices algorithm to convert location values to indices
+            const { x, y } = indicestoCoordinates(data.chosenIndices.i, data.chosenIndices.j,
+              window.innerWidth, window.innerHeight);
 
-          dataObj.value = userJourneyObj(userID.value, x, y, data.chosenIndices.i,
-            data.chosenIndices.j, 'No Title', 'No Content', tracks.titles, tracks.artists, tracks.valenceScores,
-            tracks.arousalScores, tracks.ids, tracks.albumImgs, date, time);
+            dataObj.value = userJourneyObj(userID.value, x, y, data.chosenIndices.i,
+              data.chosenIndices.j, 'No Title', 'No Content', tracks.titles, tracks.artists, tracks.valenceScores,
+              tracks.arousalScores, tracks.ids, tracks.albumImgs, date, time);
 
-          await insertData(dataObj.value, 1);
+            await insertData(dataObj.value, 1);
+
+          // otherwise, if the emotion map is already used (transition is valid)
+          // (meaning listeners are constantly using the app to keep listening to more songs)
+          } else {
+            // console.log('TRANSITION IS VALID');
+          }
         }
 
       // reset the array's length

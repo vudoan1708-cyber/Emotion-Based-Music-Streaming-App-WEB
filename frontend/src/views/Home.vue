@@ -50,7 +50,12 @@ export default {
     // Because Center Pane or Other Children Component Cannot Receive Any Data
     // Unless They Are Available
     emitter.on('user_journey', (data) => {
-      userJourney.value.unshift(data);
+      // Check for duplicate diary content
+      // eslint-disable-next-line max-len
+      if (userJourney.value[0].user.diary.title !== data.user.diary.title
+        && userJourney.value[0].user.diary.content !== data.user.diary.content) {
+        userJourney.value.unshift(data);
+      }
     });
 
     // Talk to MongDB to GET back data about user listening journey / habit

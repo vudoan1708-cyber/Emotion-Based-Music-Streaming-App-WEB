@@ -258,7 +258,7 @@ export default {
         });
       }
 
-      function locationChosen(i, j, how, trackObj, counter) {
+      function locationChosen(i, j, how, trackObj, counter, transition) {
         if (counter === 0 || counter === undefined) {
           // Either, a click events (on the stars and songs), or a search is accepted
           if (isSearched.value || isClickable.value) {
@@ -292,7 +292,7 @@ export default {
             createHistoricalNeighbours(history, chosenPoints, width, height);
 
             // get songs data from Spotify via the server
-            handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, userSettingsData.value, starDots, chosenPoints, width, height, p, emitterObj.value);
+            handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, userSettingsData.value, starDots, chosenPoints, width, height, p, emitterObj.value, transition);
           }
         }
       }
@@ -324,7 +324,9 @@ export default {
         const trackMood = moodToIndices(track.valence, track.arousal, starDots);
         // Get Coordinates of The Searched Tracks Via Its Indices
         const trackCoord = indicestoCoordinates(trackMood.i, trackMood.j, width, height);
-        locationChosen(trackMood.i, trackMood.j, 'search', track);
+        mapProperties.status
+          ? locationChosen(trackMood.i, trackMood.j, 'search', track)
+          : locationChosen(trackMood.i, trackMood.j, 'search', track, 'transition');
 
         // Get The Regions Values
         let region = null;
@@ -425,12 +427,13 @@ export default {
               if (songDots[k].onHover()) {
                 const offsetTrack = findSongViaID(songDots[k].id);
                 if (offsetTrack !== -1) {
-                  const isplaying = await playSong(0, offsetTrack);
-                  console.log(isplaying);
+                  // const isplaying = await playSong(0, offsetTrack);
+                  // console.log(isplaying);
+                  await playSong(0, offsetTrack);
                 } else {
                   track = songDots[k];
                   searchType = track === null ? 'random' : 'search';
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter, 'transition');
                   counter += 1;
                 }
                 break;
