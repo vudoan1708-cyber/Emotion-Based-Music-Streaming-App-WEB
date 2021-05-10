@@ -112,10 +112,15 @@ export default {
       albumImgs: [],
     });
 
+    const diary = reactive({
+      title: 'No Title',
+      content: 'No Content',
+    });
+
     // Talk to MongDB to GET back data about user listening journey / habit
     // Then, send this down to other children components
     // to visualise and configure variables' default values
-    async function getUserJourney() {
+    async function getUserJourney(data) {
       // get all user journey database
       const dataResponse = await getAllData(1);
       // get user data from spotify
@@ -132,6 +137,22 @@ export default {
               dataID.value = dataResponse[i]._id;
               [dateData.value] = (dataResponse[i].data.date).split('T');
               timeData.value = dataResponse[i].data.time;
+
+              // If this is a transition (not the 1st time listening on the browser)
+              if (data.transition === 'transition') {
+                // Retreive the latest data and update / add more metadata to it
+                tracks.ids = dataResponse[i].data.songs.spotify.uris;
+                tracks.artists = dataResponse[i].data.songs.artists;
+                tracks.titles = dataResponse[i].data.songs.titles;
+                tracks.valenceScores = dataResponse[i].data.songs.mood_scores.valence;
+                tracks.arousalScores = dataResponse[i].data.songs.mood_scores.arousal;
+                tracks.albumImgs = dataResponse[i].data.songs.spotify.img_urls;
+
+                diary.title = dataResponse[i].data.user.diary.title;
+                diary.content = dataResponse[i].data.user.diary.content;
+              }
+
+              break;
             }
           }
         }
@@ -154,7 +175,8 @@ export default {
         const { x, y } = indicestoCoordinates(tracks.chosenIndices.i, tracks.chosenIndices.j,
           window.innerWidth, window.innerHeight);
         dataObj.value = userJourneyObj(userData.value.ID, x, y, tracks.chosenIndices.i,
-          tracks.chosenIndices.j, 'No Title', 'No Content', tracks.titles, tracks.artists, tracks.valenceScores,
+          tracks.chosenIndices.j, diary.title, diary.content,
+          tracks.titles, tracks.artists, tracks.valenceScores,
           tracks.arousalScores, tracks.ids, tracks.albumImgs, dateData.value, timeData.value);
       }
     }
@@ -207,13 +229,18 @@ export default {
 
         // if the song collection is finished
         } else if (data.how === 'finish') {
+          // The delay is to wait for the inserting data process is done in the BottomPane component
+          // Then here, it will try to update what is left out
           setTimeout(async () => {
-            await getUserJourney();
+            await getUserJourney(data);
             // Prepare data for updating user journey database
             await userJourneyDatabasePreparation(data);
             // Update user journey database
             await updateData(dataID.value, dataObj.value, 1);
-            // props.emitter.emit('user_journey', dataObj.value);
+            // If there is a transition, update the database from here
+            // Since in this scenario, diary section won't come up
+            // eslint-disable-next-line no-unused-expressions
+            data.transition === 'transition' ? props.emitter.emit('user_journey', dataObj.value) : undefined;
           }, 1000);
         }
       } else {

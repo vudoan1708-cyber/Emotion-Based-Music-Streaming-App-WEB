@@ -22,7 +22,6 @@
           <!-- Grid System to Display User Journey -->
           <!-- 1 Group of Reading -->
           <div class="records_wrapper" v-for="(score, scoreKey) in moodScores" :key="scoreKey">
-            <h2 class="diary_title">{{ diary.titles[scoreKey] }}</h2>
 
             <div class="records_details" @click="viewRecordDetail(scoreKey)">
               <svg :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
@@ -46,6 +45,8 @@
                 </g>
               </svg>
             </div>
+
+            <h2 class="diary_title">{{ diary.titles[scoreKey] }}</h2>
           </div>
         </section>
       </article>
@@ -259,6 +260,10 @@ export default {
           color: rgb(173, 173, 173);
         }
 
+        .records_wrapper {
+          position: relative;
+        }
+
         .diary_title {
           margin: 20px;
           padding: 10px;
@@ -267,6 +272,7 @@ export default {
 
         .records_details {
           position: relative;
+          bottom: 0;
           margin: 20px;
           border-radius: 10px;
           border: 2px solid rgb(138, 138, 138);

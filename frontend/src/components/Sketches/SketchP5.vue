@@ -301,7 +301,8 @@ export default {
       // To know when the song collection process finishes,
       // The show the diary
       emitterObj.value.on('song_data', (data) => {
-        if (data.how === 'finish') {
+        // Constrain the diary section to only show once, when the browser that runs the app is sill active
+        if (data.how === 'finish' && data.transition !== 'transition') {
           setTimeout(async () => {
             diary.isShown = true;
           }, 1200);

@@ -55,6 +55,10 @@ export default {
       if (userJourney.value[0].user.diary.title !== data.user.diary.title
         && userJourney.value[0].user.diary.content !== data.user.diary.content) {
         userJourney.value.unshift(data);
+      } else {
+        // Remove the first one from the array (latest data)
+        userJourney.value.splice(0, 1);
+        userJourney.value.unshift(data);
       }
     });
 
