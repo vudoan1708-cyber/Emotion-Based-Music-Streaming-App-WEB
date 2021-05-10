@@ -108,6 +108,10 @@
       <div id="close_btn" @click="closeRecordDetailWindow">
         <h2>X</h2>
       </div>
+
+      <div id="story">
+        <div id="story_title"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -124,7 +128,7 @@ import {
 } from 'd3';
 
 // Spotify
-import { playSong } from '@/handlers/spotify';
+import { playSong, checkDuplicates, updatePlaylist } from '@/handlers/spotify';
 
 export default {
   name: 'D3',
@@ -164,7 +168,7 @@ export default {
       valence: journey.value.songs.mood_scores.valence,
       arousal: journey.value.songs.mood_scores.arousal,
       image: journey.value.songs.spotify.img_urls,
-      uri: journey.value.songs.spotify.uris,
+      uris: journey.value.songs.spotify.uris,
     });
 
     // D3
@@ -229,7 +233,12 @@ export default {
     // Play Songs
     async function replaySong(num) {
       isActive.value = num;
-      await playSong(0, isActive.value + start.value, songDot.uri);
+      songDot.uris.forEach((uri) => {
+        const isDuplicate = checkDuplicates(uri, songDot.uris);
+
+        if (isDuplicate) songDot.uris = updatePlaylist(uri, 'remove', songDot.uris);
+      });
+      await playSong(0, isActive.value + start.value, songDot.uris);
     }
 
     onBeforeMount(() => {

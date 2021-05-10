@@ -390,7 +390,7 @@ export default {
         let searchType = 'random';
         let counter = 0;
         // only clickable when the emotion map is shown and the screen is showing the homepage
-        if (showMap.index !== 0 && isClickable.value) {
+        if (showMap.index !== 0 && isClickable.value && !diary.isShown) {
           const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
           const mood = posOnMap(width, height, starDots, p);
           if (mapProperties.status && typeof (mood.valence) === 'number' && typeof (mood.arousal) === 'number') {
@@ -445,16 +445,16 @@ export default {
       };
 
       // CURRENTLY NOT FULLY IMPLEMENTED
-      p.mouseWheel = (event) => {
-        if (isClickable.value) {
-          for (let i = 0; i < songDots.length; i += 1) {
-            if (i !== 0) {
-              // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY, songDots[i - 1]);
-              songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY);
-            }
-          }
-        }
-      };
+      // p.mouseWheel = (event) => {
+      //   if (isClickable.value) {
+      //     for (let i = 0; i < songDots.length; i += 1) {
+      //       if (i !== 0) {
+      //         // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY, songDots[i - 1]);
+      //         songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY);
+      //       }
+      //     }
+      //   }
+      // };
 
       p.windowResized = () => {
         p.resizeCanvas(width, height);

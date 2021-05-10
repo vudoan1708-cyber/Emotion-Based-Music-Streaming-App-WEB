@@ -139,8 +139,8 @@ export default {
 
           // otherwise, if the emotion map is already used (transition is valid)
           // (meaning listeners are constantly using the app to keep listening to more songs)
-          } else {
-            console.log('TRANSITION IS VALID');
+          // This can be acheived either via selecting a song dot on the emotion map
+          // or searching for songs
           }
         }
 

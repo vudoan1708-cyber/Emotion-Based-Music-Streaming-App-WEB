@@ -1,0 +1,80 @@
+@import '../Mixin/position';
+@import '../Mixin/transition';
+
+#diary_container {
+  @include positionProperties(absolute, 50%, '', 50%, '');
+  width: 50%;
+  height: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+
+  #diary {
+    position: relative;
+    color: snow;
+    background-color: #6cf1a3f1;
+    border-radius: 10px;
+    text-align: left;
+
+    #diary_header {
+      position: relative;
+      text-align: center;
+      background-color: rgb(50, 50, 50);
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      margin: 0;
+      padding: 10px;
+      width: 100%;
+    }
+
+    section {
+      margin: 20px;
+      text-align: center;
+
+      label {
+        width: 100%;
+        float: left;
+        text-align: left;
+        background-color: rgb(88, 88, 88);
+        color: rgb(192, 192, 192);
+        padding: 5px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+
+      .input_fields {
+        width: 100%;
+      }
+
+      #save_btn {
+        padding: 15px 40px;
+        margin-bottom: 5px;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        background-color: rgb(50, 50, 50);
+        cursor: pointer;
+        @include transitionProperties(background-color, 0.2s);
+
+        &:hover {
+          background-color: rgb(12, 12, 12);
+        }
+      }
+    }
+  }
+
+  #loading {
+    @include positionProperties(absolute, 50%, '', 50%, '');
+    width: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.25);
+    #icon {
+      position: relative;
+      img {
+        width: 15%;
+      }
+    }
+  }
+}

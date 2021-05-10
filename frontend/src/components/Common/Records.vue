@@ -13,10 +13,11 @@
         <!-- User Journey Display -->
         <section v-else id="records_display">
           <div id="headers">
-            <h2>Summary</h2><br />
-            <div id="dates_carousel">
+            <h2>Summary</h2>
+            <!-- <br /> -->
+            <!-- <div id="dates_carousel">
               <span><p>Today</p></span>
-            </div>
+            </div> -->
           </div>
 
           <!-- Grid System to Display User Journey -->
@@ -219,82 +220,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#records_area {
-  width: 100%;
-  height: 100%;
-  color: rgb(128, 128, 128);
-
-  #records_content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 100vh;
-    position: relative;
-    text-align: center;
-
-    #records_board {
-      position: relative;
-      width: 100%;
-      height: 100%;
-
-      #records_placeholder {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-
-      #records_display {
-        position: relative;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas: 'myArea myArea';
-        gap: 20px;
-
-        #headers {
-          grid-area: myArea;
-          width: 100%;
-          text-align: center;
-          padding: 15px;
-          background-color: rgb(51, 51, 51);
-          color: rgb(173, 173, 173);
-        }
-
-        .records_wrapper {
-          position: relative;
-        }
-
-        .diary_title {
-          margin: 20px;
-          padding: 10px;
-          background-color: rgb(15, 15, 15);
-        }
-
-        .records_details {
-          position: relative;
-          bottom: 0;
-          margin: 20px;
-          border-radius: 10px;
-          border: 2px solid rgb(138, 138, 138);
-          box-shadow: inset 0 0 1000px rgb(138, 138, 138);
-          background-color: rgba(80, 80, 80, 0.25);
-          cursor: pointer;
-          transition: .25s all;
-
-          svg {
-            width: 100%;
-          }
-
-          &:hover {
-            box-shadow: inset 0 0 10px rgb(138, 138, 138);
-          }
-        }
-      }
-    }
-  }
-
-  #record_detail {
-    @extend #records_area;
-  }
-}
+@import '@/sass/Unique/_records.scss';
 </style>

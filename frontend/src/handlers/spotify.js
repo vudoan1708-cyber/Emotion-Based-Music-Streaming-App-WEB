@@ -240,7 +240,9 @@ export function removeATempPlaylist(emitterObj) {
   emitterObj.emit('song_data', data);
 }
 
-export function updatePlaylist(song, how) {
+export function updatePlaylist(song, how, playlistParam) {
+  // eslint-disable-next-line no-param-reassign
+  if (playlistParam === undefined) playlistParam = playlist;
   // create an object to remove this song from the DOM
   let data = {};
 
@@ -248,22 +250,24 @@ export function updatePlaylist(song, how) {
 
   // splice the duplicates off the playlist array
   if (how === 'remove') {
-    for (let i = playlist.length - 1; i >= 0; i -= 1) {
-      if (playlist[i] === songID) {
-        playlist.splice(i, 1);
-
-        // create an object to remove this song from the DOM
-        data = {
-          song,
-          how,
-        };
-
-        emitter.emit('song_data', data);
+    for (let i = playlistParam.length - 1; i >= 0; i -= 1) {
+      if (playlistParam[i] === songID) {
+        playlistParam.splice(i, 1);
+        
+        if (playlistParam === playlist) {
+          // create an object to remove this song from the DOM
+          data = {
+            song,
+            how,
+          };
+  
+          emitter.emit('song_data', data);
+        }
         break;
       }
     }
   } else {
-    playlist.push(songID);
+    playlistParam.push(songID);
 
     // create an object to add this song to the DOM
     data = {
@@ -273,6 +277,7 @@ export function updatePlaylist(song, how) {
 
     emitter.emit('song_data', data);
   }
+  return playlistParam;
 }
 
 export async function showUserPlaylist(title, valence, arousal, id,
@@ -312,7 +317,7 @@ export async function searchRecommendation(id, artist_details, valence, arousal)
   }
 }
 
-function checkDuplicates(id, playlists) {
+export function checkDuplicates(id, playlists) {
   let response = false;
 
   if (playlists.length > 0) {
