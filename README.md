@@ -1,5 +1,5 @@
 # Technologies
-This project makes use of 3 technologies: Vue.js, p5.js and D3.js
+This project makes use of 4 technologies: Vue.js, p5.js, D3.js and Node.js
 
 # Use case
 There are 2 ways that you can run the code. 

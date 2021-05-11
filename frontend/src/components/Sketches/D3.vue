@@ -354,10 +354,18 @@ export default {
     async function replaySong(num) {
       isActive.value = num;
 
-      const offset = isActive.value + start.value;
+      let offset = isActive.value + start.value;
       // const isDuplicate = checkDuplicates(songDot.uris[offset], songDot.uris);
 
       // if (isDuplicate) offset = findSongViaID(songDot.uris[offset], songDot.uris);
+      for (let i = songDot.uris.length - 1; i >= 0; i -= 1) {
+        // If there is any duplicate songs
+        // The system will play the first song it finds matched, BACKWARDS
+        if (songDot.uris[i] === songDot.uris[offset]) {
+          offset = i;
+          break;
+        }
+      }
       await playSong(0, offset, songDot.uris);
     }
 
