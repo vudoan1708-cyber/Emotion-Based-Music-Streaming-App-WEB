@@ -109,8 +109,23 @@
         <h2>X</h2>
       </div>
 
-      <div id="story">
-        <div id="story_title"></div>
+      <!-- Diary Display -->
+      <div id="story" v-if="diary.collapsible === 1">
+        <div id="diary_wrapper">
+          <div id="story_title">
+            <h2>{{ diary.title }}</h2>
+          </div>
+
+          <div id="story_content">
+            <p>{{ diary.content }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapse Button -->
+      <div id="collapse_btn" style="left: 50%; transform: translate(-50%, -50%);" ref="collapsibleRef" @click="collapseStoryWindow">
+        <h2 v-if="diary.collapsible === 1">&#8883;</h2>
+        <h2 v-else>&#8882;</h2>
       </div>
     </div>
   </div>
@@ -147,6 +162,7 @@ export default {
     // DOM Ref
     const xAxisRef = ref(null);
     const yAxisRef = ref(null);
+    const collapsibleRef = ref(null);
 
     const start = ref(0);
     const end = ref(3);
@@ -170,6 +186,13 @@ export default {
       arousal: journey.value.songs.mood_scores.arousal,
       image: journey.value.songs.spotify.img_urls,
       uris: journey.value.songs.spotify.uris,
+    });
+
+    // DIary Story Display variables
+    const diary = reactive({
+      collapsible: 1,
+      title: journey.value.user.diary.title,
+      content: journey.value.user.diary.content,
     });
 
     // D3
@@ -204,6 +227,23 @@ export default {
     // Close Record Detail Window
     function closeRecordDetailWindow() {
       props.emitter.emit('record_detail_window', false);
+    }
+
+    // Collapse The Story Window
+    function collapseStoryWindow() {
+      diary.collapsible = -diary.collapsible;
+
+      if (diary.collapsible === 1) {
+        // Push The Button back to the left
+        collapsibleRef.value.style.right = '';
+        collapsibleRef.value.style.left = '50%';
+        collapsibleRef.value.style.transform = 'translate(-50%, -50%)';
+      } else {
+        // Push The Button back to the right
+        collapsibleRef.value.style.right = 0;
+        collapsibleRef.value.style.left = '';
+        collapsibleRef.value.style.transform = 'translate(0, -50%)';
+      }
     }
 
     // Change Song Display Via Button Clicks
@@ -270,6 +310,9 @@ export default {
       isActive,
       replaySong,
       closeRecordDetailWindow,
+      diary,
+      collapseStoryWindow,
+      collapsibleRef,
     };
   },
 };
@@ -371,6 +414,45 @@ export default {
       &:hover {
         border: 5px dashed rgb(173, 173, 173);
         color: rgb(173, 173, 173);
+      }
+    }
+
+    #collapse_btn {
+      position: absolute;
+      top: 50%;
+      background-color: rgba(12, 12, 12, 0.95);
+      padding: 20px;
+      border: 1px solid rgb(184, 184, 184);
+      cursor: pointer;
+      transition: .2s all;
+
+      &:hover {
+        border: 5px solid rgb(173, 173, 173);
+        background-color: rgba(0, 0, 0, 0.95);
+      }
+    }
+
+    #story {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background-color: rgba(12, 12, 12, 0.95);
+      padding: 20px;
+
+      #diary_wrapper {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        #story_title,
+        #story_content {
+          margin: 10px;
+          padding: 10px;
+          color: rgb(199, 199, 199);
+        }
       }
     }
   }
