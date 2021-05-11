@@ -104,20 +104,22 @@ export function getKeyword(how, text) {
   return keyword;
 }
 
-export function findSongViaID(uri) {
+export function findSongViaID(uri, playlistParam) {
+  // eslint-disable-next-line no-param-reassign
+  if (playlistParam === undefined) playlistParam = playlist;
   // Offset Song
   let offset = 0;
   let count = 0;
   // Loop through the playlist array to check offset songs
-  for (let index = 0; index < playlist.length; index += 1) {
-    const songID = playlist[index];
+  for (let index = 0; index < playlistParam.length; index += 1) {
+    const songID = playlistParam[index];
     if (songID === uri) {
       count += 1;
       if (count <= 1) {
         offset = index;
-      } else updatePlaylist(songID, 'remove');
+      } else updatePlaylist(songID, 'remove', playlistParam);
     } else {
-      if (index === playlist.length - 1 && count === 0) {
+      if (index === playlistParam.length - 1 && count === 0) {
         offset = -1;
       }
     }
@@ -253,8 +255,7 @@ export function updatePlaylist(song, how, playlistParam) {
     for (let i = playlistParam.length - 1; i >= 0; i -= 1) {
       if (playlistParam[i] === songID) {
         playlistParam.splice(i, 1);
-        
-        if (playlistParam === playlist) {
+        if (isEmpty(playlistParam)) {
           // create an object to remove this song from the DOM
           data = {
             song,

@@ -304,7 +304,7 @@ export default {
         if (draggableElement.metadata !== '') {
           // Update The Playlist and Visualisation Via This Function
           draggableElement.metadata.label = 'accepted_by_user';
-          updatePlaylist(draggableElement.metadata, 'add', props.emitter);
+          updatePlaylist(draggableElement.metadata, 'add');
 
           // Trigger Watch Function to Add Songs To The Player's Queue
           isPlayerActive.value = true;

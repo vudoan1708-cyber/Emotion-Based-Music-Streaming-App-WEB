@@ -128,7 +128,8 @@ import {
 } from 'd3';
 
 // Spotify
-import { playSong, checkDuplicates, updatePlaylist } from '@/handlers/spotify';
+// import { playSong, checkDuplicates, findSongViaID } from '@/handlers/spotify';
+import { playSong } from '@/handlers/spotify';
 
 export default {
   name: 'D3',
@@ -233,12 +234,12 @@ export default {
     // Play Songs
     async function replaySong(num) {
       isActive.value = num;
-      songDot.uris.forEach((uri) => {
-        const isDuplicate = checkDuplicates(uri, songDot.uris);
 
-        if (isDuplicate) songDot.uris = updatePlaylist(uri, 'remove', songDot.uris);
-      });
-      await playSong(0, isActive.value + start.value, songDot.uris);
+      const offset = isActive.value + start.value;
+      // const isDuplicate = checkDuplicates(songDot.uris[offset], songDot.uris);
+
+      // if (isDuplicate) offset = findSongViaID(songDot.uris[offset], songDot.uris);
+      await playSong(0, offset, songDot.uris);
     }
 
     onBeforeMount(() => {

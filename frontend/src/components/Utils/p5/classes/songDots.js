@@ -132,7 +132,7 @@ export default class SongDots {
     } return false;
   }
 
-  updateLabels(starDots, chosenPoints, emitter) {
+  updateLabels(starDots, chosenPoints) {
     const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
 
     // re-compare
@@ -147,7 +147,7 @@ export default class SongDots {
         this.label = 'accepted';
 
         // push it in the playlist array
-        updatePlaylist(this, 'add', emitter);
+        updatePlaylist(this, 'add');
       }
 
     } else {
@@ -158,7 +158,7 @@ export default class SongDots {
         // change the label to affect the visualisation
         this.label = 'unaccepted';
 
-        updatePlaylist(this, 'remove', emitter);
+        updatePlaylist(this, 'remove');
       }
     }
   }

@@ -41,7 +41,7 @@ export function drawSongDots(starDots, chosenPoints, emitter) {
 
       if (chosenPoints.length > 0) {
         // live updating every song dots positions
-        songDots[i].updateLabels(starDots, chosenPoints, emitter);
+        songDots[i].updateLabels(starDots, chosenPoints);
       }
 
       // On Hover
