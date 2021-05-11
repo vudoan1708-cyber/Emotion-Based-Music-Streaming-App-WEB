@@ -108,7 +108,13 @@ export default {
         }
         // Update user journey database
         await updateData(dataID.value, dataObj, 1);
-        props.emitter.emit('user_journey', dataObj);
+
+        const emittedObj = {
+          data: dataObj,
+          index: 0,
+          status: 'updateSong',
+        };
+        props.emitter.emit('user_journey', emittedObj);
         loadingRef.value.style.display = 'none';
       }
     }

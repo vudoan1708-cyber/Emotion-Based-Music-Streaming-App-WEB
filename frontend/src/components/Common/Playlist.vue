@@ -239,8 +239,13 @@ export default {
             await updateData(dataID.value, dataObj.value, 1);
             // If there is a transition, update the database from here
             // Since in this scenario, diary section won't come up
+            const emittedObj = {
+              data: dataObj.value,
+              index: 0,
+              status: 'updateSong',
+            };
             // eslint-disable-next-line no-unused-expressions
-            data.transition === 'transition' ? props.emitter.emit('user_journey', dataObj.value) : undefined;
+            data.transition === 'transition' ? props.emitter.emit('user_journey', emittedObj) : undefined;
           }, 1000);
         }
       } else {

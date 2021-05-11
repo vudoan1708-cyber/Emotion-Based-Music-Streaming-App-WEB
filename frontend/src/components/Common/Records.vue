@@ -126,15 +126,15 @@ export default {
     function updateAffectiveScore() {
       moodScores.value = [];
       for (let i = 0; i < userJourneyObj.value.length; i += 1) {
-        const mood = userJourneyObj.value[i].songs.mood_scores;
+        const mood = userJourneyObj.value[i].data.songs.mood_scores;
 
         // Get the Date Values
-        dates.value.push(userJourneyObj.value[i].date);
-        times.value.push(userJourneyObj.value[i].time);
+        dates.value.push(userJourneyObj.value[i].data.date);
+        times.value.push(userJourneyObj.value[i].data.time);
 
         // Get the Diary Data
-        diary.titles.push(userJourneyObj.value[i].user.diary.title);
-        diary.contents.push(userJourneyObj.value[i].user.diary.content);
+        diary.titles.push(userJourneyObj.value[i].data.user.diary.title);
+        diary.contents.push(userJourneyObj.value[i].data.user.diary.content);
 
         // Get the Mood Scores
         moodScores.value.push(mood);
@@ -171,6 +171,7 @@ export default {
     const recordDetails = reactive({
       isOpen: false,
       which: 0,
+      databaseID: '',
       journey: null,
       colour: null,
     });
@@ -178,6 +179,21 @@ export default {
     // Listen on 'record_detail_window' event to detect record detail window being closed
     emitterObj.value.on('record_detail_window', (val) => {
       recordDetails.isOpen = val;
+
+      dates.value = [];
+      times.value = [];
+      diary.titles = [];
+      diary.contents = [];
+
+      colourDomain.value = null;
+      colour.value = null;
+      text.value = null;
+
+      colours.value = [];
+      texts.value = [];
+      averageMoodScores.value = [];
+
+      updateAffectiveScore();
     });
 
     // View Record Detail after Choosing a Record Card
@@ -185,8 +201,10 @@ export default {
       if (!recordDetails.isOpen) {
         recordDetails.isOpen = true;
         recordDetails.which = key;
-        recordDetails.journey = userJourneyObj.value[recordDetails.which];
+        recordDetails.journey = userJourneyObj.value[recordDetails.which].data;
         recordDetails.colour = colours.value[recordDetails.which];
+        // eslint-disable-next-line no-underscore-dangle
+        recordDetails.databaseID = userJourneyObj.value[recordDetails.which]._id;
       }
     }
 

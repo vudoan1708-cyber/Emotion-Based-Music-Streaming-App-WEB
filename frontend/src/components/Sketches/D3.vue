@@ -111,13 +111,33 @@
 
       <!-- Diary Display -->
       <div id="story" v-if="diary.collapsible === 1">
+        <!-- Update Button -->
+        <div class="update_btn" v-if="!diary.updateContent || !diary.updateTitle" @click="updateDiary('update')">
+          <img src="@/assets/pen.png" />
+        </div>
+        <!-- Accept Button -->
+        <div class="update_btn" v-else @click="updateDiary('acceptChanges')">
+          <img src="@/assets/okay.png" />
+        </div>
+
         <div id="diary_wrapper">
           <div id="story_title">
-            <h2>{{ diary.title }}</h2>
+            <h2 v-if="!diary.updateTitle">{{ diary.title }}</h2>
+            <!-- Update Title -->
+            <div v-else class="diary_update" id="title_update">
+              <textarea class="input_fields" id="title" name="diary" v-model="diary.title" ></textarea>
+            </div>
           </div>
 
+          <!-- TODO: Update Content In The Diary -->
+
           <div id="story_content">
-            <p>{{ diary.content }}</p>
+            <p  v-if="!diary.updateContent">{{ diary.content }}</p>
+
+            <!-- Update Content -->
+            <div v-else class="diary_update" id="content_update">
+              <textarea class="input_fields" id="content" name="diary" v-model="diary.content" ></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -146,6 +166,12 @@ import {
 // import { playSong, checkDuplicates, findSongViaID } from '@/handlers/spotify';
 import { playSong } from '@/handlers/spotify';
 
+// MongoDB
+import { updateData } from '@/handlers/mongdb';
+
+// JSON
+import userJourneyObj from '@/components/JSON/userJourneyObj';
+
 export default {
   name: 'D3',
   props: {
@@ -158,7 +184,9 @@ export default {
   },
   setup(props) {
     // using `toRefs` to create a Reactive Reference to the `recordDetails` property of props
-    const { which, journey, colour } = toRefs(props.recordDetails);
+    const {
+      which, journey, colour, databaseID,
+    } = toRefs(props.recordDetails);
     // DOM Ref
     const xAxisRef = ref(null);
     const yAxisRef = ref(null);
@@ -188,11 +216,15 @@ export default {
       uris: journey.value.songs.spotify.uris,
     });
 
-    // DIary Story Display variables
+    // Diary Story Display variables
     const diary = reactive({
       collapsible: 1,
       title: journey.value.user.diary.title,
       content: journey.value.user.diary.content,
+      oldTitle: journey.value.user.diary.title,
+      oldContent: journey.value.user.diary.content,
+      updateTitle: false,
+      updateContent: false,
     });
 
     // D3
@@ -226,6 +258,11 @@ export default {
 
     // Close Record Detail Window
     function closeRecordDetailWindow() {
+      if (diary.updateTitle && diary.updateContent) {
+        // Exit out of the update area via this way will reset the editted content
+        diary.title = diary.oldTitle;
+        diary.content = diary.oldContent;
+      }
       props.emitter.emit('record_detail_window', false);
     }
 
@@ -243,6 +280,48 @@ export default {
         collapsibleRef.value.style.right = 0;
         collapsibleRef.value.style.left = '';
         collapsibleRef.value.style.transform = 'translate(0, -50%)';
+      }
+
+      if (diary.updateTitle && diary.updateContent) {
+        // Reset the update area
+        diary.updateContent = false;
+        diary.updateTitle = false;
+
+        // Exit out of the update area via this way will reset the editted content
+        diary.title = diary.oldTitle;
+        diary.content = diary.oldContent;
+      }
+    }
+
+    // Update Diary
+    async function updateDiary(action) {
+      if (action === 'update') {
+        diary.updateTitle = true;
+        diary.updateContent = true;
+      } else if (action === 'acceptChanges') {
+        diary.updateTitle = false;
+        diary.updateContent = false;
+
+        const dataObj = userJourneyObj(journey.value.user.id,
+          journey.value.user.position.x, journey.value.user.position.y,
+          journey.value.user.indices.i, journey.value.user.indices.j,
+          diary.title, diary.content,
+          journey.value.songs.titles, journey.value.songs.artists,
+          journey.value.songs.mood_scores.valence,
+          journey.value.songs.mood_scores.arousal,
+          journey.value.songs.spotify.uris,
+          journey.value.songs.spotify.img_urls,
+          journey.value.date, journey.value.time);
+
+        // Update user journey database
+        await updateData(databaseID.value, dataObj, 1);
+
+        const emittedObj = {
+          data: dataObj,
+          index: which.value,
+          status: 'updateDiary',
+        };
+        props.emitter.emit('user_journey', emittedObj);
       }
     }
 
@@ -291,6 +370,11 @@ export default {
       journey.value = d;
     });
 
+    watch(() => [diary.title, diary.content], ([t, c]) => {
+      diary.title = t;
+      diary.content = c;
+    });
+
     return {
       canvas,
       margin,
@@ -313,6 +397,7 @@ export default {
       diary,
       collapseStoryWindow,
       collapsibleRef,
+      updateDiary,
     };
   },
 };
@@ -441,6 +526,31 @@ export default {
       background-color: rgba(12, 12, 12, 0.95);
       padding: 20px;
 
+      .update_btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 10%;
+        background-color: rgb(160, 160, 160);
+        padding: 5px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: .2s all;
+
+        img {
+          width: 100%;
+          filter: invert(0);
+        }
+
+        &:hover {
+          background-color: rgb(0, 0, 0);
+
+          img {
+            filter: invert(100%);
+          }
+        }
+      }
+
       #diary_wrapper {
         position: relative;
         top: 50%;
@@ -452,6 +562,20 @@ export default {
           margin: 10px;
           padding: 10px;
           color: rgb(199, 199, 199);
+
+          .diary_update {
+            position: relative;
+            width: 100%;
+
+            textarea {
+              width: 100%;
+              font-weight: 900;
+              border-radius: 5px;
+              outline: none;
+              padding: 5px 20px;
+              word-wrap: break-word;
+            }
+          }
         }
       }
     }

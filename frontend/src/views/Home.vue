@@ -49,16 +49,28 @@ export default {
     // Listen on 'user_journey' event
     // Because Center Pane or Other Children Component Cannot Receive Any Data
     // Unless They Are Available
-    emitter.on('user_journey', (data) => {
-      // Check for duplicate diary content
-      // eslint-disable-next-line max-len
-      if (userJourney.value[0].user.diary.title !== data.user.diary.title
-        && userJourney.value[0].user.diary.content !== data.user.diary.content) {
-        userJourney.value.unshift(data);
-      } else {
-        // Remove the first one from the array (latest data)
-        userJourney.value.splice(0, 1);
-        userJourney.value.unshift(data);
+    emitter.on('user_journey', (journey) => {
+      const data = { data: journey.data };
+      // After inserting data to database,
+      // the system will updates any song which was left out from the collection
+      if (journey.status === 'updateSong') {
+        // Check for duplicate diary content
+        // eslint-disable-next-line max-len
+        if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
+  && userJourney.value[journey.index].data.user.diary.content !== journey.data.user.diary.content) {
+          userJourney.value.unshift(data);
+        } else {
+          // Replace the old one to a new one
+          userJourney.value.splice(journey.index, 1, data);
+        }
+      } else if (journey.status === 'updateDiary') {
+        // If a diary content is changed, replace the old one to a new one
+        if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
+  || userJourney.value[journey.index].data.user.diary.content !== journey.data.user.diary.content) {
+          for (let i = userJourney.value.length - 1; i >= 0; i -= 1) {
+            if (i === journey.index) userJourney.value.splice(journey.index, 1, data);
+          }
+        }
       }
     });
 
@@ -76,7 +88,7 @@ export default {
           // compare and validate user via user's id
           if (dataResponse[i].data.user.id === userData.ID) {
             // Get Date and Time
-            userJourney.value.push(dataResponse[i].data);
+            userJourney.value.push(dataResponse[i]);
           }
         }
       }
