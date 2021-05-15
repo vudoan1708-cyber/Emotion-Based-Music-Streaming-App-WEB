@@ -259,6 +259,7 @@ export default {
       }
 
       function locationChosen(i, j, how, trackObj, counter, transition) {
+        console.log(counter);
         if (counter === 0 || counter === undefined) {
           // Either, a click events (on the stars and songs), or a search is accepted
           if (isSearched.value || isClickable.value) {
@@ -326,8 +327,8 @@ export default {
         // Get Coordinates of The Searched Tracks Via Its Indices
         const trackCoord = indicestoCoordinates(trackMood.i, trackMood.j, width, height);
         mapProperties.status
-          ? locationChosen(trackMood.i, trackMood.j, 'search', track)
-          : locationChosen(trackMood.i, trackMood.j, 'search', track, 'transition');
+          ? locationChosen(trackMood.i, trackMood.j, 'search', track, 0)
+          : locationChosen(trackMood.i, trackMood.j, 'search', track, 0, 'transition');
 
         // Get The Regions Values
         let region = null;
