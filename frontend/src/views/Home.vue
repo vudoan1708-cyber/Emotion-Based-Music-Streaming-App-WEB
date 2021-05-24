@@ -1,6 +1,7 @@
 <template>
   <div id="home">
-    <SketchP5 :personalisationSettings="personalisationSettings" :emitter="emitter" />
+    <SketchP5 :personalisationSettings="personalisationSettings"
+              :emitter="emitter" :mobile="mobile" />
     <TopPane />
     <LeftPane :emitter="emitter" />
     <BottomPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
@@ -12,6 +13,7 @@
 <script>
 import { ref, onBeforeMount, getCurrentInstance } from 'vue';
 
+// Common Components
 import SketchP5 from '@/components/Sketches/SketchP5.vue';
 import TopPane from '@/components/Common/TopPane.vue';
 import BottomPane from '@/components/Common/BottomPane.vue';
@@ -19,10 +21,13 @@ import LeftPane from '@/components/Common/LeftPane.vue';
 import RightPane from '@/components/Common/RightPane.vue';
 import CenterPane from '@/components/Common/CenterPane.vue';
 
+// Handlers
 import { getUserProfile, getUserPersonalisation } from '@/handlers/spotify';
 import { getAllData } from '@/handlers/mongdb';
 
+// Logic
 import hashURL from '@/components/Utils/logic/hashURL';
+import isMobile from '@/components/Utils/logic/mobile';
 
 export default {
   name: 'Home',
@@ -39,6 +44,9 @@ export default {
     // registered in the main.js file
     const app = getCurrentInstance();
     const emitter = app.appContext.config.globalProperties.$emitter;
+
+    // Mobile Detection
+    const mobile = isMobile();
 
     const personalisationSettings = ref([]);
     const prevURL = ref('');
@@ -161,6 +169,7 @@ export default {
       personalisationSettings,
       userJourney,
       emitter,
+      mobile,
     };
   },
 };

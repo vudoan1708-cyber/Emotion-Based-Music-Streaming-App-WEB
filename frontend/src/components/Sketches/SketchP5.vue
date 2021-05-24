@@ -88,8 +88,11 @@ import {
   indicesToMood, moodToIndices,
   coordinatesToIndices, indicestoCoordinates,
 } from '@/components/Utils/logic/algorithm';
+
+// Logic
 import hashURL from '@/components/Utils/logic/hashURL';
 
+// DOM
 import changeMap from '@/components/Utils/dom/changeMap';
 
 import {
@@ -112,6 +115,9 @@ export default {
     },
     emitter: {
       type: Object,
+    },
+    mobile: {
+      type: Boolean,
     },
   },
   components: {
@@ -149,6 +155,7 @@ export default {
 
     // PROPS
     const emitterObj = ref(props.emitter);
+    const isMobile = ref(props.mobile);
 
     // DOM
     const angryBtn = ref(null);
@@ -161,6 +168,12 @@ export default {
       isShown: false,
       title: 'No Title',
       content: 'No Content',
+    });
+
+    // Keep Track of Mouse Positions for Map Panning
+    const prevMousePos = reactive({
+      x: NaN,
+      y: NaN,
     });
 
     // Delay Time To Display The Instruction Board
@@ -259,7 +272,6 @@ export default {
       }
 
       function locationChosen(i, j, how, trackObj, counter, transition) {
-        console.log(counter);
         if (counter === 0 || counter === undefined) {
           // Either, a click events (on the stars and songs), or a search is accepted
           if (isSearched.value || isClickable.value) {
@@ -387,6 +399,10 @@ export default {
       };
 
       p.mousePressed = async () => {
+        // Record the mouse positions
+        prevMousePos.x = p.mouseX;
+        prevMousePos.y = p.mouseY;
+
         let track = null;
         let searchType = 'random';
         let counter = 0;
@@ -442,6 +458,36 @@ export default {
               }
             }
           }
+        }
+      };
+
+      // Mouse Distance
+      function calculateMouseDistance() {
+        // if the sign is -, mouse moving to the left and likewise
+        const x = p.mouseX - prevMousePos.x;
+        const y = p.mouseY - prevMousePos.y;
+        return { x, y };
+      }
+      // MAP PANNING
+      p.mouseDragged = (event) => {
+        if (isClickable.value && songDots.length > 0) {
+          for (let i = 0; i < songDots.length; i += 1) {
+            // For mobile
+            if (isMobile.value) {
+              // Calculate the distance between the previous and the latest mouse positions
+              // const { x, y } = calculateMouseDistance();
+              // songDots[i].panning(x, y);
+              console.log(event.touches[0].clientX, event.touches[0].clientY);
+            } else {
+              // Calculate the distance between the previous and the latest mouse positions
+              const { x, y } = calculateMouseDistance();
+              songDots[i].panning(x, y);
+            }
+          }
+
+          // Update the mouse positions
+          prevMousePos.x = p.mouseX;
+          prevMousePos.y = p.mouseY;
         }
       };
 

@@ -46,6 +46,11 @@ export default class SongDots {
     } return false;
   }
 
+  panning(x, y) {
+    this.x += x;
+    this.y += y;
+  }
+
   zoom(zoomFactor, mx, my) {
     // this.p5.push();
     this.size += zoomFactor;
