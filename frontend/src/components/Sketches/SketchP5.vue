@@ -318,7 +318,7 @@ export default {
         if (data.how === 'finish' && data.transition !== 'transition') {
           setTimeout(async () => {
             diary.isShown = true;
-          }, 1200);
+          }, 1500);
         }
       });
 
@@ -469,7 +469,7 @@ export default {
         return { x, y };
       }
       // MAP PANNING
-      p.mouseDragged = (event) => {
+      p.mouseDragged = () => {
         if (isClickable.value && songDots.length > 0) {
           for (let i = 0; i < songDots.length; i += 1) {
             // For mobile
@@ -477,7 +477,6 @@ export default {
               // Calculate the distance between the previous and the latest mouse positions
               // const { x, y } = calculateMouseDistance();
               // songDots[i].panning(x, y);
-              console.log(event.touches[0].clientX, event.touches[0].clientY);
             } else {
               // Calculate the distance between the previous and the latest mouse positions
               const { x, y } = calculateMouseDistance();

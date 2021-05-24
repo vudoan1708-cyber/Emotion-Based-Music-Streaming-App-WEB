@@ -246,7 +246,7 @@ export default {
             };
             // eslint-disable-next-line no-unused-expressions
             data.transition === 'transition' ? props.emitter.emit('user_journey', emittedObj) : undefined;
-          }, 1000);
+          }, 1500);
         }
       } else {
         personalisedTracks.value.push(data.song);
