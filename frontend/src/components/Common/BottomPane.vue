@@ -118,7 +118,7 @@ export default {
           // Show the player
           appState.stage = 3;
           // If listeners just start listening to music using the emotion map
-          // (transition is null or undefined)
+          // (transition will be null or undefined)
           if (data.transition !== 'transition') {
             const date = new Date();
 
@@ -130,7 +130,6 @@ export default {
             // Use coordinatesToIndices algorithm to convert location values to indices
             const { x, y } = indicestoCoordinates(data.chosenIndices.i, data.chosenIndices.j,
               window.innerWidth, window.innerHeight);
-
             dataObj.value = userJourneyObj(userID.value, x, y, data.chosenIndices.i,
               data.chosenIndices.j, 'No Title', 'No Content', tracks.titles, tracks.artists, tracks.valenceScores,
               tracks.arousalScores, tracks.ids, tracks.albumImgs, date, time);
@@ -154,11 +153,10 @@ export default {
     });
 
     // Get The Minimum Number of Tracks To Fetch
-    watch(props.personalisationSettings, (data) => {
-      const datum = data[0];
-      if (datum.length !== 0 && datum[datum.length - 1].data !== undefined) {
-        tracks.min = Number(datum[datum.length - 1].data.user.personalisation.numOfTracks);
-        userID.value = datum[datum.length - 1].data.user.id;
+    watch(props.personalisationSettings, (settingsData) => {
+      if (settingsData.length > 0 && settingsData[0].data !== undefined) {
+        tracks.min = Number(settingsData[0].data.user.personalisation.numOfTracks);
+        userID.value = settingsData[0].data.user.id;
       } else {
         // eslint-disable-next-line no-self-assign
         tracks.min = tracks.min;

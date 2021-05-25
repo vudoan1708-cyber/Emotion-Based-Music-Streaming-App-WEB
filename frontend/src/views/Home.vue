@@ -71,6 +71,7 @@ export default {
         // After inserting data to database,
         // the system will updates any song which was left out from the collection
         if (journey.status === 'updateSong') {
+          // eslint-disable-next-line max-len
           // Check for duplicate diary content
           // eslint-disable-next-line max-len
           if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
@@ -91,7 +92,7 @@ export default {
           }
         }
 
-      // If New User
+      // If New User is Using The App
       } else {
         userJourney.value.unshift(data);
       }
@@ -170,7 +171,7 @@ export default {
               const { muserfly, spotify } = dataResponse[i].data.last_checked;
 
               // Append Settings Config to the Array
-              personalisationSettings.value.push(dataResponse);
+              personalisationSettings.value.push(dataResponse[i]);
 
               // if it's just the personalisation button is checked
               if (muserfly) {

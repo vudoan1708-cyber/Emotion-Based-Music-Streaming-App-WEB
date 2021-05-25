@@ -240,24 +240,22 @@ export default {
         personalisedData.value.forEach((datum, i) => {
           // Get The Checkboxes Latest Settings
           if (i === 0) {
-            datum.forEach((_, d) => {
-              // Check for The Correct User
-              if (datum[d].data.user.id === userDetail.value.id) {
-                const { muserfly, spotify } = datum[d].data.last_checked;
-                personalisationBtn.value.checked = muserfly;
-                spotifyBtn.value.checked = spotify;
+            // Check for The Correct User
+            if (datum.data.user.id === userDetail.value.id) {
+              const { muserfly, spotify } = datum.data.last_checked;
+              personalisationBtn.value.checked = muserfly;
+              spotifyBtn.value.checked = spotify;
 
-                // Update dataID
-                // eslint-disable-next-line no-underscore-dangle
-                dataID.value = datum[d]._id;
+              // Update dataID
+              // eslint-disable-next-line no-underscore-dangle
+              dataID.value = datum._id;
 
-                // Replace Default Settings With The Data
-                const {
-                  artists, market, numOfTracks, themes, genre,
-                } = datum[d].data.user.personalisation;
-                defaultPersonalisedValues(artists, market, numOfTracks, themes, genre);
-              }
-            });
+              // Replace Default Settings With The Data
+              const {
+                artists, market, numOfTracks, themes, genre,
+              } = datum.data.user.personalisation;
+              defaultPersonalisedValues(artists, market, numOfTracks, themes, genre);
+            }
           }
         });
       }

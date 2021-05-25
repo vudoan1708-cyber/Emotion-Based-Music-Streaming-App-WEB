@@ -90,24 +90,20 @@ export default {
         for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
           // compare and validate user via user's id
           if (dataResponse[i].data.user.id === userData.ID) {
-            // Get Date and Time
-            if (i === dataResponse.length - 1) {
-              // Get The Data ID
-              // eslint-disable-next-line no-underscore-dangle
-              dataID.value = dataResponse[i]._id;
-
-              dataObj = userJourneyObj(userData.ID,
-                dataResponse[i].data.user.position.x, dataResponse[i].data.user.position.y,
-                dataResponse[i].data.user.indices.i, dataResponse[i].data.user.indices.j,
-                title.value, content.value,
-                dataResponse[i].data.songs.titles, dataResponse[i].data.songs.artists,
-                dataResponse[i].data.songs.mood_scores.valence,
-                dataResponse[i].data.songs.mood_scores.arousal,
-                dataResponse[i].data.songs.spotify.uris,
-                dataResponse[i].data.songs.spotify.img_urls,
-                dataResponse[i].data.date, dataResponse[i].data.time);
-              break;
-            }
+            // Get The Data ID
+            // eslint-disable-next-line no-underscore-dangle
+            dataID.value = dataResponse[i]._id;
+            dataObj = userJourneyObj(userData.ID,
+              dataResponse[i].data.user.position.x, dataResponse[i].data.user.position.y,
+              dataResponse[i].data.user.indices.i, dataResponse[i].data.user.indices.j,
+              title.value, content.value,
+              dataResponse[i].data.songs.titles, dataResponse[i].data.songs.artists,
+              dataResponse[i].data.songs.mood_scores.valence,
+              dataResponse[i].data.songs.mood_scores.arousal,
+              dataResponse[i].data.songs.spotify.uris,
+              dataResponse[i].data.songs.spotify.img_urls,
+              dataResponse[i].data.date, dataResponse[i].data.time);
+            break;
           }
         }
         // Update user journey database

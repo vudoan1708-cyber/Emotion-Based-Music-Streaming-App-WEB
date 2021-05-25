@@ -130,30 +130,27 @@ export default {
         for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
           // compare and validate user via user's id
           if (dataResponse[i].data.user.id === userData.value.ID) {
-            // Get Date and Time
-            if (i === dataResponse.length - 1) {
-              // Get The Data ID
-              // eslint-disable-next-line no-underscore-dangle
-              dataID.value = dataResponse[i]._id;
-              [dateData.value] = (dataResponse[i].data.date).split('T');
-              timeData.value = dataResponse[i].data.time;
+            // Get The Data ID
+            // eslint-disable-next-line no-underscore-dangle
+            dataID.value = dataResponse[i]._id;
+            [dateData.value] = (dataResponse[i].data.date).split('T');
+            timeData.value = dataResponse[i].data.time;
 
-              // If this is a transition (not the 1st time listening on the browser)
-              if (data.transition === 'transition') {
-                // Retreive the latest data and update / add more metadata to it
-                tracks.ids = dataResponse[i].data.songs.spotify.uris;
-                tracks.artists = dataResponse[i].data.songs.artists;
-                tracks.titles = dataResponse[i].data.songs.titles;
-                tracks.valenceScores = dataResponse[i].data.songs.mood_scores.valence;
-                tracks.arousalScores = dataResponse[i].data.songs.mood_scores.arousal;
-                tracks.albumImgs = dataResponse[i].data.songs.spotify.img_urls;
+            // If this is a transition (not the 1st time listening on the browser)
+            if (data.transition === 'transition') {
+              // Retreive the latest data and update / add more metadata to it
+              tracks.ids = dataResponse[i].data.songs.spotify.uris;
+              tracks.artists = dataResponse[i].data.songs.artists;
+              tracks.titles = dataResponse[i].data.songs.titles;
+              tracks.valenceScores = dataResponse[i].data.songs.mood_scores.valence;
+              tracks.arousalScores = dataResponse[i].data.songs.mood_scores.arousal;
+              tracks.albumImgs = dataResponse[i].data.songs.spotify.img_urls;
 
-                diary.title = dataResponse[i].data.user.diary.title;
-                diary.content = dataResponse[i].data.user.diary.content;
-              }
-
-              break;
+              diary.title = dataResponse[i].data.user.diary.title;
+              diary.content = dataResponse[i].data.user.diary.content;
             }
+
+            break;
           }
         }
       }
