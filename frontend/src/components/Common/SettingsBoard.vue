@@ -193,7 +193,8 @@ export default {
       dataObj.value = settingsObj(userDetail,
         tracksField.value.value, artistsField.value.value,
         themesField.value.value, marketField.value.value,
-        genresField.value.options[selectedIndex].text, personalisationBtn, spotifyBtn);
+        genresField.value.options[selectedIndex].text,
+        personalisationBtn.value.checked, spotifyBtn.value.checked);
 
       // Insert data to MongDB Here
       props.personalisationSettings.length === 0

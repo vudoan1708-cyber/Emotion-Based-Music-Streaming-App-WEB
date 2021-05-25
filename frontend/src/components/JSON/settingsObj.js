@@ -16,8 +16,8 @@ export default function settingsObj(userDetail,
       },
     },
     last_checked: {
-      muserfly: personalisationBtn.value.checked,
-      spotify: spotifyBtn.value.checked,
+      muserfly: personalisationBtn,
+      spotify: spotifyBtn,
     },
   };
 }

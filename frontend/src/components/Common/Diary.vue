@@ -41,6 +41,9 @@
 <script>
 import { ref, toRefs, watch } from 'vue';
 
+// Util
+import isEmpty from '@/components/Utils/logic/object';
+
 import { getUserProfile } from '@/handlers/spotify';
 
 // MongoDB
@@ -81,7 +84,8 @@ export default {
       const dataResponse = await getAllData(1);
       // get user data from spotify
       const userData = await getUserProfile();
-      if (dataResponse.length > 0) {
+      if (isEmpty(userData)) getUserJourney();
+      else if (dataResponse.length > 0) {
         // loop backwards to get the latest data
         for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
           // compare and validate user via user's id

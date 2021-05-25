@@ -229,7 +229,7 @@ export default {
 
         // if the song collection is finished
         } else if (data.how === 'finish') {
-          // The delay is to wait for the inserting data process is done in the BottomPane component
+          // The delay is to wait for updateLabel method to finish in songDots component
           // Then here, it will try to update what is left out
           setTimeout(async () => {
             await getUserJourney(data);
@@ -245,7 +245,7 @@ export default {
               status: 'updateSong',
             };
             // eslint-disable-next-line no-unused-expressions
-            data.transition === 'transition' ? props.emitter.emit('user_journey', emittedObj) : undefined;
+            data.transition === 'transition' ? props.emitter.emit('user_journey', emittedObj) : props.emitter.emit('show_diary', data);
           }, 1500);
         }
       } else {

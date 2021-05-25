@@ -23,7 +23,10 @@ import CenterPane from '@/components/Common/CenterPane.vue';
 
 // Handlers
 import { getUserProfile, getUserPersonalisation } from '@/handlers/spotify';
-import { getAllData } from '@/handlers/mongdb';
+import { insertData, getAllData } from '@/handlers/mongdb';
+
+// JSON
+import settingsObj from '@/components/JSON/settingsObj';
 
 // Logic
 import hashURL from '@/components/Utils/logic/hashURL';
@@ -54,31 +57,43 @@ export default {
     // User Journey Data
     const userJourney = ref([]);
 
+    // Invent User Detail if there is none for new user
+    const userDetail = ref({});
+
     // Listen on 'user_journey' event
     // Because Center Pane or Other Children Component Cannot Receive Any Data
     // Unless They Are Available
     emitter.on('user_journey', (journey) => {
       const data = { data: journey.data };
-      // After inserting data to database,
-      // the system will updates any song which was left out from the collection
-      if (journey.status === 'updateSong') {
-        // Check for duplicate diary content
-        // eslint-disable-next-line max-len
-        if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
+
+      // Check For New User (Empty userJourney Object)
+      if (userJourney.value.length > 0) {
+        // After inserting data to database,
+        // the system will updates any song which was left out from the collection
+        if (journey.status === 'updateSong') {
+          // Check for duplicate diary content
+          // eslint-disable-next-line max-len
+          if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
   && userJourney.value[journey.index].data.user.diary.content !== journey.data.user.diary.content) {
-          userJourney.value.unshift(data);
-        } else {
-          // Replace the old one to a new one
-          userJourney.value.splice(journey.index, 1, data);
-        }
-      } else if (journey.status === 'updateDiary') {
-        // If a diary content is changed, replace the old one to a new one
-        if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
+            userJourney.value.unshift(data);
+          } else {
+            // Replace the old one to a new one
+            userJourney.value.splice(journey.index, 1, data);
+          }
+        } else if (journey.status === 'updateDiary') {
+          // If a diary content is changed, replace the old one to a new one
+          // eslint-disable-next-line max-len
+          if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
   || userJourney.value[journey.index].data.user.diary.content !== journey.data.user.diary.content) {
-          for (let i = userJourney.value.length - 1; i >= 0; i -= 1) {
-            if (i === journey.index) userJourney.value.splice(journey.index, 1, data);
+            for (let i = userJourney.value.length - 1; i >= 0; i -= 1) {
+              if (i === journey.index) userJourney.value.splice(journey.index, 1, data);
+            }
           }
         }
+
+      // If New User
+      } else {
+        userJourney.value.unshift(data);
       }
     });
 
@@ -124,6 +139,19 @@ export default {
       }
     }
 
+    // Add Default Settings Values For New User
+    async function addDefaultSettings(userData) {
+      userDetail.value.id = userData.ID;
+      userDetail.value.name = userData.NAME;
+      userDetail.value.location = userData.COUNTRY;
+      userDetail.value.email = userData.EMAIL;
+      const dataObj = settingsObj(userDetail,
+        '5', '',
+        '', 'from_token',
+        '', false, false);
+      await insertData(dataObj, 0);
+    }
+
     // Talk to MongDB to GET back data about personalisation settings
     // Then, send this down to other children components
     // to visualise and configure variables' default values
@@ -133,7 +161,6 @@ export default {
         const dataResponse = await getAllData(0);
         // get user data from spotify
         const userData = await getUserProfile();
-
         if (dataResponse.length > 0) {
           // loop backwards to get the latest data
           for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
@@ -152,8 +179,26 @@ export default {
               }
 
               break;
+            // If The Usernames Don't Match With What's In The Database (new user)
+            } else if (dataResponse[i].data.user.id !== userData.ID) {
+              // Check till the end of the loop
+              if (i === 0) {
+                // Add default settings for them
+                addDefaultSettings(userData);
+                // Call The Function Again to Retreived The Recently Added Data
+                // eslint-disable-next-line no-await-in-loop
+                await getPersonalisationData();
+                break;
+              }
             }
           }
+
+        // If there is no user yet
+        } else {
+          // The 1st user gets a default settings
+          addDefaultSettings(userData);
+          // Call The Function Again to Retreived The Recently Added Data
+          await getPersonalisationData();
         }
       } catch (err) {
         personalisationSettings.value.push((err));
