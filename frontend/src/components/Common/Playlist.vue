@@ -237,7 +237,10 @@ export default {
             // If there is a transition, update the database from here
             // Since in this scenario, diary section won't come up
             const emittedObj = {
-              data: dataObj.value,
+              data: {
+                data: dataObj.value,
+                _id: dataID.value,
+              },
               index: 0,
               status: 'updateSong',
             };

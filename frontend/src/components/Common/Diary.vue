@@ -110,7 +110,10 @@ export default {
         await updateData(dataID.value, dataObj, 1);
 
         const emittedObj = {
-          data: dataObj,
+          data: {
+            data: dataObj,
+            _id: dataID.value,
+          },
           index: 0,
           status: 'updateSong',
         };

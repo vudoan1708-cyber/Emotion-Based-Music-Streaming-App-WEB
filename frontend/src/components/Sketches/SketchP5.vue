@@ -468,7 +468,7 @@ export default {
       }
       // MAP PANNING
       p.mouseDragged = () => {
-        if (isClickable.value && songDots.length > 0) {
+        if (isClickable.value && songDots.length > 0 && !diary.isShown) {
           for (let i = 0; i < songDots.length; i += 1) {
             // For mobile
             if (isMobile.value) {

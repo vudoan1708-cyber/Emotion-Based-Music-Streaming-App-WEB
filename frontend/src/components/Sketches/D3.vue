@@ -34,16 +34,6 @@
           <!-- Title -->
           <text :x="`${canvas.width / 2}%`" :y="`${margin.top + 15}%`" fill="rgba(255, 255, 255, .75)"  text-anchor="middle">My Emotion Journey</text>
 
-          <!-- Add X axis -->
-          <svg x="0" :y="`${canvas.height - margin.bottom}%`" :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
-            <g ref="xAxisRef"></g>
-          </svg>
-
-          <!-- Add Y axis -->
-          <svg :x="margin.left" y="0" :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
-            <g ref="yAxisRef"></g>
-          </svg>
-
           <!-- Add Scatter Plot -->
           <g v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey">
             <line v-if="valenceKey !== journey.songs.mood_scores.valence.length - 1"
@@ -153,14 +143,8 @@
 
 <script>
 import {
-  onBeforeMount,
   reactive, ref, toRefs, watch,
 } from 'vue';
-
-// D3
-import {
-  select, scaleLinear, axisBottom, axisLeft,
-} from 'd3';
 
 // Spotify
 // import { playSong, checkDuplicates, findSongViaID } from '@/handlers/spotify';
@@ -188,8 +172,6 @@ export default {
       which, journey, colour, databaseID,
     } = toRefs(props.recordDetails);
     // DOM Ref
-    const xAxisRef = ref(null);
-    const yAxisRef = ref(null);
     const collapsibleRef = ref(null);
 
     const start = ref(0);
@@ -240,21 +222,6 @@ export default {
       bottom: 20,
       left: 20,
     });
-
-    // X-Axis
-    const axes = reactive({
-      x: scaleLinear()
-        .domain([0, 1])
-        .range([0, canvas.width]),
-      y: scaleLinear()
-        .domain([0, 1])
-        .range([0, canvas.height]),
-    });
-
-    function createAxes() {
-      select(xAxisRef.value).call(axisBottom(axes.x));
-      select(yAxisRef.value).call(axisLeft(axes.y));
-    }
 
     // Close Record Detail Window
     function closeRecordDetailWindow() {
@@ -315,9 +282,11 @@ export default {
 
         // Update user journey database
         await updateData(databaseID.value, dataObj, 1);
-
         const emittedObj = {
-          data: dataObj,
+          data: {
+            data: dataObj,
+            _id: databaseID.value,
+          },
           index: which.value,
           status: 'updateDiary',
         };
@@ -369,10 +338,6 @@ export default {
       await playSong(0, offset, songDot.uris);
     }
 
-    onBeforeMount(() => {
-      createAxes();
-    });
-
     watch(() => [which, journey], ([key, d]) => {
       which.value = key;
       journey.value = d;
@@ -388,9 +353,6 @@ export default {
       margin,
       journey,
       colour,
-      axes,
-      xAxisRef,
-      yAxisRef,
       songInfoDisplay,
       changesongInfoDisplay,
       start,

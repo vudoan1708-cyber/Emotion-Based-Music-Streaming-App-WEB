@@ -43,6 +43,7 @@ export default {
     CenterPane,
   },
   setup() {
+    /* eslint-disable max-len */
     // instantiate the app's current instance to get global properties
     // registered in the main.js file
     const app = getCurrentInstance();
@@ -63,9 +64,8 @@ export default {
     // Listen on 'user_journey' event
     // Because Center Pane or Other Children Component Cannot Receive Any Data
     // Unless They Are Available
-    emitter.on('user_journey', (journey) => {
-      const data = { data: journey.data };
-
+    emitter.on('user_journey', async (journey) => {
+      const journeyData = journey.data;
       // Check For New User (Empty userJourney Object)
       if (userJourney.value.length > 0) {
         // After inserting data to database,
@@ -74,27 +74,35 @@ export default {
           // eslint-disable-next-line max-len
           // Check for duplicate diary content
           // eslint-disable-next-line max-len
-          if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
-  && userJourney.value[journey.index].data.user.diary.content !== journey.data.user.diary.content) {
-            userJourney.value.unshift(data);
+          if (userJourney.value[journey.index].data.user.diary.title !== journeyData.data.user.diary.title
+          && userJourney.value[journey.index].data.user.diary.content !== journeyData.data.user.diary.content) {
+            userJourney.value.unshift(journeyData);
           } else {
-            // Replace the old one to a new one
-            userJourney.value.splice(journey.index, 1, data);
+            for (let i = userJourney.value.length - 1; i >= 0; i -= 1) {
+              if (i === journey.index) {
+                // Replace the old one to a new one
+                userJourney.value.splice(journey.index, 1, journeyData);
+                break;
+              }
+            }
           }
         } else if (journey.status === 'updateDiary') {
           // If a diary content is changed, replace the old one to a new one
           // eslint-disable-next-line max-len
-          if (userJourney.value[journey.index].data.user.diary.title !== journey.data.user.diary.title
-  || userJourney.value[journey.index].data.user.diary.content !== journey.data.user.diary.content) {
+          if (userJourney.value[journey.index].data.user.diary.title !== journeyData.data.user.diary.title
+          || userJourney.value[journey.index].data.user.diary.content !== journeyData.data.user.diary.content) {
             for (let i = userJourney.value.length - 1; i >= 0; i -= 1) {
-              if (i === journey.index) userJourney.value.splice(journey.index, 1, data);
+              if (i === journey.index) {
+                userJourney.value.splice(journey.index, 1, journeyData);
+                break;
+              }
             }
           }
         }
 
       // If New User is Using The App
       } else {
-        userJourney.value.unshift(data);
+        userJourney.value.unshift(journeyData);
       }
     });
 
@@ -102,6 +110,8 @@ export default {
     // Then, send this down to other children components
     // to visualise and configure variables' default values
     async function getUserJourney() {
+      // Clean up the array
+      userJourney.value = [];
       // get all user journey database
       const dataResponse = await getAllData(1);
       // get user data from spotify
@@ -111,7 +121,7 @@ export default {
         for (let i = dataResponse.length - 1; i >= 0; i -= 1) {
           // compare and validate user via user's id
           if (dataResponse[i].data.user.id === userData.ID) {
-            // Get Date and Time
+            // Get User Journey Data
             userJourney.value.push(dataResponse[i]);
           }
         }
