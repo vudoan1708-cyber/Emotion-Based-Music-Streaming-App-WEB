@@ -245,7 +245,7 @@ export default {
               status: 'updateSong',
             };
             // eslint-disable-next-line no-unused-expressions
-            data.transition === 'transition' ? props.emitter.emit('user_journey', emittedObj) : props.emitter.emit('show_diary', data);
+            await data.transition === 'transition' ? props.emitter.emit('user_journey', emittedObj) : props.emitter.emit('show_diary', data);
           }, 1500);
         }
       } else {

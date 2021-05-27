@@ -1,7 +1,5 @@
 /* eslint-disable camelcase */
 /* eslint-disable indent */
-/* eslint-disable no-param-reassign */
-/* eslint-disable max-len */
 // eslint-disable-next-line import/no-cycle
 import SongDots from '@/components/Utils/p5/classes/songDots';
 import { moodToCoordinates } from '@/components/Utils/logic/algorithm';

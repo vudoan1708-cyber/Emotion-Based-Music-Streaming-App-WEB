@@ -160,7 +160,7 @@ export default {
 
     // PROPS
     const emitterObj = ref(props.emitter);
-    // const isMobile = ref(props.mobile);
+    const isMobile = ref(props.mobile);
 
     // DOM
     const angryBtn = ref(null);
@@ -392,7 +392,7 @@ export default {
           // All The Map-Related Visualisation Elements Will Always Be Drawn When Homepage is Visited
           if (isClickable.value) {
             // The Emotion Map
-            drawMap(width, height, isClicked, starDots, chosenPoints, showMap.index, mapProperties, emitterObj.value, p);
+            drawMap(isClicked, starDots, chosenPoints, p);
 
             // Song Dots
             drawSongDots(starDots, chosenPoints, emitterObj.value);
@@ -416,34 +416,35 @@ export default {
           const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
           const mood = posOnMap(width, height, starDots, p);
           if (mapProperties.status && typeof (mood.valence) === 'number' && typeof (mood.arousal) === 'number') {
-            for (let i = 0; i < starDots.length; i += 1) {
-              for (let j = 0; j < starDots[i].length; j += 1) {
-                counter = j;
-                const region = mapRegions(p.mouseX, p.mouseY, width, height);
-                if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
-                  if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
-                    for (let k = 0; k < songDots.length; k += 1) {
-                      if (songDots[k].onHover()) {
-                        track = songDots[k];
-                      }
-                    }
-                  } else track = null;
+            // for (let i = 0; i < starDots.length; i += 1) {
+            //   for (let j = 0; j < starDots[i].length; j += 1) {
+            const region = mapRegions(p.mouseX, p.mouseY, width, height);
+            if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
+              if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
+                for (let k = 0; k < songDots.length; k += 1) {
+                  if (songDots[k].onHover()) {
+                    track = songDots[k];
+                  }
                 }
-                searchType = track === null ? 'random' : 'search';
-                // to prevent click event happens globally for all regions
-                // on clickable on one selected region
-                if (region === 1 && showMap.index === 1) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                } else if (region === 2 && showMap.index === 2) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                } else if (region === 3 && showMap.index === 3) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                } else if (region === 4 && showMap.index === 4) {
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-                }
-                // isChangeable.value = true;
-              }
+              } else track = null;
             }
+            searchType = track === null ? 'random' : 'search';
+            // to prevent click event happens globally for all regions
+            // on clickable on one selected region
+            if (region === 1 && showMap.index === 1) {
+              locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+            } else if (region === 2 && showMap.index === 2) {
+              locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+            } else if (region === 3 && showMap.index === 3) {
+              locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+            } else if (region === 4 && showMap.index === 4) {
+              locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+            }
+
+            counter += 1;
+            // isChangeable.value = true;
+            //   }
+            // }
           } else if (!mapProperties.status) {
             for (let k = 0; k < songDots.length; k += 1) {
               // If click on a song dot on the map
@@ -471,33 +472,33 @@ export default {
       };
 
       // Mouse Distance
-      // function calculateMouseDistance() {
-      //   // if the sign is -, mouse moving to the left and likewise
-      //   const x = p.mouseX - prevMousePos.x;
-      //   const y = p.mouseY - prevMousePos.y;
-      //   return { x, y };
-      // }
-      // // MAP PANNING
-      // p.mouseDragged = () => {
-      //   if (isClickable.value && songDots.length > 0 && !diary.isShown) {
-      //     for (let i = 0; i < songDots.length; i += 1) {
-      //       // For mobile
-      //       if (isMobile.value) {
-      //         // Calculate the distance between the previous and the latest mouse positions
-      //         // const { x, y } = calculateMouseDistance();
-      //         // songDots[i].panning(x, y);
-      //       } else {
-      //         // Calculate the distance between the previous and the latest mouse positions
-      //         const { x, y } = calculateMouseDistance();
-      //         songDots[i].panning(x, y);
-      //       }
-      //     }
+      function calculateMouseDistance() {
+        // if the sign is -, mouse moving to the left and likewise
+        const x = p.mouseX - prevMousePos.x;
+        const y = p.mouseY - prevMousePos.y;
+        return { x, y };
+      }
+      // MAP PANNING
+      p.mouseDragged = () => {
+        if (isClickable.value && songDots.length > 0 && !diary.isShown) {
+          for (let i = 0; i < songDots.length; i += 1) {
+            // For mobile
+            if (isMobile.value) {
+              // Calculate the distance between the previous and the latest mouse positions
+              // const { x, y } = calculateMouseDistance();
+              // songDots[i].panning(x, y);
+            } else {
+              // Calculate the distance between the previous and the latest mouse positions
+              const { x, y } = calculateMouseDistance();
+              songDots[i].panning(x, y);
+            }
+          }
 
-      //     // Update the mouse positions
-      //     prevMousePos.x = p.mouseX;
-      //     prevMousePos.y = p.mouseY;
-      //   }
-      // };
+          // Update the mouse positions
+          prevMousePos.x = p.mouseX;
+          prevMousePos.y = p.mouseY;
+        }
+      };
 
       // CURRENTLY NOT FULLY IMPLEMENTED
       // p.mouseWheel = (event) => {

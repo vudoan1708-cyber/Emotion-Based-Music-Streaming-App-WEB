@@ -131,12 +131,6 @@ export default class SongDots {
     this.p5.pop();
   }
 
-  overlaidPos(song) {
-    if (this.x === song.x && this.y === song.y) {
-      return true;
-    } return false;
-  }
-
   updateLabels(starDots, chosenPoints) {
     const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
 
