@@ -132,7 +132,11 @@ export default {
       j: 0,
       name: 'Regions on The Map',
       status: true,
-      usePlayerUntraditionally: false,
+      usePlayerUntraditionally: {
+        showPlayer: false,
+        elements: null,
+        offset: -1,
+      },
     });
 
     // triggering event to open the map
@@ -449,6 +453,10 @@ export default {
                   // const isplaying = await playSong(0, offsetTrack);
                   // console.log(isplaying);
                   await playSong(0, offsetTrack);
+                  // If a Song is Chosen on The Map
+                  // Remove The Player That Was Shown Untraditionally By Removing Songs That Was Fed To It From The Records section
+                  mapProperties.usePlayerUntraditionally.showPlayer = true;
+                  emitterObj.value.emit('map', mapProperties);
                 } else {
                   track = songDots[k];
                   searchType = track === null ? 'random' : 'search';

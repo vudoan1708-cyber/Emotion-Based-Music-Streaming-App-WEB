@@ -21,7 +21,7 @@
 
     <!-- Playing -->
     <div id="playing" v-else>
-      <Playing :appState="appState" :emitter="emitterObj" />
+      <Playing :appState="appState" :mapProperties="mapProperties" :emitter="emitterObj" />
     </div>
   </div>
 </template>
@@ -68,6 +68,11 @@ export default {
       },
       name: 'Regions on The Map',
       img: '',
+      usePlayerUntraditionally: {
+        showPlayer: true,
+        elements: null,
+        offset: 0,
+      },
     });
 
     const tracks = reactive({
@@ -94,7 +99,7 @@ export default {
     emitterObj.value.on('map', (map) => {
       // Check if A User Listens To A Playlist Via The Map
       // Or The Records Section
-      if (!map.usePlayerUntraditionally) {
+      if (!map.usePlayerUntraditionally.showPlayer) {
         mapProperties.coords.x = map.i;
         mapProperties.coords.y = map.j;
         mapProperties.name = map.name;
@@ -102,8 +107,11 @@ export default {
 
         appState.stage = !appState.map ? 2 : 1;
       } else {
-        // User is Playing Music from The Records section
+        // User is Playing Music from The Records section (D3.vue componnt)
         appState.stage = 3;
+        mapProperties.usePlayerUntraditionally.showPlayer = map.usePlayerUntraditionally.showPlayer;
+        mapProperties.usePlayerUntraditionally.elements = map.usePlayerUntraditionally.elements;
+        mapProperties.usePlayerUntraditionally.offset = map.usePlayerUntraditionally.offset;
       }
     });
 
@@ -124,6 +132,10 @@ export default {
         } else if (data.how === 'finish' && tracks.total >= tracks.min) {
           // Show the player
           appState.stage = 3;
+          // Disable Player Properties That Is Displayed Via The Records Section
+          mapProperties.usePlayerUntraditionally.showPlayer = false;
+          mapProperties.usePlayerUntraditionally.elements = null;
+          mapProperties.usePlayerUntraditionally.offset = 0;
           // If listeners just start listening to music using the emotion map
           // (transition will be null or undefined)
           if (data.transition !== 'transition') {

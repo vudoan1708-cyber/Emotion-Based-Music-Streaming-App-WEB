@@ -79,6 +79,9 @@ export default {
     appState: {
       type: Object,
     },
+    mapProperties: {
+      type: Object,
+    },
     emitter: {
       type: Object,
     },
@@ -95,6 +98,13 @@ export default {
       offset: 0,
       artists: '',
       title: '',
+    });
+
+    // Player
+    const player = reactive({
+      showPlayer: props.mapProperties.usePlayerUntraditionally.showPlayer,
+      elements: props.mapProperties.usePlayerUntraditionally.elements,
+      offset: props.mapProperties.usePlayerUntraditionally.offset,
     });
 
     // Progress Seeker
@@ -133,7 +143,10 @@ export default {
       } else {
         images.value = Play;
         songPlay.offset = songPlay.isPlaying.offset;
-        playSong(songPlay.progress_ms, songPlay.offset);
+        if (player.showPlayer && !isEmpty(player.elements)) {
+          songPlay.offset = player.offset;
+          playSong(songPlay.progress_ms, songPlay.offset, player.elements);
+        } else playSong(songPlay.progress_ms, songPlay.offset);
       }
     }
     // via spacebar
@@ -168,6 +181,7 @@ export default {
               && images.value === Play) images.value = Pause;
           }, 1200);
         } else {
+          // console.log('SOMETHING IS WRONG HERE');
           // Only Handle The Error Case At The Beginning of The Song Play, Not During
           // Checking Empty Strings and Empty Object Will Help With That
           // eslint-disable-next-line no-lonely-if
@@ -275,7 +289,13 @@ export default {
         liveUpdatePlayerBar();
       }
 
+      // Update song position by users
       seeker.percentage = (seeker.pos.x / window.innerWidth) * 100;
+
+      // Update Player if Player is forced to show untraditionally
+      player.showPlayer = props.mapProperties.usePlayerUntraditionally.showPlayer;
+      player.elements = props.mapProperties.usePlayerUntraditionally.elements;
+      player.offset = props.mapProperties.usePlayerUntraditionally.offset;
     });
 
     return {

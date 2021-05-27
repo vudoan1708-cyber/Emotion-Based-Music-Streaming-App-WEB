@@ -482,7 +482,7 @@ export async function playSong(position_ms, offset, playlistParam) {
               : `http://localhost:5000/player/play/?token=${TOKEN}&playlist=${playlistParam}&player_id=${spotifyPlayerID}&position_ms=${position_ms}&offset=${offset}`;
 
     const response = await useFetch(URL, 'GET');
-    const errorStatus = response.error !== undefined 
+    const errorStatus = response.error !== undefined
                       ? response.error.status
                       : undefined;
     if (errorStatus === 404 || errorStatus === 403) {

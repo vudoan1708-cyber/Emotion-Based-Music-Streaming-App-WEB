@@ -325,7 +325,11 @@ export default {
       j: 0,
       name: 'Regions on The Map',
       status: false,
-      usePlayerUntraditionally: true,
+      usePlayerUntraditionally: {
+        showPlayer: true,
+        elements: songDot.uris,
+        offset: 0,
+      },
     });
 
     // Play Songs
@@ -346,6 +350,8 @@ export default {
       }
       await playSong(0, offset, songDot.uris);
       // Display The Player
+      mapProperties.usePlayerUntraditionally.elements = songDot.uris;
+      mapProperties.usePlayerUntraditionally.offset = offset;
       props.emitter.emit('map', mapProperties);
     }
 
