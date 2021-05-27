@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <script src="https://raw.githack.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+  <script>
+      THREEx.ArToolkitContext.baseURL = 'https://raw.githack.com/jeromeetienne/ar.js/master/three.js/'
+  </script>
+  <script src="./script.js"></script>
+  <link rel="stylesheet" type="text/css" href="./style.css"/>
+  <title>AR.js Test</title>
+</head>
+<body style='margin: 0; overflow: hidden;'>
+  <div class="centered instructions"></div>
+  <a-scene
+    vr-mode-ui="enabled: false"
+    embedded
+    arjs="sourceType: webcam; sourceWidth:1920; sourceHeight:1080; displayWidth: 1920; displayHeight: 1080; debugUIEnabled: false;"
+  >
+    <!-- <a-text
+      value="This content will always face you."
+      look-at="[gps-camera]"
+      scale="120 120 120"
+      gps-entity-place="latitude: <add-your-latitude>; longitude: <add-your-longitude>;"
+    ></a-text> -->
+    <a-entity
+      look-at="[gps-camera]"
+      gltf-model="./assets/magnemite/scene.gltf"
+      rotation="0 180 0"
+      scale="0.05 0.05 0.05"
+      gps-entity-place="latitude: 108.2772; longitude: 14.0583;" animation-mixer/>
+    <!-- <a-box material="color: yellow" gps-entity-place="latitude: <your-latitude>; longitude: <your-longitude>"/> -->
+    <a-camera look-controls-enabled='false' arjs-look-controls='smoothingFactor: 0.1' gps-camera rotation-reader> </a-camera>
+  </a-scene>
+
+  <div class="centered">
+    <button data-action="change"></button>
+  </div>
+</body>
+</html>

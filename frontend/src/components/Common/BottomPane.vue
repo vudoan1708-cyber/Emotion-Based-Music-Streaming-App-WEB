@@ -92,12 +92,19 @@ export default {
 
     // Listen on the 'map' event
     emitterObj.value.on('map', (map) => {
-      mapProperties.coords.x = map.i;
-      mapProperties.coords.y = map.j;
-      mapProperties.name = map.name;
-      appState.map = map.status;
+      // Check if A User Listens To A Playlist Via The Map
+      // Or The Records Section
+      if (!map.usePlayerUntraditionally) {
+        mapProperties.coords.x = map.i;
+        mapProperties.coords.y = map.j;
+        mapProperties.name = map.name;
+        appState.map = map.status;
 
-      appState.stage = !appState.map ? 2 : 1;
+        appState.stage = !appState.map ? 2 : 1;
+      } else {
+        // User is Playing Music from The Records section
+        appState.stage = 3;
+      }
     });
 
     // Listen on the 'song_data' event

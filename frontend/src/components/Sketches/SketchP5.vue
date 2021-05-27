@@ -126,12 +126,13 @@ export default {
     Diary,
   },
   setup(props) {
-    // indices on map
+    // Properties on The Map
     const mapProperties = reactive({
       i: 0,
       j: 0,
       name: 'Regions on The Map',
       status: true,
+      usePlayerUntraditionally: false,
     });
 
     // triggering event to open the map
@@ -378,7 +379,9 @@ export default {
         // eslint-disable-next-line valid-typeof
         mapProperties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
         mapProperties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
-        mapProperties.status ? emitMapEvent('open') : undefined;
+
+        // Only Run This Line if User is At The Homepage
+        if (isClickable.value) mapProperties.status ? emitMapEvent('open') : undefined;
 
         if (showMap.index !== 0) {
           // For Performances Reason, Hide All Song Dots And Neighbours

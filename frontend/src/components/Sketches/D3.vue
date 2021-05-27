@@ -319,6 +319,15 @@ export default {
       songDot.which = num;
     }
 
+    // indices on map
+    const mapProperties = reactive({
+      i: 0,
+      j: 0,
+      name: 'Regions on The Map',
+      status: false,
+      usePlayerUntraditionally: true,
+    });
+
     // Play Songs
     async function replaySong(num) {
       isActive.value = num;
@@ -336,6 +345,8 @@ export default {
         }
       }
       await playSong(0, offset, songDot.uris);
+      // Display The Player
+      props.emitter.emit('map', mapProperties);
     }
 
     watch(() => [which, journey], ([key, d]) => {
