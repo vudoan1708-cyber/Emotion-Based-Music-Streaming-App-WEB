@@ -160,7 +160,7 @@ export default {
 
     // PROPS
     const emitterObj = ref(props.emitter);
-    const isMobile = ref(props.mobile);
+    // const isMobile = ref(props.mobile);
 
     // DOM
     const angryBtn = ref(null);
@@ -471,33 +471,33 @@ export default {
       };
 
       // Mouse Distance
-      function calculateMouseDistance() {
-        // if the sign is -, mouse moving to the left and likewise
-        const x = p.mouseX - prevMousePos.x;
-        const y = p.mouseY - prevMousePos.y;
-        return { x, y };
-      }
-      // MAP PANNING
-      p.mouseDragged = () => {
-        if (isClickable.value && songDots.length > 0 && !diary.isShown) {
-          for (let i = 0; i < songDots.length; i += 1) {
-            // For mobile
-            if (isMobile.value) {
-              // Calculate the distance between the previous and the latest mouse positions
-              // const { x, y } = calculateMouseDistance();
-              // songDots[i].panning(x, y);
-            } else {
-              // Calculate the distance between the previous and the latest mouse positions
-              const { x, y } = calculateMouseDistance();
-              songDots[i].panning(x, y);
-            }
-          }
+      // function calculateMouseDistance() {
+      //   // if the sign is -, mouse moving to the left and likewise
+      //   const x = p.mouseX - prevMousePos.x;
+      //   const y = p.mouseY - prevMousePos.y;
+      //   return { x, y };
+      // }
+      // // MAP PANNING
+      // p.mouseDragged = () => {
+      //   if (isClickable.value && songDots.length > 0 && !diary.isShown) {
+      //     for (let i = 0; i < songDots.length; i += 1) {
+      //       // For mobile
+      //       if (isMobile.value) {
+      //         // Calculate the distance between the previous and the latest mouse positions
+      //         // const { x, y } = calculateMouseDistance();
+      //         // songDots[i].panning(x, y);
+      //       } else {
+      //         // Calculate the distance between the previous and the latest mouse positions
+      //         const { x, y } = calculateMouseDistance();
+      //         songDots[i].panning(x, y);
+      //       }
+      //     }
 
-          // Update the mouse positions
-          prevMousePos.x = p.mouseX;
-          prevMousePos.y = p.mouseY;
-        }
-      };
+      //     // Update the mouse positions
+      //     prevMousePos.x = p.mouseX;
+      //     prevMousePos.y = p.mouseY;
+      //   }
+      // };
 
       // CURRENTLY NOT FULLY IMPLEMENTED
       // p.mouseWheel = (event) => {
