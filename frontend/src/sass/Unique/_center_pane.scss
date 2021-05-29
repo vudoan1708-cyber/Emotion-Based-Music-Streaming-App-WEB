@@ -97,35 +97,53 @@
 
 /* Responsive Grid Layout */
 @media screen and (max-width: 770px) {
-  #results {
-    margin: 20px 40px !important;
-    grid-template-columns: repeat(4, 25%) !important;
-    font-size: 15px;
+  #center_pane {
+    @include positionProperties(absolute, 0 !important, '', 0, '');
+    width: 100% !important;
+    height: 72% !important;
 
-    .result_details {
-      width: 100% !important;
+    #results {
+      margin: 20px 40px !important;
+      grid-template-columns: repeat(4, 25%) !important;
+      font-size: 15px;
+
+      .result_details {
+        width: 100% !important;
+      }
     }
   }
 }
 @media screen and (max-width: 600px) {
-  #results {
-    margin: 10px 20px !important;
-    grid-template-columns: 50% 50% !important;
-    font-size: 12px;
+  #center_pane {
+    @include positionProperties(absolute, 0 !important, '', 0, '');
+    width: 100% !important;
+    height: 72% !important;
 
-    .result_details {
-      width: 100% !important;
+    #results {
+      margin: 10px 20px !important;
+      grid-template-columns: 50% 50% !important;
+      font-size: 12px;
+
+      .result_details {
+        width: 100% !important;
+      }
     }
   }
 }
 @media screen and (max-width: 469px) {
-  #results {
-    margin: 10px 20px !important;
-    grid-template-columns: 100% !important;
-    font-size: 10px;
+  #center_pane {
+    @include positionProperties(absolute, 0 !important, '', 0, '');
+    width: 100% !important;
+    height: 72% !important;
 
-    .result_details {
-      width: 100% !important;
+    #results {
+      margin: 10px 20px !important;
+      grid-template-columns: 100% !important;
+      font-size: 10px;
+
+      .result_details {
+        width: 100% !important;
+      }
     }
   }
 }

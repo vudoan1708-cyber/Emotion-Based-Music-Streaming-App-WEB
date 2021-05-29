@@ -1,10 +1,33 @@
 @import '../Mixin/position';
 
 #left_pane {
-  @include positionProperties(absolute, 0, '0', 0, '0');
+  @include positionProperties(absolute, 0, '', '', ''); 
   width: 200px;
   height: 82%;
   background-color: rgba(44, 44, 44, 0.397);
   box-shadow: 2px 0px 5px rgb(66, 66, 66);
   z-index: 3;
+}
+
+/* Responsive Layout */
+@media screen and (max-width: 770px) {
+  #left_pane {
+    @include positionProperties(fixed !important, 0 !important, '' !important, '' !important, 0 !important); 
+    width: 100% !important;
+    height: 10% !important;
+  }
+}
+@media screen and (max-width: 600px) {
+  #left_pane {
+    @include positionProperties(fixed !important, 0 !important, '' !important, '' !important, 0 !important); 
+    width: 100% !important;
+    height: 10% !important;
+  }
+}
+@media screen and (max-width: 469px) {
+  #left_pane {
+    @include positionProperties(fixed !important, 0 !important, '' !important, '' !important, 0 !important); 
+    width: 100% !important;
+    height: 10% !important;
+  }
 }

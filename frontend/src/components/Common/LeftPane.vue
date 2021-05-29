@@ -1,8 +1,8 @@
 <template>
   <div id="left_pane">
-    <Logo />
+    <Logo :mobile="isMobile" />
     <Navigation :emitter="emitterObj" />
-    <MapKey />
+    <MapKey v-if="!isMobile" />
   </div>
 </template>
 
@@ -19,6 +19,9 @@ export default {
     emitter: {
       type: Object,
     },
+    mobile: {
+      type: Boolean,
+    },
   },
   components: {
     Logo,
@@ -26,9 +29,12 @@ export default {
     MapKey,
   },
   setup(props) {
+    // Props
     const emitterObj = ref(props.emitter);
+    const isMobile = ref(props.mobile);
     return {
       emitterObj,
+      isMobile,
     };
   },
 };

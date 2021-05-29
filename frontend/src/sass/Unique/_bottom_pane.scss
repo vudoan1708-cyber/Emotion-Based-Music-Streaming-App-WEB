@@ -62,26 +62,41 @@
 
 /* Responsive Text */
 @media screen and (max-width: 770px) {
-  h1 {
-    font-size: 1.75rem !important;
-  }
-  h5 {
-    font-size: 0.8rem !important;
+  #bottom_pane {
+    position: absolute !important;
+    bottom: 10% !important;
+
+    h1 {
+      font-size: 1.75rem !important;
+    }
+    h5 {
+      font-size: 0.8rem !important;
+    }
   }
 }
 @media screen and (max-width: 600px) {
-  h1 {
-    font-size: 1.5rem !important;
-  }
-  h5 {
-    font-size: 0.75rem !important;
+  #bottom_pane {
+    position: absolute !important;
+    bottom: 10% !important;
+
+    h1 {
+      font-size: 1.5rem !important;
+    }
+    h5 {
+      font-size: 0.75rem !important;
+    }
   }
 }
 @media screen and (max-width: 469px) {
-  h1 {
-    font-size: 1.25rem !important;
-  }
-  h5 {
-    font-size: 0.7rem !important;
+  #bottom_pane {
+    position: absolute !important;
+    bottom: 10% !important;
+
+    h1 {
+      font-size: 1.25rem !important;
+    }
+    h5 {
+      font-size: 0.7rem !important;
+    }
   }
 }

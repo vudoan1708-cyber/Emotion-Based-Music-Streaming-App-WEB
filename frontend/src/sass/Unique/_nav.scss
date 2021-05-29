@@ -7,9 +7,11 @@
   text-align: center;
 
   ul {
+    position: relative;
     display: block;
 
     li {
+      list-style: none;
       margin-bottom: 20px;
       cursor: pointer;
       text-align: left;
@@ -60,16 +62,85 @@
 /* Responsive Layout */
 @media screen and (max-width: 770px) {
   #nav {
+    height: 100%;
     font-size: 12px;
+    
+    ul {
+      height: 100%;
+      display: grid !important;
+      grid-template-columns: repeat(4, 25%) !important;
+
+      li {
+        text-align: center !important;
+        margin-bottom: 0 !important;
+
+        .nav_el {
+          display: block !important;
+          margin: 0 !important;
+          margin-top: 8px !important;
+          width: 100% !important;
+
+          img {
+            width: 25% !important;
+          }
+        }
+      }
+    }
   }
 }
 @media screen and (max-width: 600px) {
   #nav {
+    height: 100%;
     font-size: 12px;
+    
+    ul {
+      height: 100%;
+      display: grid !important;
+      grid-template-columns: repeat(4, 25%) !important;
+
+      li {
+        text-align: center !important;
+        margin-bottom: 0 !important;
+
+        .nav_el {
+          display: block !important;
+          margin: 0 !important;
+          margin-top: 8px !important;
+          width: 100% !important;
+
+          img {
+            width: 25% !important;
+          }
+        }
+      }
+    }
   }
 }
 @media screen and (max-width: 469px) {
   #nav {
+    height: 100%;
     font-size: 12px;
+    
+    ul {
+      height: 100%;
+      display: grid !important;
+      grid-template-columns: repeat(4, 25%) !important;
+
+      li {
+        text-align: center !important;
+        margin-bottom: 0 !important;
+
+        .nav_el {
+          display: block !important;
+          margin: 0 !important;
+          margin-top: 8px !important;
+          width: 100% !important;
+
+          img {
+            width: 25% !important;
+          }
+        }
+      }
+    }
   }
 }

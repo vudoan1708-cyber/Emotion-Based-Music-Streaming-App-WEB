@@ -2,8 +2,8 @@
   <div id="home">
     <SketchP5 :personalisationSettings="personalisationSettings"
               :emitter="emitter" :mobile="mobile" />
-    <TopPane />
-    <LeftPane :emitter="emitter" />
+    <TopPane :mobile="mobile" />
+    <LeftPane :emitter="emitter" :mobile="mobile" />
     <BottomPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
     <RightPane :personalisationSettings="personalisationSettings"
               :emitter="emitter" :mobile="mobile" />
