@@ -150,34 +150,19 @@ $offset: 50%;
     // Size
     .low {
       width: 25%;
-      // min-height: 30%;
-      // display: block;
-      // overflow: hidden;
-      // padding: 7.5% 0;
       height: calc(100% / 6.5);
-      // transform: scaleY(10);
       z-index: 0;
       background-color: rgba(0, 0, 0, 0.05);
     }
     .medium {
       width: 50%;
-      // min-height: 60%;
-      // display: block;
-      // overflow: hidden;
-      // padding: 10% 0;
       height: calc(100% / 5);
-      // transform: scaleY(10);
       z-index: -1;
       background-color: rgba(0, 0, 0, 0.05);
     }
     .high {
       width: 75%;
-      // min-height: 90%;
-      // display: block;
-      // overflow: hidden;
-      // padding: 15% 0;
       height: calc(100% / 4);
-      // transform: scaleY(10);
       z-index: -2;
       background-color: rgba(0, 0, 0, 0.05);
     }
@@ -289,6 +274,139 @@ $offset: 50%;
     .calmH {
       border-bottom: 4px solid rgba(122, 45, 245, 0.75);
       border-right: 4px solid rgba(122, 45, 245, 0.75);
+    }
+  }
+}
+
+/* Responsive Text & Layout */
+@media screen and (max-width: 770px) {
+  $radiusVal: 75px !important;
+  #map_cover {
+    font-size: 15px;
+
+    ul {
+      li {
+        padding: 45px 55px !important;
+      }
+
+      #top_left {
+        border-top-left-radius: $radiusVal !important;
+      }
+      
+      
+      #top_right {
+        border-top-right-radius: $radiusVal !important;
+      }
+      
+      
+      #bottom_left {
+        border-bottom-left-radius: $radiusVal !important;
+      }
+      
+      
+      #bottom_right {
+        border-bottom-right-radius: $radiusVal !important;
+      }
+    }
+  }
+
+  #map_layers {
+    font-size: 15px;
+    border-top-left-radius: $radiusVal !important;
+
+    // Layer Sizes Won't Get Changed
+  }
+}
+@media screen and (max-width: 600px) {
+  $radiusVal: 80px;
+  #map_cover {
+    font-size: 12px;
+
+    ul {
+      li {
+        padding: 45px 55px !important;
+      }
+
+      #top_left {
+        border-top-left-radius: $radiusVal !important;
+      }
+      
+      
+      #top_right {
+        border-top-right-radius: $radiusVal !important;
+      }
+      
+      
+      #bottom_left {
+        border-bottom-left-radius: $radiusVal !important;
+      }
+      
+      
+      #bottom_right {
+        border-bottom-right-radius: $radiusVal !important;
+      }
+    }
+  }
+
+  #map_layers {
+    font-size: 12px;
+    border-top-left-radius: $radiusVal !important;
+    // Layer Sizes Get Changed
+    // Size
+    .low {
+      width: 30% !important;
+    }
+    .medium {
+      width: 60% !important;
+    }
+    .high {
+      width: 90% !important;
+    }
+  }
+}
+@media screen and (max-width: 469px) {
+  $radiusVal: 80px;
+  #map_cover {
+    font-size: 10px;
+
+    ul {
+      li {
+        padding: 45px 45px !important;
+      }
+
+      #top_left {
+      border-top-left-radius: $radiusVal !important;
+    }
+    
+      #top_right {
+        border-top-right-radius: $radiusVal !important;
+      }
+      
+      
+      #bottom_left {
+        border-bottom-left-radius: $radiusVal !important;
+      }
+      
+      
+      #bottom_right {
+        border-bottom-right-radius: $radiusVal !important;
+      }
+    }
+  }
+
+  #map_layers {
+    font-size: 10px;
+    border-top-left-radius: $radiusVal !important;
+    // Layer Sizes Get Changed
+    // Size
+    .low {
+      width: 35% !important;
+    }
+    .medium {
+      width: 70% !important;
+    }
+    .high {
+      width: 105% !important;
     }
   }
 }

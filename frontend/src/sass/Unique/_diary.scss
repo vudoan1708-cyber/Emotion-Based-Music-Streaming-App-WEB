@@ -78,3 +78,29 @@
     }
   }
 }
+
+/* Responsive Text */
+@media screen and (max-width: 770px) {
+  #diary_container {
+    font-size: 15px !important;
+    #save_btn {
+      font-size: 0.8rem !important;
+    }
+  }
+}
+@media screen and (max-width: 600px) {
+  #diary_container {
+    font-size: 12px !important;
+    #save_btn {
+      font-size: 0.75rem !important;
+    }
+  }
+}
+@media screen and (max-width: 469px) {
+  #diary_container {
+    font-size: 10px !important;
+    #save_btn {
+      font-size: 0.7rem !important;
+    }
+  }
+}

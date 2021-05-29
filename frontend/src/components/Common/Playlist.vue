@@ -3,7 +3,8 @@
 
     <!-- Collected Tracks -->
     <h3>Collected Tracks: {{ acceptedSongData.length }}</h3>
-    <div ref="collectedTracksStyling" id="collected" style="min-height: 30%;"
+    <div ref="collectedTracksStyling" id="collected"
+        :style="{ minHeight: minHeightVal.collectedTracks }"
                 @mouseup="endDrag('collected')"
                 @mouseover="onMouseOverCollected(true)"
                 @mouseout="onMouseOverCollected(false)">
@@ -21,7 +22,8 @@
 
     <!-- All Tracks -->
     <h3>All Tracks: {{ allSongData.length }}</h3>
-    <div ref="allTracksStyling" id="all" style="min-height: 40%;"
+    <div ref="allTracksStyling" id="all"
+        :style="{ minHeight: minHeightVal.allTracks }"
               @mouseup="endDrag('all')">
       <div class="tracks tracks_all_info" v-for="(data, dataKey) in allSongData" :key="dataKey"
               @mousedown="initDrag($event, data.id)">
@@ -59,7 +61,7 @@ import { getAllData, updateData } from '@/handlers/mongdb';
 import userJourneyObj from '@/components/JSON/userJourneyObj';
 
 import {
-  ref, reactive, watch,
+  ref, reactive, watch, onBeforeMount,
 } from 'vue';
 
 export default {
@@ -68,14 +70,26 @@ export default {
     emitter: {
       type: Object,
     },
+    mobile: {
+      type: Boolean,
+    },
   },
   setup(props) {
+    // Props
+    const isMobile = ref(props.mobile);
+
     const allTracksStyling = ref(null);
     const collectedTracksStyling = ref(null);
 
     const allSongData = ref([]);
     const acceptedSongData = ref([]);
     const personalisedTracks = ref([]);
+
+    // Dynamic Styling
+    const minHeightVal = reactive({
+      collectedTracks: '30%',
+      allTracks: '40%',
+    });
 
     const isPlayerActive = ref(false);
 
@@ -194,7 +208,7 @@ export default {
             //   // Update user journey database
             //   await updateData(dataID.value, dataObj.value, 1);
             // }
-            if (collectedTracksStyling.value.style.minHeight === '30%') collectedTracksStyling.value.style.minHeight = '';
+            if (collectedTracksStyling.value.style.minHeight === minHeightVal.collectedTracks) collectedTracksStyling.value.style.minHeight = '';
           } else {
             // eslint-disable-next-line no-unused-expressions
             allSongData.value.length === 0
@@ -202,7 +216,7 @@ export default {
               : undefined;
             // push received data to the array
             allSongData.value.push(data.song);
-            if (allTracksStyling.value.style.minHeight === '40%') allTracksStyling.value.style.minHeight = '';
+            if (allTracksStyling.value.style.minHeight === minHeightVal.allTracks) allTracksStyling.value.style.minHeight = '';
           }
 
         // if a song is removed
@@ -215,7 +229,7 @@ export default {
         // if all songs are removed
         } else if (data.how === 'removeAll') {
           // reset
-          collectedTracksStyling.value.style.minHeight = '30%';
+          collectedTracksStyling.value.style.minHeight = minHeightVal.collectedTracks;
           acceptedSongData.value = [...data.playlist];
           tracks.ids = [];
           tracks.artists = [];
@@ -341,9 +355,21 @@ export default {
       }
     }
 
+    // Mobile Responsiveness Design
+    function onMobileResize() {
+      if (isMobile.value) {
+        minHeightVal.collectedTracks = '30%';
+        minHeightVal.allTracks = '40%';
+      }
+    }
+
     // Watch Function cannot wait for a response from an execution on ASYNC/AWAIT
     watch((isPlayerActive), (isActive) => {
       awaitToAddSong(isActive);
+    });
+
+    onBeforeMount(() => {
+      onMobileResize();
     });
 
     return {
@@ -356,6 +382,7 @@ export default {
       duringDrag,
       endDrag,
       draggableElement,
+      minHeightVal,
     };
   },
 };

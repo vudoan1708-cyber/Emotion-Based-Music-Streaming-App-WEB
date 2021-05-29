@@ -10,18 +10,77 @@
 }
 
 /* Responsive Layout */
+$collapsibleBtnColor: rgb(116, 116, 116);
 @media screen and (max-width: 770px) {
+
+  .collapsible_btn {
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgb(34, 36, 34);
+    color: $collapsibleBtnColor;
+    border: 2px solid $collapsibleBtnColor;
+  }
+
+  #right_pane_display_button {
+    @include positionProperties(absolute, '', 0, 0, '');
+  }
+
+  #right_pane_close_button {
+    @include positionProperties(absolute, 0, '', 0, '');
+  }
+
   #right_pane {
+    width: 100% !important;
     height: 75% !important;
+    z-index: 3 !important;
   }
 }
 @media screen and (max-width: 600px) {
+  .collapsible_btn {
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgb(34, 36, 34);
+    color: $collapsibleBtnColor;
+    border: 2px solid $collapsibleBtnColor;
+  }
+
+  #right_pane_display_button {
+    @include positionProperties(absolute, '', 0, 0, '');
+  }
+
+  #right_pane_close_button {
+    @include positionProperties(absolute, 0, '', 0, '');
+  }
+
   #right_pane {
+    width: 100% !important;
     height: 75% !important;
+    z-index: 3 !important;
   }
 }
 @media screen and (max-width: 469px) {
+  .collapsible_btn {
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgb(34, 36, 34);
+    color: $collapsibleBtnColor;
+    border: 2px solid $collapsibleBtnColor;
+  }
+
+  #right_pane_display_button {
+    @include positionProperties(absolute, '', 0, 0, '');
+  }
+
+  #right_pane_close_button {
+    @include positionProperties(absolute, 0, '', 0, '');
+  }
+
   #right_pane {
+    width: 100% !important;
     height: 75% !important;
+    z-index: 3 !important;
   }
 }
