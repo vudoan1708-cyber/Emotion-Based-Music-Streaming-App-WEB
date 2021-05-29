@@ -73,3 +73,56 @@
     @extend .tracks;
   }
 }
+
+/* Responsive Layout */
+@media screen and (max-width: 770px) {
+  #playlist_container {
+    margin: 7px !important;
+
+    h3 {
+      font-size: 12px;
+    }
+
+    // #collected {
+    //   max-height: 25% !important;
+    // }
+
+    // #all {
+    //   max-height: 30% !important;
+    // }
+  }
+}
+@media screen and (max-width: 600px) {
+  #playlist_container {
+    margin: 7px !important;
+
+    h3 {
+      font-size: 12px;
+    }
+
+    // #collected {
+    //   max-height: 25% !important;
+    // }
+
+    // #all {
+    //   max-height: 30% !important;
+    // }
+  }
+}
+@media screen and (max-width: 469px) {
+  #playlist_container {
+    margin: 7px !important;
+
+    h3 {
+      font-size: 12px;
+    }
+
+    // #collected {
+    //   max-height: 25% !important;
+    // }
+
+    // #all {
+    //   max-height: 30% !important;
+    // }
+  }
+}

@@ -84,3 +84,48 @@
     }
   }
 }
+
+/* Responsive Layout */
+@media screen and (max-width: 770px) {
+  #user_account {
+   margin: 20px 5px;
+
+    ul {
+      margin: 0 10px 15px 0 !important;
+      width: 55% !important;
+
+      #user_name {
+        font-size: 15px !important;
+      }
+    }
+  }
+}
+@media screen and (max-width: 600px) {
+  #user_account {
+   margin: 10px 2px;
+
+    ul {
+      margin: 0 10px 15px 0 !important;
+      width: 80% !important;
+
+      #user_name {
+        font-size: 12px !important;
+      }
+    }
+  }
+}
+@media screen and (max-width: 469px) {
+  #user_account {
+   margin: 10px 2px;
+
+    ul {
+      margin: 0 0 15px 0 !important;
+      width: 100% !important;
+
+      #user_name {
+
+        font-size: 10px !important;
+      }
+    }
+  }
+}

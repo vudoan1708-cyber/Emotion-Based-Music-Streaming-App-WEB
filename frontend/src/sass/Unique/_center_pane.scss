@@ -13,10 +13,10 @@
 
   #results {
     margin: 20px 40px;
-    position: absolute;
+    // position: absolute;
     display: grid;
-    grid-template-columns: 20% 20% 20% 20% 20%;
-    grid-gap: 10px;
+    grid-template-columns: repeat(5, 20%);
+    gap: 10px;
 
     .result_details {
       position: relative;
@@ -62,35 +62,70 @@
       }
     }
 
-    #next_back_button {
-      grid-column: 2 / 5;
-      width: 100%;
-      text-align: center;
-
-      .center_nav_button {
-        display: inline-block;
-        margin: 10px;
-        padding: 5px;
-        color: rgb(214, 214, 214);
-        background-color: rgb(22, 22, 22);
-        border-radius: 5px;
-      }
-
-      #back_button,
-      #next_button {
-        cursor: pointer;
-        color: rgb(173, 173, 173) !important;
-
-        &:hover {
-          color: rgb(214, 214, 214) !important;
-          background-color: rgb(56, 56, 56);
-        }
-      }
-    }
   }
-
+  
   #no_results {
     margin: 40px;
     color: rgba(184, 184, 184, 0.733);
+  }
+
+  #next_back_button {
+    width: 100%;
+    text-align: center;
+
+    .center_nav_button {
+      display: inline-block;
+      margin: 10px;
+      padding: 5px;
+      color: rgb(214, 214, 214);
+      background-color: rgb(22, 22, 22);
+      border-radius: 5px;
+    }
+
+    #back_button,
+    #next_button {
+      cursor: pointer;
+      color: rgb(173, 173, 173) !important;
+
+      &:hover {
+        color: rgb(214, 214, 214) !important;
+        background-color: rgb(56, 56, 56);
+      }
+    }
+  }
+}
+
+/* Responsive Grid Layout */
+@media screen and (max-width: 770px) {
+  #results {
+    margin: 20px 40px !important;
+    grid-template-columns: repeat(4, 25%) !important;
+    font-size: 15px;
+
+    .result_details {
+      width: 100% !important;
+    }
+  }
+}
+@media screen and (max-width: 600px) {
+  #results {
+    margin: 10px 20px !important;
+    grid-template-columns: 50% 50% !important;
+    font-size: 12px;
+
+    .result_details {
+      width: 100% !important;
+    }
+  }
+}
+@media screen and (max-width: 469px) {
+  #results {
+    margin: 10px 20px !important;
+    grid-template-columns: 100% !important;
+    font-size: 10px;
+
+    .result_details {
+      width: 100% !important;
+    }
   }
 }

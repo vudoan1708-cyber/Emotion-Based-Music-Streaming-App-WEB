@@ -15,6 +15,7 @@
     </ul>
   </div>
 
+  <!-- layer of emotion intensities -->
   <div id="map_layers" v-if="mapProperties.status">
     <div id="corners">
       <!-- Aggressive -->
@@ -58,7 +59,10 @@
   <!-- Diary -->
   <transition name="fade">
     <Diary :emitter="emitterObj" :diary="diary" v-if="diary.isShown" />
-    <!-- <Diary :emitter="emitterObj" :diary="diary" /> -->
+  </transition>
+
+  <!-- Enter AR mode -->
+  <transition name="fade">
   </transition>
 </template>
 

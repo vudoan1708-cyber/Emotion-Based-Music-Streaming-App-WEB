@@ -60,16 +60,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#search_area {
-  position: relative;
-  margin: 40px;
-
-  input[type=text] {
-    width: 40%;
-    font-size: 1.5rem;
-    border-radius: 20px;
-    outline: none;
-    padding: 5px 20px;
-  }
-}
+@import '@/sass/Unique/_search';
 </style>

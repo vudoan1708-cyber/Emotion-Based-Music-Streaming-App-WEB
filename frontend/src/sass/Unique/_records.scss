@@ -77,3 +77,32 @@
     @extend #records_area;
   }
 }
+
+/* Responsive Grid Layout */
+@media screen and (max-width: 770px) {
+  #records_display {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-areas: 'myArea myArea' !important;
+    gap: 5px !important;
+
+    font-size: 15px;
+  }
+}
+@media screen and (max-width: 600px) {
+  #records_display {
+    grid-template-columns: 100% !important;
+    grid-template-areas: 'myArea' !important;
+    gap: 20px !important;
+
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 469px) {
+  #records_display {
+    grid-template-columns: 100% !important;
+    grid-template-areas: 'myArea' !important;
+    gap: 10px !important;
+
+    font-size: 10px;
+  }
+}

@@ -27,6 +27,9 @@ export default {
     emitter: {
       type: Object,
     },
+    mobile: {
+      type: Boolean,
+    },
   },
   components: {
     SettingsBoard,
@@ -36,14 +39,16 @@ export default {
   setup(props) {
     const emitterObj = ref(props.emitter);
     const settings = ref(props.personalisationSettings);
+    const isMobile = ref(props.mobile);
 
-    watch(() => props.personalisationSettings, (data) => {
-      settings.value = data;
+    watch(props.personalisationSettings, (s) => {
+      settings.value = s;
     });
 
     return {
       settings,
       emitterObj,
+      isMobile,
     };
   },
 };

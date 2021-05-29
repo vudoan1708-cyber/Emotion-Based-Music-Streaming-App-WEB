@@ -12,3 +12,20 @@
     color: rgb(175, 175, 175);
   }
 }
+
+/* Responsive Text */
+@media screen and (max-width: 770px) {
+  h1 {
+    font-size: 2.75rem !important;
+  }
+}
+@media screen and (max-width: 600px) {
+  h1 {
+    font-size: 2.5rem !important;
+  }
+}
+@media screen and (max-width: 469px) {
+  h1 {
+    font-size: 2.0rem !important;
+  }
+}

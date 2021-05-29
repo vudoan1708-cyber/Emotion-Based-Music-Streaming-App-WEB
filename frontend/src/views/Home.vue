@@ -5,7 +5,8 @@
     <TopPane />
     <LeftPane :emitter="emitter" />
     <BottomPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
-    <RightPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
+    <RightPane :personalisationSettings="personalisationSettings"
+              :emitter="emitter" :mobile="mobile" />
     <CenterPane :userJourney="userJourney" :emitter="emitter" />
   </div>
 </template>

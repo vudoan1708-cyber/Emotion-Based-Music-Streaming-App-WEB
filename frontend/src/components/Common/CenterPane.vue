@@ -10,44 +10,43 @@
     <Portfolio v-else :emitter="emitterObj" />
 
     <!-- Search Result Board -->
-    <div v-if="number === 2 && searchResults.length !== 0" id="results">
-      <div v-for="(searchResult, searchKey) in searchResults" :key="searchKey"
+    <section v-if="number === 2 && searchResults.length !== 0" id="results">
+      <ul v-for="(searchResult, searchKey) in searchResults" :key="searchKey"
         class="result_details" @click="plotTrackOnTheMap(searchResult)">
-        <ul>
-          <li><img v-if="searchResult.error === undefined"
-            :src="searchResult.album_imgs.url" />
-            <!-- Valence & Arousal Values When On Hover -->
-            <div class="v-a">
-              <div class="track_moods">
-                <div v-if="searchResult.error === undefined">
-                  <b>Valence: {{ searchResult.valence }}</b>
-                </div>
-                <div v-if="searchResult.error === undefined">
-                  <b>Arousal: {{ searchResult.arousal }}</b>
-                </div>
+        <li><img v-if="searchResult.error === undefined"
+          :src="searchResult.album_imgs.url" />
+          <!-- Valence & Arousal Values When On Hover -->
+          <div class="v-a">
+            <div class="track_moods">
+              <div v-if="searchResult.error === undefined">
+                <b>Valence: {{ searchResult.valence }}</b>
+              </div>
+              <div v-if="searchResult.error === undefined">
+                <b>Arousal: {{ searchResult.arousal }}</b>
               </div>
             </div>
-          </li>
-          <li v-if="searchResult.error === undefined"
-            id="track_title"><h3>{{ searchResult.title }}</h3>
-          </li>
-          <li v-if="searchResult.error === undefined"
-            id="artist_name">{{ searchResult.artist_names }}
-          </li>
-        </ul>
-      </div>
-      <div id="next_back_button">
-        <h3 v-if="searchPage > 1" id="back_button" class="center_nav_button"
-          @click="navigateThroughPages(-1)">&lt;</h3>
-        <h2 class="center_nav_button">{{ searchPage }}</h2>
-        <h3 id="next_button" class="center_nav_button"
-          @click="navigateThroughPages(1)">&gt;</h3>
-      </div>
-    </div>
+          </div>
+        </li>
+        <li v-if="searchResult.error === undefined"
+          id="track_title"><h3>{{ searchResult.title }}</h3>
+        </li>
+        <li v-if="searchResult.error === undefined"
+          id="artist_name">{{ searchResult.artist_names }}
+        </li>
+      </ul>
+    </section>
     <div v-else-if="number === 2 && searchResults.length === 0 && searchKeywords !== ''"
       id="no_results">
       <h3>No Results Found For "{{ searchKeywords }}"</h3>
     </div>
+
+    <section v-if="number === 2 && searchResults.length !== 0" id="next_back_button">
+      <h3 v-if="searchPage > 1" id="back_button" class="center_nav_button"
+        @click="navigateThroughPages(-1)">&lt;</h3>
+      <h2 class="center_nav_button">{{ searchPage }}</h2>
+      <h3 id="next_button" class="center_nav_button"
+        @click="navigateThroughPages(1)">&gt;</h3>
+    </section>
   </div>
 </template>
 

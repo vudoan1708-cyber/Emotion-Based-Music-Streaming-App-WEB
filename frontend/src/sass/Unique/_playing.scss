@@ -179,3 +179,20 @@
     }
   }
 }
+
+/* Responsive Grid Layout */
+@media screen and (max-width: 770px) {
+  #playing_container {
+    font-size: 15px !important;
+  }
+}
+@media screen and (max-width: 600px) {
+  #playing_container {
+    font-size: 12px !important;
+  }
+}
+@media screen and (max-width: 469px) {
+  #playing_container {
+    font-size: 10px !important;
+  }
+}

@@ -56,3 +56,20 @@
     }
   }
 }
+
+/* Responsive Layout */
+@media screen and (max-width: 770px) {
+  #nav {
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 600px) {
+  #nav {
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 469px) {
+  #nav {
+    font-size: 12px;
+  }
+}
