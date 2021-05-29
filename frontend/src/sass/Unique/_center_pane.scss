@@ -100,7 +100,7 @@
   #center_pane {
     @include positionProperties(absolute, 0 !important, '', 0, '');
     width: 100% !important;
-    height: 72% !important;
+    height: 75% !important;
 
     #results {
       margin: 20px 40px !important;
@@ -117,7 +117,7 @@
   #center_pane {
     @include positionProperties(absolute, 0 !important, '', 0, '');
     width: 100% !important;
-    height: 72% !important;
+    height: 75% !important;
 
     #results {
       margin: 10px 20px !important;
@@ -134,7 +134,7 @@
   #center_pane {
     @include positionProperties(absolute, 0 !important, '', 0, '');
     width: 100% !important;
-    height: 72% !important;
+    height: 75% !important;
 
     #results {
       margin: 10px 20px !important;

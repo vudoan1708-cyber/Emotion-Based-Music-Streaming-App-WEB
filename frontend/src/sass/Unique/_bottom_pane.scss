@@ -60,11 +60,16 @@
   }
 }
 
-/* Responsive Text */
+/* Responsive Text & Layout */
 @media screen and (max-width: 770px) {
   #bottom_pane {
     position: absolute !important;
     bottom: 10% !important;
+    height: 15% !important;
+
+    #map {
+      margin: 0 !important;
+    }
 
     h1 {
       font-size: 1.75rem !important;
@@ -78,6 +83,11 @@
   #bottom_pane {
     position: absolute !important;
     bottom: 10% !important;
+    height: 15% !important;
+
+    #map {
+      margin: 0 !important;
+    }
 
     h1 {
       font-size: 1.5rem !important;
@@ -91,6 +101,11 @@
   #bottom_pane {
     position: absolute !important;
     bottom: 10% !important;
+    height: 15% !important;
+
+    #map {
+      margin: 0 !important;
+    }
 
     h1 {
       font-size: 1.25rem !important;

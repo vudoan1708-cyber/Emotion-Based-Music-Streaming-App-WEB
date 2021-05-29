@@ -4,7 +4,8 @@
               :emitter="emitter" :mobile="mobile" />
     <TopPane :mobile="mobile" />
     <LeftPane :emitter="emitter" :mobile="mobile" />
-    <BottomPane :personalisationSettings="personalisationSettings" :emitter="emitter" />
+    <BottomPane :personalisationSettings="personalisationSettings"
+                :emitter="emitter" :mobile="mobile" />
     <RightPane :personalisationSettings="personalisationSettings"
               :emitter="emitter" :mobile="mobile" />
     <CenterPane :userJourney="userJourney" :emitter="emitter" />

@@ -47,7 +47,7 @@
       </div>
 
       <!-- Volume -->
-      <div id="volume">
+      <div id="volume" v-if="!isMobile">
         <input ref="volumeRef" type="range" min="1" max="100" value="100"
           @change="setVolume" />
       </div>
@@ -85,8 +85,13 @@ export default {
     emitter: {
       type: Object,
     },
+    mobile: {
+      type: Boolean,
+    },
   },
   setup(props) {
+    const isMobile = ref(props.mobile);
+
     // images
     const images = ref(Play);
 
@@ -315,6 +320,7 @@ export default {
       Next,
       Previous,
       skipSong,
+      isMobile,
     };
   },
 };

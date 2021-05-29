@@ -37,3 +37,19 @@
   }
 }
 
+/* Responsive Text */
+@media screen and (max-width: 770px) {
+  #bar_styling, .song_detail, h3 {
+    font-size: 1.1rem;
+  }
+}
+@media screen and (max-width: 600px) {
+  #bar_styling, .song_detail, h3 {
+    font-size: 0.75rem;
+  }
+}
+@media screen and (max-width: 469px) {
+  #bar_styling, .song_detail, h3 {
+    font-size: 0.5rem;
+  }
+}

@@ -21,7 +21,8 @@
 
     <!-- Playing -->
     <div id="playing" v-else>
-      <Playing :appState="appState" :mapProperties="mapProperties" :emitter="emitterObj" />
+      <Playing :appState="appState" :mapProperties="mapProperties"
+                :emitter="emitterObj" :mobile="isMobile" />
     </div>
   </div>
 </template>
@@ -50,12 +51,19 @@ export default {
     emitter: {
       type: Object,
     },
+    mobile: {
+      type: Boolean,
+    },
   },
   components: {
     LoadingBar,
     Playing,
   },
   setup(props) {
+    // Props
+    const emitterObj = ref(props.emitter);
+    const isMobile = ref(props.mobile);
+
     const appState = reactive({
       map: true,
       stage: 1,
@@ -88,9 +96,6 @@ export default {
 
     // Get User ID
     const userID = ref('');
-
-    // Props
-    const emitterObj = ref(props.emitter);
 
     // Data Obj for userJourney database
     const dataObj = ref({});
@@ -187,6 +192,7 @@ export default {
       mapProperties,
       tracks,
       emitterObj,
+      isMobile,
     };
   },
 };
