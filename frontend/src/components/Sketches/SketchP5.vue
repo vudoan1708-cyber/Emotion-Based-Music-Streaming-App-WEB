@@ -238,7 +238,9 @@ export default {
     // listen to click event from the dom elements
     function instantiateMap(num) {
       showMap.index = changeMap(num, showMap.index, angryBtn.value, happyBtn.value, sadBtn.value, calmBtn.value);
-      if (checkSongDotsSize() > 0) {
+      // If The Used Device is Mobile / Tablet and The User Has Their Spotify Playlist Plotted On The Map Already
+      if (checkSongDotsSize() > 0 && isMobile.value) {
+        // Allow Them To Use The Zoom Feature
         isZoomable.value = true;
       }
     }
@@ -305,8 +307,6 @@ export default {
         if (counter === 0 || counter === undefined) {
           // Either, a click events (on song dots), or a search is accepted
           if (isSearched.value || isClickable.value) {
-            // Allow Map Zooming
-            isZoomable.value = true;
             // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
             const { valence, arousal } = indicesToMood(i, j, starDots);
 
@@ -324,6 +324,9 @@ export default {
             //   size: starDots[i][j].size,
             // };
             // socket.emit('click', data);
+
+            // Allow Map Zooming
+            isZoomable.value = true;
 
             // manipulate data to be sent to another component file
             mapProperties.status = false;
@@ -467,13 +470,15 @@ export default {
             searchType = track === null ? 'random' : 'search';
             // to prevent click event happens globally for all regions
             // on clickable on one selected region
-            if (region === 1 && showMap.index === 1) {
+            if (region === 1 && showMap.index === 1 && !isZoomable.value) {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-            } else if (region === 2 && showMap.index === 2) {
+            } else if (region === 2 && showMap.index === 2 && !isZoomable.value) {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-            } else if (region === 3 && showMap.index === 3) {
+            } else if (region === 3 && showMap.index === 3 && !isZoomable.value) {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-            } else if (region === 4 && showMap.index === 4) {
+            } else if (region === 4 && showMap.index === 4 && !isZoomable.value) {
+              locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+            } else if (isMobile.value && isZoomable.value) {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
             }
 
