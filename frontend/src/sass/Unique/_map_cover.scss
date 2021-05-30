@@ -285,6 +285,8 @@ $offset: 50%;
     font-size: 15px;
 
     ul {
+      gap: 20px !important;
+
       li {
         padding: 45px 55px !important;
       }
@@ -323,6 +325,8 @@ $offset: 50%;
     font-size: 12px;
 
     ul {
+      gap: 20px !important;
+
       li {
         padding: 45px 55px !important;
       }
@@ -370,6 +374,8 @@ $offset: 50%;
     font-size: 10px;
 
     ul {
+      gap: 0px !important;
+
       li {
         padding: 45px 45px !important;
       }
@@ -400,13 +406,13 @@ $offset: 50%;
     // Layer Sizes Get Changed
     // Size
     .low {
-      width: 35% !important;
+      width: 25% !important;
     }
     .medium {
-      width: 70% !important;
+      width: 50% !important;
     }
     .high {
-      width: 105% !important;
+      width: 75% !important;
     }
   }
 }

@@ -16,9 +16,8 @@ export function posOnMap(width, height, starDots, p5) {
   // to get affective values
   /// start by translating coordinates values to indices
   const indices = coordinatesToIndices(p5.mouseX, p5.mouseY, width, height);
-
-  if (indices.i >= 0 && indices.i < starDots[starDots.length - 1][0].i) {
-    if (indices.j >= 0 && indices.j < starDots[0][starDots[0].length - 1].j) {
+  if (indices.i >= 0 && indices.i <= starDots[starDots.length - 1][0].i) {
+    if (indices.j >= 0 && indices.j <= starDots[0][starDots[0].length - 1].j) {
       // then translate those indices to affective values
       const mood = indicesToMood(indices.i, indices.j, starDots);
       const { valence, arousal } = mood;

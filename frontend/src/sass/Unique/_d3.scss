@@ -30,6 +30,10 @@
       top: 50%;
       transform: translateY(-50%);
 
+      h2 {
+        text-align: center;
+      }
+
       .btns {
         position: relative;
         display: inline-block;
@@ -163,6 +167,167 @@
               outline: none;
               padding: 5px 20px;
               word-wrap: break-word;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Responsive Text & Layout */
+@media screen and (max-width: 770px) {
+  #detail {
+    .board {
+      // Text: Date & Time
+      #journey_date {
+        font-size: 30px !important;
+      }
+      // Text: My Emotion Map
+      #plain_text {
+        font-size: 10px !important;
+      }
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+    #info {
+      font-size: 12px;
+      
+      .btns {
+        img {
+          width: 75%;
+        }
+      }
+    }
+    
+    #mood {
+
+      #collapse_btn {
+        padding: 18px !important;
+      }
+
+      #story {
+        .update_btn {
+          width: 20% !important;
+        }
+
+        #diary_wrapper {
+          #story_title,
+          #story_content {
+            font-size: 15px !important;
+
+            .diary_update {
+              textarea {
+                font-size: 15px !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 600px) {
+  #detail {
+    .board {
+      // Text: Date & Time
+      #journey_date {
+        font-size: 25px !important;
+      }
+      // Text: My Emotion Map
+      #plain_text {
+        font-size: 10px !important;
+      }
+    }
+
+    h2 {
+      font-size: 15px;
+    }
+    #info {
+      font-size: 12px;
+      
+      .btns {
+        img {
+          width: 75%;
+        }
+      }
+    }
+    
+    #mood {
+
+      #collapse_btn {
+        padding: 15px !important;
+      }
+
+      #story {
+        .update_btn {
+          width: 15% !important;
+        }
+
+        #diary_wrapper {
+          #story_title,
+          #story_content {
+            font-size: 12px !important;
+
+            .diary_update {
+              textarea {
+                font-size: 12px !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 469px) {
+  #detail {
+    .board {
+      // Text: Date & Time
+      #journey_date {
+        font-size: 20px !important;
+      }
+      // Text: My Emotion Map
+      #plain_text {
+        font-size: 10px !important;
+      }
+    }
+
+    h2 {
+      font-size: 12px;
+    }
+    #info {
+      font-size: 9px;
+      
+      .btns {
+        img {
+          width: 50%;
+        }
+      }
+    }
+    
+    #mood {
+
+      #collapse_btn {
+        padding: 12px !important;
+      }
+
+      #story {
+        .update_btn {
+          width: 15% !important;
+        }
+
+        #diary_wrapper {
+          #story_title,
+          #story_content {
+            font-size: 10px !important;
+
+            .diary_update {
+              textarea {
+                font-size: 10px !important;
+              }
             }
           }
         }

@@ -27,12 +27,12 @@
           <!-- Container -->
           <rect x="0" y="0" :width="`${canvas.width}%`" :height="`${canvas.height}%`" fill="black"></rect>
           <!-- Date -->
-          <text :x="`${canvas.width / 2}%`" :y="`${margin.top - 5}%`" fill="white" font-size="2em" text-anchor="middle">
+          <text id="journey_date" :x="`${canvas.width / 2}%`" :y="`${margin.top - 5}%`" fill="white" font-size="2em" text-anchor="middle">
             <tspan :x="`${canvas.width / 2}%`">{{ journey.date }}</tspan>
             <tspan :x="`${canvas.width / 2}%`" dy="1.5em">at {{ journey.time }}</tspan>
           </text>
           <!-- Title -->
-          <text :x="`${canvas.width / 2}%`" :y="`${margin.top + 15}%`" fill="rgba(255, 255, 255, .75)"  text-anchor="middle">My Emotion Journey</text>
+          <text id="plain_text" :x="`${canvas.width / 2}%`" :y="`${margin.top + 15}%`" fill="rgba(255, 255, 255, .75)"  text-anchor="middle">My Emotion Journey</text>
 
           <!-- Add Scatter Plot -->
           <g v-for="(valence, valenceKey) in journey.songs.mood_scores.valence" :key="valenceKey">
