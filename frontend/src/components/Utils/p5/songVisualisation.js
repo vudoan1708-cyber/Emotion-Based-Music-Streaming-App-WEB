@@ -62,3 +62,7 @@ export function drawSongDots(starDots, chosenPoints, emitter) {
     }
   }
 }
+
+export function checkSongDotsSize() {
+  return songDots.length;
+}

@@ -6,7 +6,7 @@
   </div>
 
   <!-- map cover -->
-  <div id="map_cover" v-if="mapProperties.status">
+  <div id="map_cover" v-if="mapProperties.status && !isZoomable">
     <ul>
       <li id="top_left" style="opacity: 1;" @click=instantiateMap(1) ref="angryBtn">Aggressive</li>
       <li id="top_right" style="opacity: 1;" @click=instantiateMap(2) ref="happyBtn">Exciting</li>
@@ -16,7 +16,7 @@
   </div>
 
   <!-- layer of emotion intensities -->
-  <div id="map_layers" v-if="mapProperties.status">
+  <div id="map_layers" v-if="mapProperties.status && !isZoomable">
     <div id="corners">
       <!-- Aggressive -->
       <ul id="angryCorner" v-if="showMap.index === 1">
@@ -62,7 +62,7 @@
   </transition>
 
   <!-- Map Zoom -->
-  <transition name="fade" v-if="isMobile">
+  <transition name="fade" v-if="isMobile && isZoomable">
     <div id="map_zoom_btns">
       <div class="zoom_btn" id="zoomIn" @click="mapZooming($event, 1)">+</div>
       <div class="zoom_btn" id="zoomOut" @click="mapZooming($event, -1)">-</div>
@@ -97,7 +97,7 @@ import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/galaxyVisuali
 import {
   createMap, drawMap, posOnMap, mapConstraintVisualisation,
 } from '@/components/Utils/p5/emotionMapVisualisation';
-import { songDots, drawSongDots } from '@/components/Utils/p5/songVisualisation';
+import { songDots, drawSongDots, checkSongDotsSize } from '@/components/Utils/p5/songVisualisation';
 // import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
 import {
@@ -199,8 +199,9 @@ export default {
 
     // To Track Mouse Click Event Inbound or Outbound
     const clickOutBound = ref(false);
-    // Check If The Map is Pannable Based on The Outbound Variable
+    // Check If The Map is Pan-able & Zoomable Based on The Outbound Variable
     const isMapPannable = ref(false);
+    const isZoomable = ref(false);
 
     // Delay Time To Display The Instruction Board
     const isInstructionsShown = ref(false);
@@ -237,6 +238,9 @@ export default {
     // listen to click event from the dom elements
     function instantiateMap(num) {
       showMap.index = changeMap(num, showMap.index, angryBtn.value, happyBtn.value, sadBtn.value, calmBtn.value);
+      if (checkSongDotsSize() > 0) {
+        isZoomable.value = true;
+      }
     }
 
     const sketch = (p) => {
@@ -299,8 +303,10 @@ export default {
 
       function locationChosen(i, j, how, trackObj, counter, transition) {
         if (counter === 0 || counter === undefined) {
-          // Either, a click events (on the stars and songs), or a search is accepted
+          // Either, a click events (on song dots), or a search is accepted
           if (isSearched.value || isClickable.value) {
+            // Allow Map Zooming
+            isZoomable.value = true;
             // mapping algorithm to get the valence and arousal values by getting the percentage of an index to the max value
             const { valence, arousal } = indicesToMood(i, j, starDots);
 
@@ -573,8 +579,8 @@ export default {
         // console.log(event.delta, zoomFactor);
         for (let i = 0; i < songDots.length; i += 1) {
           if (i !== 0) {
-            // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY, songDots[i - 1]);
-            songDots[i].zoom(zoomFactor / 100, event.clientX, event.clientY);
+            // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, event.clientX, event.clientY, songDots[i - 1]);
+            songDots[i].zoom(zoomFactor);
           }
         }
       }
@@ -617,6 +623,7 @@ export default {
       diary,
       mapZooming,
       enterARMode,
+      isZoomable,
       isMobile,
     };
   },

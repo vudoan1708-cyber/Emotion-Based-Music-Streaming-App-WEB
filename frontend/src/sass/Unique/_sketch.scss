@@ -14,7 +14,7 @@
   @include positionProperties(absolute, '', 20%, '', 18%);
   margin: 10px;
   color: black;
-  cursor: pointer;;
+  cursor: pointer;
 
   .zoom_btn {
     margin: 5px;
@@ -36,9 +36,14 @@
   padding: 10px;
   background-color: rgba(209, 209, 209, 0.8);
   border-radius: 5px;
+  cursor: pointer;
 
   img {
     width: 100%;
+  }
+
+  &:hover {
+    background-color: rgba(190, 190, 190, 0.8);
   }
 }
 

@@ -51,15 +51,21 @@ export default class SongDots {
     this.y += y;
   }
 
-  zoom(zoomFactor, mx, my) {
+  zoom(zoomFactor) {
     // this.p5.push();
-    this.size += zoomFactor;
+    this.size += zoomFactor / 10;
+
+    const roi = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+    };
 
     // Calculate the distance between the mouse coordinates and each song dot's coordinates
     // const dMouseCurrent = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
     // const dMousePrev = Math.floor(this.p5.dist(mx, my, prevNode.x, prevNode.y) / 20);
     // const dCurrentPrev = Math.floor(this.p5.dist(this.x, this.y, prevNode.x, prevNode.y) / 20);
-    const d = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
+    // eslint-disable-next-line max-len
+    const d = Math.floor(this.p5.dist(roi.x, roi.y, this.x, this.y) / 20);
 
     // Find distance ratio between the current node and the previous node
     // const ratio = dMouseCurrent / dMousePrev;
@@ -68,23 +74,23 @@ export default class SongDots {
     // Check for the sign of the zoomFactor argument
     // if it is positive, which means, zooming in (for now)
     if (Math.sign(zoomFactor) === 1) {
-      if (this.x < mx) {
+      if (this.x < roi.x) {
         this.x -= d;
-      } else if (this.x > mx) this.x += d;
+      } else if (this.x > roi.x) this.x += d;
   
-      if (this.y < my) {
+      if (this.y < roi.y) {
         this.y -= d;
-      } else if (this.y > mx) this.y += d;
+      } else if (this.y > roi.y) this.y += d;
     
     // otherwise, if it is negative, which means, zooming out
     } else {
-      if (this.x < mx) {
+      if (this.x < roi.x) {
         this.x += d;
-      } else if (this.x > mx) this.x -= d;
+      } else if (this.x > roi.x) this.x -= d;
   
-      if (this.y < my) {
+      if (this.y < roi.y) {
         this.y += d;
-      } else if (this.y > mx) this.y -= d;
+      } else if (this.y > roi.y) this.y -= d;
     }
     // console.log(this.x, this.y);
     
