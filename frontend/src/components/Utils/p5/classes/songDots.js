@@ -108,9 +108,9 @@ export default class SongDots {
     star(0, 0, updatedSize * 3, updatedSize / 3, 4, this.p5);
 
     this.p5.stroke(0);
-    // if accepted by the system: green,
-    // by user: yellow, not accepted: gray,
-    // by user personalised playlist: red
+    // if accepted by the system: white,
+    // by user: yellow,
+    // by user personalised playlist: grey
     if (this.label === 'accepted') { this.p5.fill(225, 225, 225); }
     else if (this.label === 'accepted_by_user') { this.p5.fill(255, 255, 0); }
     else if (this.label === 'user_playlist') { this.p5.fill(50, 50, 50, 200); }

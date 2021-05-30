@@ -3,7 +3,7 @@
 
     <!-- Logo Image -->
     <div>
-      <img src="@/assets/logo.png"/>
+      <img src="@/assets/logo/logo.png"/>
     </div>
 
     <!-- Title -->

@@ -61,13 +61,23 @@
     <Diary :emitter="emitterObj" :diary="diary" v-if="diary.isShown" />
   </transition>
 
-  <!-- Enter AR mode -->
+  <!-- Map Zoom -->
+  <transition name="fade" v-if="isMobile">
+    <div id="map_zoom_btns">
+      <div class="zoom_btn" id="zoomIn" @click="mapZooming($event, 1)">+</div>
+      <div class="zoom_btn" id="zoomOut" @click="mapZooming($event, -1)">-</div>
+    </div>
+  </transition>
+
+  <!-- Button to Enter AR mode -->
   <transition name="fade">
+    <div id="button_AR" @click="enterARMode">
+      <img src="@/assets/icons/ar.png"/>
+    </div>
   </transition>
 </template>
 
 <script>
-/* eslint-disable no-console */
 /* eslint-disable max-len */
 /* eslint-disable no-param-reassign */
 /* eslint-disable new-cap */
@@ -79,14 +89,16 @@ import {
 } from 'vue';
 
 import p5 from 'p5';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 // Utilities
 import mapRegions from '@/components/Utils/p5/mapRegions';
 import { createBGStars, drawGalaxyBG } from '@/components/Utils/p5/galaxyVisualisation';
-import { createMap, drawMap, posOnMap } from '@/components/Utils/p5/emotionMapVisualisation';
+import {
+  createMap, drawMap, posOnMap, mapConstraintVisualisation,
+} from '@/components/Utils/p5/emotionMapVisualisation';
 import { songDots, drawSongDots } from '@/components/Utils/p5/songVisualisation';
-import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
+// import { createNewNeighbours, createHistoricalNeighbours, drawNeighbours } from '@/components/Utils/p5/neighboursVisualisation';
 
 import {
   indicesToMood, moodToIndices,
@@ -104,8 +116,8 @@ import {
   showUserPlaylist, playSong, findSongViaID,
 } from '@/handlers/spotify';
 
-// Vue Component
-import SongData from '@/components/Common/SongData.vue';
+// Vue Components
+import SongData from '@/components/Reusable/SongData.vue';
 
 import Instructions from '@/components/Common/Instructions.vue';
 
@@ -185,6 +197,11 @@ export default {
       y: NaN,
     });
 
+    // To Track Mouse Click Event Inbound or Outbound
+    const clickOutBound = ref(false);
+    // Check If The Map is Pannable Based on The Outbound Variable
+    const isMapPannable = ref(false);
+
     // Delay Time To Display The Instruction Board
     const isInstructionsShown = ref(false);
     // setTimeout for deplaying the instruction to be displayed
@@ -228,7 +245,7 @@ export default {
       // eslint-disable-next-line no-param-reassign
       p.disableFriendlyErrors = true;
 
-      let history = [];
+      // let history = [];
 
       const galaxy = [];
       const chosenPoints = [];
@@ -237,48 +254,48 @@ export default {
 
       let isClicked = false;
 
-      let socket = null;
+      // let socket = null;
 
       // in one machine, only two types of data emit from this socket connection
       // 1: HISTORICAL DATA (when first open the app)
       // 2: NEW DATA (when other users choose a coordinates closely to others)
-      function userDataEmit(curentData) {
-        // check if it is the first HISTORICAL data emit
-        // because a HISTORICAL data emit is in a form of an array (not undefined)
-        // this condition statement is to store the historical data to a global variable
-        if (curentData.length !== undefined) {
-          // check if a user is not the first connection to the system
-          // because first users don't need historical data
-          if (curentData.length !== 0) {
-            // shallow copy the data and assign it to a global array
-            history = [...curentData];
-          }
+      // function userDataEmit(curentData) {
+      //   // check if it is the first HISTORICAL data emit
+      //   // because a HISTORICAL data emit is in a form of an array (not undefined)
+      //   // this condition statement is to store the historical data to a global variable
+      //   if (curentData.length !== undefined) {
+      //     // check if a user is not the first connection to the system
+      //     // because first users don't need historical data
+      //     if (curentData.length !== 0) {
+      //       // shallow copy the data and assign it to a global array
+      //       history = [...curentData];
+      //     }
 
-        // check if it is a current event
-        } else {
-          // receive the NEW data broadcasted by OTHER USERS
-          // and push it to neighbours array
-          createNewNeighbours(curentData, chosenPoints, width, height);
-        }
-      }
+      //   // check if it is a current event
+      //   } else {
+      //     // receive the NEW data broadcasted by OTHER USERS
+      //     // and push it to neighbours array
+      //     createNewNeighbours(curentData, chosenPoints, width, height);
+      //   }
+      // }
 
-      function getSocket() {
-        // handling production and development mode
-        const PRODUCTION = process.env.NODE_ENV;
+      // function getSocket() {
+      //   // handling production and development mode
+      //   const PRODUCTION = process.env.NODE_ENV;
 
-        const URL = (PRODUCTION === 'production') ? '' : 'http://localhost:5000';
-        socket = io.connect(URL);
+      //   const URL = (PRODUCTION === 'production') ? '' : 'http://localhost:5000';
+      //   socket = io.connect(URL);
 
-        socket.on('connect', () => {
-          console.log('Connect to SocketIO successfully');
-        });
+      //   socket.on('connect', () => {
+      //     console.log('Connect to SocketIO successfully');
+      //   });
 
-        socket.on('click', userDataEmit);
+      //   socket.on('click', userDataEmit);
 
-        socket.on('error', (err) => {
-          console.log(err);
-        });
-      }
+      //   socket.on('error', (err) => {
+      //     console.log(err);
+      //   });
+      // }
 
       function locationChosen(i, j, how, trackObj, counter, transition) {
         if (counter === 0 || counter === undefined) {
@@ -311,7 +328,7 @@ export default {
             // HISTORICAL USERS
             // use the history array available globally after collecting it the first time
             // and push it t0 neighbours array as well
-            createHistoricalNeighbours(history, chosenPoints, width, height);
+            // createHistoricalNeighbours(history, chosenPoints, width, height);
 
             // get songs data from Spotify via the server
             handlingSongsData(Number(valence.toFixed(3)), Number(arousal.toFixed(3)), how, trackObj, userSettingsData.value, starDots, chosenPoints, width, height, p, emitterObj.value, transition);
@@ -370,20 +387,26 @@ export default {
         p.rectMode(p.CENTER);
 
         // socket.io
-        getSocket();
+        // getSocket();
 
         // make bg
         createBGStars(width, height, stars, galaxy, p);
 
         // make emotion map
         starDots = createMap(width, height, starDots, p);
+
+        // draw map constraints
+        // mapConstraintVisualisation(width, height, starDots, p);
       };
       p.draw = () => {
         p.background(10);
         drawGalaxyBG(galaxy, p);
 
+        // draw map constraints
+        if (clickOutBound.value && isClickable.value) mapConstraintVisualisation(width, height, starDots, p);
+
         // Keep Track of Affective Values on The Emotion Map
-        const mood = posOnMap(width, height, starDots, p);
+        const mood = posOnMap(width, height, starDots, p.mouseX, p.mouseY);
         // eslint-disable-next-line valid-typeof
         mapProperties.i = typeof (mood.valence) === 'number' ? (mood.valence).toFixed(3) : NaN;
         mapProperties.j = typeof (mood.arousal) === 'number' ? (mood.arousal).toFixed(3) : NaN;
@@ -402,7 +425,7 @@ export default {
             drawSongDots(starDots, chosenPoints, emitterObj.value);
 
             // Neighbours
-            drawNeighbours(p);
+            // drawNeighbours(p);
           }
         }
       };
@@ -415,10 +438,13 @@ export default {
         let track = null;
         let searchType = 'random';
         let counter = 0;
+
+        // Allow Map Panning
+        isMapPannable.value = true;
         // only clickable when the emotion map is shown and the screen is showing the homepage
         if (showMap.index !== 0 && isClickable.value && !diary.isShown) {
           const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
-          const mood = posOnMap(width, height, starDots, p);
+          const mood = posOnMap(width, height, starDots, p.mouseX, p.mouseY);
           if (mapProperties.status && typeof (mood.valence) === 'number' && typeof (mood.arousal) === 'number') {
             // for (let i = 0; i < starDots.length; i += 1) {
             //   for (let j = 0; j < starDots[i].length; j += 1) {
@@ -471,6 +497,16 @@ export default {
                 break;
               }
             }
+          } else if (typeof (mood.valence) !== 'number' && typeof (mood.arousal) !== 'number') {
+            // Restrict Map Panning
+            isMapPannable.value = false;
+            // Show The Map Constraints Very Briefly
+            setTimeout(() => {
+              clickOutBound.value = true;
+            }, 100);
+            setTimeout(() => {
+              clickOutBound.value = false;
+            }, 1000);
           }
         }
       };
@@ -484,7 +520,7 @@ export default {
       }
       // MAP PANNING
       p.mouseDragged = () => {
-        if (isClickable.value && songDots.length > 0 && !diary.isShown) {
+        if (isClickable.value && songDots.length > 0 && !diary.isShown && isMapPannable.value) {
           for (let i = 0; i < songDots.length; i += 1) {
             // For mobile
             if (isMobile.value) {
@@ -531,6 +567,25 @@ export default {
         starDots, width, height, p5Obj, emitterObj.value);
     }
 
+    // MAP ZOOMING
+    function mapZooming(event, zoomFactor) {
+      if (isClickable.value) {
+        // console.log(event.delta, zoomFactor);
+        for (let i = 0; i < songDots.length; i += 1) {
+          if (i !== 0) {
+            // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, p.mouseX, p.mouseY, songDots[i - 1]);
+            songDots[i].zoom(zoomFactor / 100, event.clientX, event.clientY);
+          }
+        }
+      }
+    }
+
+    // AR MODE
+    function enterARMode() {
+      // Subscribe to the 'ar' event
+      emitterObj.value.emit('ar', true);
+    }
+
     watch(props.personalisationSettings, (data) => {
       data.forEach((datum, index) => {
         if (index !== 0 && datum.message !== 'no personalised data') {
@@ -560,6 +615,9 @@ export default {
       mapProperties,
       showMap,
       diary,
+      mapZooming,
+      enterARMode,
+      isMobile,
     };
   },
 };

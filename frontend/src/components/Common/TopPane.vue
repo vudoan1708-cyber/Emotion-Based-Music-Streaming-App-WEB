@@ -2,7 +2,7 @@
   <div id="title">
     <!-- Logo Image -->
     <div id="mobile_logo" v-if="isMobile">
-      <img src="@/assets/logo.png"/>
+      <img src="@/assets/logo/logo.png"/>
     </div>
 
     <h1>Emotion Map</h1>

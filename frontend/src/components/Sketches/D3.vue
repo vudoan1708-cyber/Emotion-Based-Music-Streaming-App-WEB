@@ -5,7 +5,7 @@
       <div id="stacks">
         <h2 id="header">SONGS</h2>
         <div v-if="start > 0" class="btns" @click="changesongInfoDisplay(-3)">
-          <img id="prev" src="@/assets/up.png" />
+          <img id="prev" src="@/assets/icons/up.png" />
         </div>
         <div id="song_wrapper">
           <h4 v-for="(song, songKey) in songInfoDisplay.titles"
@@ -16,7 +16,7 @@
           </h4>
         </div>
         <div v-if="end < journey.songs.titles.length - 1" class="btns" @click="changesongInfoDisplay(3)">
-          <img id="next" src="@/assets/up.png" />
+          <img id="next" src="@/assets/icons/up.png" />
         </div>
       </div>
     </div>
@@ -103,11 +103,11 @@
       <div id="story" v-if="diary.collapsible === 1">
         <!-- Update Button -->
         <div class="update_btn" v-if="!diary.updateContent || !diary.updateTitle" @click="updateDiary('update')">
-          <img src="@/assets/pen.png" />
+          <img src="@/assets/icons/pen.png" />
         </div>
         <!-- Accept Button -->
         <div class="update_btn" v-else @click="updateDiary('acceptChanges')">
-          <img src="@/assets/okay.png" />
+          <img src="@/assets/icons/okay.png" />
         </div>
 
         <div id="diary_wrapper">

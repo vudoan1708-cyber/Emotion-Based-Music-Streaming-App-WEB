@@ -4,7 +4,7 @@
       <!-- Home -->
       <li :class="{ 'home': homeElement }" @click="onClickNav(1)">
         <div class="nav_el">
-          <img src="@/assets/homepage.png"/>
+          <img src="@/assets/icons/homepage.png"/>
         </div>
         <div class="nav_el">
           <p>Home</p>
@@ -14,7 +14,7 @@
       <!-- Search -->
       <li :class="{ 'search': searchElement }" @click="onClickNav(2)">
         <div class="nav_el">
-          <img src="@/assets/search.png"/>
+          <img src="@/assets/icons/search.png"/>
         </div>
         <div class="nav_el">
           <p>Search</p>
@@ -24,7 +24,7 @@
       <!-- Records -->
       <li :class="{ 'records': recordsElement }" @click="onClickNav(3)">
         <div class="nav_el">
-          <img src="@/assets/records.png"/>
+          <img src="@/assets/icons/records.png"/>
         </div>
         <div class="nav_el">
           <p>Records</p>
@@ -34,7 +34,7 @@
       <!-- Portfolio -->
       <li :class="{ 'portfolio': portfolioElement }" @click="onClickNav(4)">
         <div class="nav_el">
-          <img src="@/assets/portfolio.png"/>
+          <img src="@/assets/icons/portfolio.png"/>
         </div>
         <div class="nav_el">
           <p>Portfolio</p>

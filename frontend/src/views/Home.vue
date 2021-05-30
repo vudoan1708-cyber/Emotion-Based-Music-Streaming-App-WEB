@@ -1,8 +1,9 @@
 <template>
   <div id="home">
-    <SketchP5 :personalisationSettings="personalisationSettings"
+    <AR v-if="ARMode" />
+    <SketchP5 v-if="!ARMode" :personalisationSettings="personalisationSettings"
               :emitter="emitter" :mobile="mobile" />
-    <TopPane :mobile="mobile" />
+    <TopPane v-if="!ARMode" :mobile="mobile" />
     <LeftPane :emitter="emitter" :mobile="mobile" />
     <BottomPane :personalisationSettings="personalisationSettings"
                 :emitter="emitter" :mobile="mobile" />
@@ -16,6 +17,7 @@
 import { ref, onBeforeMount, getCurrentInstance } from 'vue';
 
 // Common Components
+import AR from '@/components/Sketches/AR.vue';
 import SketchP5 from '@/components/Sketches/SketchP5.vue';
 import TopPane from '@/components/Common/TopPane.vue';
 import BottomPane from '@/components/Common/BottomPane.vue';
@@ -37,6 +39,7 @@ import isMobile from '@/components/Utils/logic/mobile';
 export default {
   name: 'Home',
   components: {
+    AR,
     SketchP5,
     TopPane,
     BottomPane,
@@ -63,7 +66,14 @@ export default {
     // Invent User Detail if there is none for new user
     const userDetail = ref({});
 
-    // Listen on 'user_journey' event
+    const ARMode = ref(false);
+
+    // Listen on the 'ar' event to enter the AR mode
+    emitter.on('ar', (isToggled) => {
+      ARMode.value = isToggled;
+    });
+
+    // Listen on the 'user_journey' event
     // Because Center Pane or Other Children Component Cannot Receive Any Data
     // Unless They Are Available
     emitter.on('user_journey', async (journey) => {
@@ -228,6 +238,7 @@ export default {
       userJourney,
       emitter,
       mobile,
+      ARMode,
     };
   },
 };

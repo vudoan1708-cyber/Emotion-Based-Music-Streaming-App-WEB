@@ -63,6 +63,8 @@ export default class StarDots {
     this.p5.strokeWeight(2.5);
     // this.p5.stroke(0, 180, 0, 100);
     this.p5.beginShape();
+    // Because of the translation, the origin coordinates are now (0, 0)
+    // All other coordinate properties will subtract the origin one to form the bounderies
     this.p5.vertex(newPos.x1 - this.x, newPos.y1 - this.y);
     this.p5.vertex(newPos.x2 - this.x, newPos.y1 - this.y);
     this.p5.vertex(newPos.x2 - this.x, newPos.y2 - this.y);

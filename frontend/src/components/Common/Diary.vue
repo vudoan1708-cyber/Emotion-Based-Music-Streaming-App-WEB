@@ -53,7 +53,7 @@ import { getAllData, updateData } from '@/handlers/mongdb';
 import userJourneyObj from '@/components/JSON/userJourneyObj';
 
 // GIF
-import Loading from '@/assets/loading.gif';
+import Loading from '@/assets/gif/loading.gif';
 
 export default {
   name: 'Diary',

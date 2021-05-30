@@ -162,7 +162,7 @@ $offset: 50%;
     }
     .high {
       width: 75%;
-      height: calc(100% / 4);
+      height: calc(100% / 3.5);
       z-index: -2;
       background-color: rgba(0, 0, 0, 0.05);
     }
@@ -328,7 +328,7 @@ $offset: 50%;
       gap: 20px !important;
 
       li {
-        padding: 45px 55px !important;
+        padding: 45px 35px !important;
       }
 
       #top_left {
@@ -358,13 +358,13 @@ $offset: 50%;
     // Layer Sizes Get Changed
     // Size
     .low {
-      width: 30% !important;
+      width: 20% !important;
     }
     .medium {
-      width: 60% !important;
+      width: 40% !important;
     }
     .high {
-      width: 90% !important;
+      width: 60% !important;
     }
   }
 }
@@ -377,7 +377,7 @@ $offset: 50%;
       gap: 0px !important;
 
       li {
-        padding: 45px 45px !important;
+        padding: 45px 30px !important;
       }
 
       #top_left {
@@ -406,13 +406,13 @@ $offset: 50%;
     // Layer Sizes Get Changed
     // Size
     .low {
-      width: 25% !important;
+      width: 20% !important;
     }
     .medium {
-      width: 50% !important;
+      width: 40% !important;
     }
     .high {
-      width: 75% !important;
+      width: 60% !important;
     }
   }
 }

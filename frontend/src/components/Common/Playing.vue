@@ -33,13 +33,13 @@
       <!-- Shuffle Mode -->
       <div class="playing_mode" :class="{ 'shuffle_hightlight': isChosen === 1 }" id="shuffle"
         @click="togglePlayerModes(1)">
-        <img src="@/assets/shuffle.png" />
+        <img src="@/assets/icons/shuffle.png" />
       </div>
 
       <!-- Repeat Mode -->
       <div class="playing_mode" :class="{ 'repeat_hightlight': isChosen === -1 }" id="repeat"
         @click="togglePlayerModes(-1)">
-        <img src="@/assets/repeat.png" />
+        <img src="@/assets/icons/repeat.png" />
         <div v-if="currentRepeatState !== 'off'" id="modes">
           <h5 v-if="currentRepeatState === 'track'">1</h5>
           <h5 v-else-if="currentRepeatState === 'context'">All</h5>
@@ -68,10 +68,10 @@ import { Romanisation } from '@/components/Utils/logic/string';
 
 import isEmpty from '@/components/Utils/logic/object';
 
-import Play from '@/assets/play.png';
-import Pause from '@/assets/pause.png';
-import Next from '@/assets/next.png';
-import Previous from '@/assets/previous.png';
+import Play from '@/assets/icons/play.png';
+import Pause from '@/assets/icons/pause.png';
+import Next from '@/assets/icons/next.png';
+import Previous from '@/assets/icons/previous.png';
 
 export default {
   name: 'Playing',

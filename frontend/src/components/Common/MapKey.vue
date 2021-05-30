@@ -5,43 +5,43 @@
       <ul v-if="isShown" id="keys">
         <!-- Your Playlists -->
         <li>
-          <img class="key_sections" src="@/assets/Map_YourPlaylists.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_YourPlaylists.png" />
           <label class="key_sections" >Your Spotify Playlist</label>
         </li>
         <!-- Other Tracks -->
         <!-- Aggressive -->
         <li>
-          <img class="key_sections" src="@/assets/Map_A.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_A.png" />
           <label class="key_sections" >Aggressive</label>
         </li>
         <!-- Exciting -->
         <li>
-          <img class="key_sections" src="@/assets/Map_E.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_E.png" />
           <label class="key_sections" >Exciting</label>
         </li>
         <!-- Sad -->
         <li>
-          <img class="key_sections" src="@/assets/Map_S.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_S.png" />
           <label class="key_sections" >Sad</label>
         </li>
         <!-- Calm -->
         <li>
-          <img class="key_sections" src="@/assets/Map_C.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_C.png" />
           <label class="key_sections" >Calm</label>
         </li>
         <!-- Chosen Tracks By Users -->
         <li>
-          <img class="key_sections" src="@/assets/Map_Chosen.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_Chosen.png" />
           <label class="key_sections" >Chosen by User</label>
         </li>
         <!-- Collected Tracks -->
         <li>
-          <img class="key_sections" src="@/assets/Map_CollectedSongDot.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_CollectedSongDot.png" />
           <label class="key_sections" >Collected Tracks</label>
         </li>
         <!-- Neighbours -->
         <!-- <li>
-          <img class="key_sections" src="@/assets/Map_NeighbourDot.png" />
+          <img class="key_sections" src="@/assets/imgs/Map_NeighbourDot.png" />
           <label  class="key_sections">Your Neighbours</label>
         </li> -->
       </ul>

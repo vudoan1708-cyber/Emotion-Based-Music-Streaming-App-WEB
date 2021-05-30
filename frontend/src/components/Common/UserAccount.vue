@@ -34,7 +34,7 @@ import { randomCharacters } from '@/components/Utils/logic/random';
 import isEmpty from '@/components/Utils/logic/object';
 
 // assets
-import userDefaultImg from '@/assets/user.png';
+import userDefaultImg from '@/assets/icons/user.png';
 
 export default {
   name: 'UserAccount',

@@ -84,12 +84,12 @@ npm run dev
 
 # TODO Lists
 ## Extended Features for Muserfly
-### Collapsible Menu Bar
+### Mobile Responsive Design (DONE)
 This will be developed for mobile users
 ### The Emotion Map: Zoom Feature
 This will be developed for mobile users
 ### The Emotion Map: Panning Feature
 This will be developed for mobile users
 ### Song Mapping on Locations: AR.js
-Locations strongly correlate to memories. And Memories bring back Emotions. What if you can use mixed reality technology to allow users to "plant" their playlist on a location and whenever they visit that physical location, they can see and play the playlist they listened to in the past?<br />
+Locations strongly correlate to Memories. And Memories bring back Emotions. What if you can use mixed reality technology to allow users to "plant" their playlist on a location and whenever they visit that physical location, they can see and play the playlist they listened to in the past?<br />
 This will open up possibilities to create a music app where people will be able to listen to a playlist as they physically and virtually walk passed it, regardless of their "planted playlist" or someone else's 

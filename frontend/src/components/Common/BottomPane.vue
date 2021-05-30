@@ -8,7 +8,7 @@
       </div>
       <div class="map_info" id="coordinates">
         <div id="display">
-          <img class="map_detail" id="coord_img" src="@/assets/coordinates.png"/>
+          <img class="map_detail" id="coord_img" src="@/assets/icons/coordinates.png"/>
           <h5 class="map_detail">{{mapProperties.coords.x}}, {{mapProperties.coords.y}}</h5>
         </div>
       </div>

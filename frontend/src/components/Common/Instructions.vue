@@ -35,11 +35,11 @@
 import { reactive, ref } from 'vue';
 
 // Images
-import Logo from '@/assets/logo.png';
-import VA from '@/assets/instructions_v_a.png';
-import PlaylistSection from '@/assets/instructions_playlists.png';
-import NavigationSection from '@/assets/instructions_nav.png';
-import SettingsSection from '@/assets/instructions_settings.png';
+import Logo from '@/assets/logo/logo.png';
+import VA from '@/assets/imgs/instructions_v_a.png';
+import PlaylistSection from '@/assets/imgs/instructions_playlists.png';
+import NavigationSection from '@/assets/imgs/instructions_nav.png';
+import SettingsSection from '@/assets/imgs/instructions_settings.png';
 
 export default {
   name: 'Instructions',

@@ -15,3 +15,20 @@
     opacity: 0.75;
   }
 }
+
+/* Responsive Text */
+@media screen and (max-width: 770px) {
+  #song_data {
+    font-size: 0.75rem !important;
+  }
+}
+@media screen and (max-width: 600px) {
+  #song_data {
+    font-size: 0.7rem !important;
+  }
+}
+@media screen and (max-width: 469px) {
+  #song_data {
+    font-size: 0.5rem !important;
+  }
+}
