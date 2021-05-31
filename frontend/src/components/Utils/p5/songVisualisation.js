@@ -11,13 +11,15 @@ let songIndex = -1;
 
 export function createSongDots(label, title, valence, arousal, id,
                               album_imgs, artist_details, artist_names, external_urls,
-                              beforeLoading, starDots, width, height, p5, emitter) {
+                              beforeLoading, starDots, width, height, p5, emitter,
+                              zoomVal, panningVal) {
   // reverse the mapping algorithm to get the location values from valence and arousal
   const coordinates = moodToCoordinates(valence, arousal, starDots, width, height);
 
   const song = new SongDots(label, title, id, valence, arousal,
                             album_imgs, artist_details, artist_names, external_urls,
-                            coordinates.x, coordinates.y, p5.random(3, 5), width, height, p5);
+                            coordinates.x, coordinates.y, p5.random(3, 5), width, height, p5,
+                            zoomVal, panningVal);
 
   songDots.push(song);
   songLoaded = true;

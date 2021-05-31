@@ -64,8 +64,8 @@
   <!-- Map Zoom -->
   <transition name="fade" v-if="isMobile && isZoomable">
     <div id="map_zoom_btns">
-      <div class="zoom_btn" id="zoomIn" @click="mapZooming($event, 1)">+</div>
-      <div class="zoom_btn" id="zoomOut" @click="mapZooming($event, -1)">-</div>
+      <div class="zoom_btn" id="zoomIn" @click="mapZooming($event, 2)">+</div>
+      <div class="zoom_btn" id="zoomOut" @click="mapZooming($event, -2)">-</div>
     </div>
   </transition>
 
@@ -103,6 +103,7 @@ import { songDots, drawSongDots, checkSongDotsSize } from '@/components/Utils/p5
 import {
   indicesToMood, moodToIndices,
   coordinatesToIndices, indicestoCoordinates,
+  VECTORS, updateVectors, storeVectors, checkVectorsArrayLength,
 } from '@/components/Utils/logic/algorithm';
 
 // Logic
@@ -113,7 +114,7 @@ import changeMap from '@/components/Utils/dom/changeMap';
 
 import {
   handlingSongsData, removeATempPlaylist,
-  showUserPlaylist, playSong, findSongViaID,
+  showUserPlaylist, playSong, findSongViaID, updateMapValues,
 } from '@/handlers/spotify';
 
 // Vue Components
@@ -195,6 +196,10 @@ export default {
     const prevMousePos = reactive({
       x: NaN,
       y: NaN,
+      touchPos: {
+        x: NaN,
+        y: NaN,
+      },
     });
 
     // To Track Mouse Click Event Inbound or Outbound
@@ -202,6 +207,14 @@ export default {
     // Check If The Map is Pan-able & Zoomable Based on The Outbound Variable
     const isMapPannable = ref(false);
     const isZoomable = ref(false);
+    const mapWasPanned = ref(false);
+
+    // Keep Track of Zoom Times (can be negative, to apply the same zoom value to newly created song dots)
+    const zoomVal = ref(0);
+    const panningVal = ref({
+      x: 0,
+      y: 0,
+    });
 
     // Delay Time To Display The Instruction Board
     const isInstructionsShown = ref(false);
@@ -439,7 +452,7 @@ export default {
         }
       };
 
-      p.mousePressed = async () => {
+      async function onScreenRegister() {
         // Record the mouse positions
         prevMousePos.x = p.mouseX;
         prevMousePos.y = p.mouseY;
@@ -478,7 +491,8 @@ export default {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
             } else if (region === 4 && showMap.index === 4 && !isZoomable.value) {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
-            } else if (isMobile.value && isZoomable.value) {
+            // FOR MOBILE ONLY
+            } else if (isMobile.value && isZoomable.value && !mapWasPanned.value) {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
             }
 
@@ -520,34 +534,78 @@ export default {
             }, 1000);
           }
         }
-      };
+
+        mapWasPanned.value = false;
+      }
 
       // Mouse Distance
-      function calculateMouseDistance() {
+      function calculateMouseVectorDistance(px, py, cx, cy) {
         // if the sign is -, mouse moving to the left and likewise
-        const x = p.mouseX - prevMousePos.x;
-        const y = p.mouseY - prevMousePos.y;
+        const x = cx - px;
+        const y = cy - py;
         return { x, y };
       }
+
+      p.mousePressed = () => {
+        if (!isMobile.value) {
+          onScreenRegister();
+        }
+      };
+
+      p.touchEnded = () => {
+        if (isMobile.value && isClickable.value) {
+          if (mapWasPanned.value) {
+            const { x, y } = calculateMouseVectorDistance(prevMousePos.touchPos.x, prevMousePos.touchPos.y, p.mouseX, p.mouseY);
+            panningVal.value.x = x;
+            panningVal.value.y = y;
+            // Only Store 2 Vectors
+            storeVectors(panningVal.value);
+            // Check The Length of The VECTORS variable
+            if (checkVectorsArrayLength() === 2) {
+              const { newX, newY } = updateVectors(VECTORS[0], VECTORS[1]);
+              panningVal.value.x = newX;
+              panningVal.value.y = newY;
+            }
+            updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
+          }
+          onScreenRegister();
+        }
+      };
+
+      p.touchStarted = () => {
+        // Allow Map Panning
+        isMapPannable.value = true;
+        // Record the mouse positions
+        prevMousePos.x = p.mouseX;
+        prevMousePos.y = p.mouseY;
+
+        if (showMap.index !== 0) {
+          prevMousePos.touchPos.x = p.mouseX;
+          prevMousePos.touchPos.y = p.mouseY;
+        }
+      };
+
       // MAP PANNING
-      p.mouseDragged = () => {
-        if (isClickable.value && songDots.length > 0 && !diary.isShown && isMapPannable.value) {
-          for (let i = 0; i < songDots.length; i += 1) {
-            // For mobile
-            if (isMobile.value) {
-              // Calculate the distance between the previous and the latest mouse positions
-              // const { x, y } = calculateMouseDistance();
-              // songDots[i].panning(x, y);
-            } else {
-              // Calculate the distance between the previous and the latest mouse positions
-              const { x, y } = calculateMouseDistance();
+      p.touchMoved = (e) => {
+        if (isMobile.value) {
+          mapWasPanned.value = true;
+          // If User is at The Homepage
+          // If There Are Some Song Dots on The Map
+          // If The Diary Section is not Displayed
+          // If The Click Position is Inbound
+          // If The Used Device is Mobiile
+          // Then, The Map Is Pan-able
+          if (isClickable.value && songDots.length > 0 && !diary.isShown && isMapPannable.value) {
+            for (let i = 0; i < songDots.length; i += 1) {
+              // Calculate the distance between the previous and the latest touch positions
+              const { x, y } = e.touches.length === 1 ? calculateMouseVectorDistance(prevMousePos.x, prevMousePos.y, p.mouseX, p.mouseY) : undefined;
               songDots[i].panning(x, y);
             }
-          }
 
-          // Update the mouse positions
-          prevMousePos.x = p.mouseX;
-          prevMousePos.y = p.mouseY;
+            // Update the mouse positions
+            prevMousePos.x = p.mouseX;
+            prevMousePos.y = p.mouseY;
+          }
         }
       };
 
@@ -581,12 +639,12 @@ export default {
     // MAP ZOOMING
     function mapZooming(event, zoomFactor) {
       if (isClickable.value) {
+        zoomVal.value += zoomFactor;
+        // For The Next Generations of Song Dots
+        updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
         // console.log(event.delta, zoomFactor);
         for (let i = 0; i < songDots.length; i += 1) {
-          if (i !== 0) {
-            // if (songDots[i].onHover()) songDots[i].zoom(event.delta / 100, event.clientX, event.clientY, songDots[i - 1]);
-            songDots[i].zoom(zoomFactor);
-          }
+          songDots[i].zoom(zoomFactor);
         }
       }
     }

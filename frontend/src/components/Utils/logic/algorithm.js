@@ -37,3 +37,26 @@ export function indicestoCoordinates(i, j, width, height) {
   const y = height / 4.5 + j * OFFSET;
   return { x, y };
 }
+
+// GEOMETRY ALGORITHMS
+export const VECTORS = [];
+
+function removeVectors() {
+  VECTORS.splice(0, VECTORS.length);
+}
+
+export function updateVectors(a, b) {
+  const newX = a.x + b.x;
+  const newY = a.y + b.y;
+
+  removeVectors();
+  return { newX, newY };
+}
+
+export function storeVectors(v) {
+  VECTORS.push(v);
+}
+
+export function checkVectorsArrayLength() {
+  return VECTORS.length;
+}

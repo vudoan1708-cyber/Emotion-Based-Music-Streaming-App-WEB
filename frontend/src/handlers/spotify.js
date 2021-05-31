@@ -35,6 +35,18 @@ const personalisedPlaylist = [];
 const PRODUCTION = process.env.NODE_ENV;
 const TOKEN = hashURL(window.location.href, 1);
 
+// Mobile ONLY (Keep Track of Zoom and Panning Values) for the next generations of song dots
+let zoomVal = 0;
+const panningVal = {
+  x: 0,
+  y: 0,
+};
+export function updateMapValues(z, panX, panY) {
+  zoomVal = z;
+  panningVal.x = panX;
+  panningVal.y = panY;
+}
+
 export function LoginHandlers(instructions) {
 
   // if it's production mode, get rid of the proxied server,
@@ -295,7 +307,8 @@ export async function showUserPlaylist(title, valence, arousal, id,
     // accepted songs
     createSongDots('user_playlist', title, valence, arousal, id,
                     album_imgs, artist_details, artist_names, external_urls,
-                    true, starDots, width, height, p5, emitterObj);
+                    true, starDots, width, height, p5, emitterObj,
+                    zoomVal, panningVal);
   }
 }
 // audio_features, valence, arousal, how, trackObj, starDots, chosenPoints, width, height, p5
@@ -377,7 +390,8 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
             // unaccepted songs
             createSongDots('unaccepted', song_data.title, song_data.valence, song_data.arousal, id,
                             song_data.album_imgs, song_data.artist_details, song_data.artist_names, song_data.external_urls,
-                            false, starDots, width, height, p5, emitter);
+                            false, starDots, width, height, p5, emitter,
+                            zoomVal, panningVal);
           }
   
         // otherwise, redo the loop again until the playlist array condition is satisfied
@@ -453,7 +467,8 @@ export async function makeATempPlaylist(id, title, valence, arousal,
     // accepted songs
     createSongDots('accepted', title, valence, arousal, reformatID,
                     album_imgs, artist_details, artist_names, external_urls,
-                    false, starDots, width, height, p5, emitter);
+                    false, starDots, width, height, p5, emitter,
+                    zoomVal, panningVal);
   }
 }
 

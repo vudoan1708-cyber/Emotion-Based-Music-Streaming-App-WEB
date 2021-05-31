@@ -13,7 +13,8 @@ import mapRegions from '@/components/Utils/p5/mapRegions';
 export default class SongDots {
   constructor(label, title, id, valence, arousal,
               album_imgs, artist_details, artist_names, external_urls,
-              x, y, size, width, height, p5) {
+              x, y, size, width, height, p5,
+              zoomVal, panningVal) {
     this.label = label;
     this.title = title;
     this.id = id;
@@ -23,15 +24,22 @@ export default class SongDots {
     this.artist_details = artist_details;
     this.artist_names = artist_names;
     this.external_urls = external_urls;
+
+    this.prevX = x;
+    this.prevY = y;
     this.x = x;
     this.y = y;
+
     this.size = size;
     this.oldSize = this.size;
 
-    this.region = mapRegions(this.x, this.y, width, height);
-    
-    // this.scaleFactor = 1;
     this.p5 = p5;
+    if (zoomVal !== 0 || panningVal.x !== 0 || panningVal.y !== 0) {
+      this.zoom(zoomVal);
+      this.panning(panningVal.x, panningVal.y);
+    }
+
+    this.region = mapRegions(this.prevX, this.prevY, width, height);
   }
 
   onHover() {
@@ -52,50 +60,51 @@ export default class SongDots {
   }
 
   zoom(zoomFactor) {
-    // this.p5.push();
-    this.size += zoomFactor / 10;
-
-    const roi = {
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2,
-    };
-
-    // Calculate the distance between the mouse coordinates and each song dot's coordinates
-    // const dMouseCurrent = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
-    // const dMousePrev = Math.floor(this.p5.dist(mx, my, prevNode.x, prevNode.y) / 20);
-    // const dCurrentPrev = Math.floor(this.p5.dist(this.x, this.y, prevNode.x, prevNode.y) / 20);
-    // eslint-disable-next-line max-len
-    const d = Math.floor(this.p5.dist(roi.x, roi.y, this.x, this.y) / 20);
-
-    // Find distance ratio between the current node and the previous node
-    // const ratio = dMouseCurrent / dMousePrev;
-    // console.log(ratio, dCurrentPrev);
-
-    // Check for the sign of the zoomFactor argument
-    // if it is positive, which means, zooming in (for now)
-    if (Math.sign(zoomFactor) === 1) {
-      if (this.x < roi.x) {
-        this.x -= d;
-      } else if (this.x > roi.x) this.x += d;
+    if (zoomFactor > 0) {
+      // this.p5.push();
+      this.size += zoomFactor / 1000;
   
-      if (this.y < roi.y) {
-        this.y -= d;
-      } else if (this.y > roi.y) this.y += d;
+      const roi = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      };
+  
+      // Calculate the distance between the mouse coordinates and each song dot's coordinates
+      // const dMouseCurrent = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
+      // const dMousePrev = Math.floor(this.p5.dist(mx, my, prevNode.x, prevNode.y) / 20);
+      // const dCurrentPrev = Math.floor(this.p5.dist(this.x, this.y, prevNode.x, prevNode.y) / 20);
+      const d = Math.floor(this.p5.dist(roi.x, roi.y, this.x, this.y) / zoomFactor);
+  
+      // Find distance ratio between the current node and the previous node
+      // const ratio = dMouseCurrent / dMousePrev;
+      // console.log(ratio, dCurrentPrev);
+  
+      // Check for the sign of the zoomFactor argument
+      // if it is positive, which means, zooming in (for now)
+      if (Math.sign(zoomFactor) === 1) {
+        if (this.x < roi.x) {
+          this.x -= d;
+        } else if (this.x > roi.x) this.x += d;
     
-    // otherwise, if it is negative, which means, zooming out
-    } else {
-      if (this.x < roi.x) {
-        this.x += d;
-      } else if (this.x > roi.x) this.x -= d;
-  
-      if (this.y < roi.y) {
-        this.y += d;
-      } else if (this.y > roi.y) this.y -= d;
+        if (this.y < roi.y) {
+          this.y -= d;
+        } else if (this.y > roi.y) this.y += d;
+      
+      // otherwise, if it is negative, which means, zooming out
+      } else {
+        if (this.x < roi.x) {
+          this.x += d;
+        } else if (this.x > roi.x) this.x -= d;
+    
+        if (this.y < roi.y) {
+          this.y += d;
+        } else if (this.y > roi.y) this.y -= d;
+      }
+      // console.log(this.x, this.y);
+      
+      // this.zoomX += this.p5.mouseX;
+      // this.zoomY += this.p5.mouseY;
     }
-    // console.log(this.x, this.y);
-    
-    // this.zoomX += this.p5.mouseX;
-    // this.zoomY += this.p5.mouseY;
   }
 
   show() {
