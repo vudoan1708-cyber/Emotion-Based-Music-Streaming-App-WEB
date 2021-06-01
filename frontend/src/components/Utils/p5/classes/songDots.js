@@ -86,7 +86,7 @@ export default class SongDots {
   zoom(zoomFactor, zoomVal) {
     if (zoomFactor !== 0 && zoomVal !== 0) {
       // this.p5.push();
-      this.size += zoomFactor / 100;
+      this.size += zoomFactor / 10;
 
       const roi = {
         x: window.innerWidth / 2,

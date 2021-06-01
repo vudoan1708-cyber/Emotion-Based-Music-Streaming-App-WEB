@@ -558,14 +558,13 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
   if (isSearching || playlist.length < minTracks) {
     isSearching = true;
     emitter = emitterObj;
-  
     // Get The Min Number of Tracks to Collect from User Settings Data
-    minTracks = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined)
-              ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.numOfTracks
+    minTracks = (userSettingsData !== undefined)
+              ? userSettingsData.data.user.personalisation.numOfTracks
               : minTracks;
   
-    chosenGenre = (userSettingsData.length !== 0 && userSettingsData[userSettingsData.length - 1] !== undefined && trackObj === null)
-                ? userSettingsData[userSettingsData.length - 1].data.user.personalisation.genre
+    chosenGenre = (userSettingsData !== undefined && trackObj === null)
+                ? userSettingsData.data.user.personalisation.genre
                 : chosenGenre;
     let KEYWORD = '';
   

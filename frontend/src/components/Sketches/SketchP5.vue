@@ -174,7 +174,7 @@ export default {
     const isSearched = ref(false);
 
     // Get User Settings
-    const userSettingsData = ref([]);
+    const userSettingsData = ref({});
 
     // PROPS
     const emitterObj = ref(props.emitter);
@@ -478,8 +478,8 @@ export default {
             // for (let i = 0; i < starDots.length; i += 1) {
             //   for (let j = 0; j < starDots[i].length; j += 1) {
             const region = mapRegions(p.mouseX, p.mouseY, width, height);
-            if (userSettingsData.value.length !== 0 && userSettingsData.value[userSettingsData.value.length - 1] !== undefined) {
-              if (userSettingsData.value[userSettingsData.value.length - 1].data.last_checked.spotify) {
+            if (songDots.length > 0) {
+              if (userSettingsData.value.data.last_checked.spotify) {
                 for (let k = 0; k < songDots.length; k += 1) {
                   if (songDots[k].onHover()) {
                     track = songDots[k];
@@ -535,7 +535,7 @@ export default {
 
                 const offsetMouseIndices = coordinatesToIndices(generatedX, generatedY, width, height);
                 locationChosen(offsetMouseIndices.i, offsetMouseIndices.j, searchType, track, counter);
-              } else if (zoomVal.value === 0) {
+              } else if (zoomVal.value === 0 || panningVal.value.x === 0 || panningVal.value.y === 0) {
                 locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
               }
             }
