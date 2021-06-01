@@ -2,13 +2,13 @@
 /* eslint-disable camelcase */
 /* eslint-disable indent */
 /* eslint-disable padded-blocks */
-/* eslint-disable operator-linebreak */
-/* eslint-disable no-trailing-spaces */
 /* eslint-disable consistent-return */
 import star from '@/components/Utils/p5/star';
 // eslint-disable-next-line import/no-cycle
 import { updatePlaylist } from '@/handlers/spotify';
 import mapRegions from '@/components/Utils/p5/mapRegions';
+
+import { coordinatesToIndices, zoom } from '@/components/Utils/logic/algorithm';
 
 export default class SongDots {
   constructor(label, title, id, valence, arousal,
@@ -54,56 +54,51 @@ export default class SongDots {
     } return false;
   }
 
-  panning(x, y) {
-    this.x += x;
-    this.y += y;
+  findSongOriginalIndices(w, h) {
+    const { i, j } = coordinatesToIndices(this.prevX, this.prevY, w, h);
+    const songIndexI = i;
+    const songIndexJ = j;
+    return { songIndexI, songIndexJ };
   }
 
-  zoom(zoomFactor) {
-    if (zoomFactor > 0) {
+  reset(which) {
+    if (which === undefined) {
+      this.x = this.prevX;
+      this.y = this.prevY;
+      this.size = this.oldSize;
+    } else if (which === 'positions') {
+      this.x = this.prevX;
+      this.y = this.prevY;
+    } else if (which === 'size') {
+      this.size = this.oldSize;
+    }
+  }
+
+  panning(x, y) {
+    // if (this.x > window.innerWidth / 2 + 20 || this.x < window.innerWidth / 2 - 20) {
+    //   if (this.y > window.innerHeight / 2 + 20 || this.y < window.innerHeight / 2 - 20) {
+    this.x += x;
+    this.y += y;
+    //   } else this.reset();
+    // } else this.reset();
+  }
+
+  zoom(zoomFactor, zoomVal) {
+    if (zoomFactor !== 0 && zoomVal !== 0) {
       // this.p5.push();
-      this.size += zoomFactor / 1000;
-  
+      this.size += zoomFactor / 100;
+
       const roi = {
         x: window.innerWidth / 2,
         y: window.innerHeight / 2,
       };
-  
-      // Calculate the distance between the mouse coordinates and each song dot's coordinates
-      // const dMouseCurrent = Math.floor(this.p5.dist(mx, my, this.x, this.y) / 20);
-      // const dMousePrev = Math.floor(this.p5.dist(mx, my, prevNode.x, prevNode.y) / 20);
-      // const dCurrentPrev = Math.floor(this.p5.dist(this.x, this.y, prevNode.x, prevNode.y) / 20);
-      const d = Math.floor(this.p5.dist(roi.x, roi.y, this.x, this.y) / zoomFactor);
-  
-      // Find distance ratio between the current node and the previous node
-      // const ratio = dMouseCurrent / dMousePrev;
-      // console.log(ratio, dCurrentPrev);
-  
-      // Check for the sign of the zoomFactor argument
-      // if it is positive, which means, zooming in (for now)
-      if (Math.sign(zoomFactor) === 1) {
-        if (this.x < roi.x) {
-          this.x -= d;
-        } else if (this.x > roi.x) this.x += d;
-    
-        if (this.y < roi.y) {
-          this.y -= d;
-        } else if (this.y > roi.y) this.y += d;
-      
-      // otherwise, if it is negative, which means, zooming out
-      } else {
-        if (this.x < roi.x) {
-          this.x += d;
-        } else if (this.x > roi.x) this.x -= d;
-    
-        if (this.y < roi.y) {
-          this.y += d;
-        } else if (this.y > roi.y) this.y -= d;
-      }
-      // console.log(this.x, this.y);
-      
-      // this.zoomX += this.p5.mouseX;
-      // this.zoomY += this.p5.mouseY;
+
+      const OFFSET_ZOOM = zoom(zoomFactor, roi, this.x, this.y, this.p5, false);
+
+      this.x += OFFSET_ZOOM.x;
+      this.y += OFFSET_ZOOM.y;
+    } else if (zoomVal === 0) {
+      this.reset();
     }
   }
 
@@ -150,10 +145,10 @@ export default class SongDots {
     const bounds = starDots[chosenPoints[0]][chosenPoints[1]].showBoundaries();
 
     // re-compare
-    if (this.x > bounds.x1 && 
-      this.x < bounds.x2
-  && this.y > bounds.y1 && 
-      this.y < bounds.y2) {
+    if (this.x > bounds.x1
+        && this.x < bounds.x2
+    && this.y > bounds.y1
+        && this.y < bounds.y2) {
 
       if (this.label === 'unaccepted' || this.label === 'accepted_by_user' || this.label === 'user_playlist') {
 

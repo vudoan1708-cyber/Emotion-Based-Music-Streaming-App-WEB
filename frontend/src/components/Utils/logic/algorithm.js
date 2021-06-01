@@ -38,7 +38,49 @@ export function indicestoCoordinates(i, j, width, height) {
   return { x, y };
 }
 
-// GEOMETRY ALGORITHMS
+export function zoom(zoomFactor, roi, x, y, p5, reverse) {
+  const OFFSET_ZOOM = {
+    x: 0,
+    y: 0,
+  };
+
+  if (zoomFactor === 0) {
+    return OFFSET_ZOOM;
+  }
+  // Calculate the distance between the mouse coordinates and each song dot's coordinates
+  const d = !reverse
+    ? Math.floor(p5.dist(roi.x, roi.y, x, y) / Math.abs(zoomFactor))
+    : -Math.floor(p5.dist(roi.x, roi.y, x, y) / Math.abs(zoomFactor));
+
+  // Find distance ratio between the current node and the previous node
+  // const ratio = dMouseCurrent / dMousePrev;
+  // console.log(ratio, dCurrentPrev);
+
+  // Check for the sign of the zoomFactor argument
+  // if it is positive, which means, zooming in (for now)
+  if (Math.sign(zoomFactor) === 1) {
+    if (x < roi.x) {
+      OFFSET_ZOOM.x = -d;
+    } else if (x > roi.x) OFFSET_ZOOM.x = d;
+
+    if (y < roi.y) {
+      OFFSET_ZOOM.y = -d;
+    } else if (y > roi.y) OFFSET_ZOOM.y = d;
+
+  // otherwise, if it is negative, which means, zooming out
+  } else {
+    if (x < roi.x) {
+      OFFSET_ZOOM.x = d;
+    } else if (x > roi.x) OFFSET_ZOOM.x = -d;
+
+    if (y < roi.y) {
+      OFFSET_ZOOM.y = d;
+    } else if (y > roi.y) OFFSET_ZOOM.y = -d;
+  }
+  return OFFSET_ZOOM;
+}
+
+// VECTOR-BASED ALGORITHMS
 export const VECTORS = [];
 
 function removeVectors() {
@@ -46,14 +88,18 @@ function removeVectors() {
 }
 
 export function updateVectors(a, b) {
-  const newX = a.x + b.x;
-  const newY = a.y + b.y;
+  const newDX = a.x + b.x;
+  const newDY = a.y + b.y;
 
   removeVectors();
-  return { newX, newY };
+  return { newDX, newDY };
 }
 
-export function storeVectors(v) {
+export function storeVectors(vx, vy) {
+  const v = {
+    x: vx,
+    y: vy,
+  };
   VECTORS.push(v);
 }
 

@@ -60,7 +60,7 @@ export default class StarDots {
     this.p5.translate(this.x, this.y);
     // this.p5.rotate(this.angle);
     this.p5.noFill();
-    this.p5.strokeWeight(2.5);
+    // this.p5.strokeWeight(2.5);
     // this.p5.stroke(0, 180, 0, 100);
     this.p5.beginShape();
     // Because of the translation, the origin coordinates are now (0, 0)

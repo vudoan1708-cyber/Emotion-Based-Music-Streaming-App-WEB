@@ -64,8 +64,8 @@
   <!-- Map Zoom -->
   <transition name="fade" v-if="isMobile && isZoomable">
     <div id="map_zoom_btns">
-      <div class="zoom_btn" id="zoomIn" @click="mapZooming($event, 2)">+</div>
-      <div class="zoom_btn" id="zoomOut" @click="mapZooming($event, -2)">-</div>
+      <div class="zoom_btn" id="zoomIn" @click="mapZooming(5)">+</div>
+      <div class="zoom_btn" id="zoomOut" @click="mapZooming(-5)">-</div>
     </div>
   </transition>
 
@@ -102,7 +102,7 @@ import { songDots, drawSongDots, checkSongDotsSize } from '@/components/Utils/p5
 
 import {
   indicesToMood, moodToIndices,
-  coordinatesToIndices, indicestoCoordinates,
+  coordinatesToIndices, indicestoCoordinates, zoom,
   VECTORS, updateVectors, storeVectors, checkVectorsArrayLength,
 } from '@/components/Utils/logic/algorithm';
 
@@ -114,7 +114,8 @@ import changeMap from '@/components/Utils/dom/changeMap';
 
 import {
   handlingSongsData, removeATempPlaylist,
-  showUserPlaylist, playSong, findSongViaID, updateMapValues,
+  showUserPlaylist, playSong, findSongViaID,
+  // updateMapValues,
 } from '@/handlers/spotify';
 
 // Vue Components
@@ -267,6 +268,7 @@ export default {
       // let history = [];
 
       const galaxy = [];
+
       const chosenPoints = [];
 
       const stars = Array(160);
@@ -327,6 +329,7 @@ export default {
             // Reassign The Array Variable Like This For Repeated Searches, Instead Of Array Push
             chosenPoints[0] = i;
             chosenPoints[1] = j;
+
             // Refresh The Collected Playlist
             chosenPoints.length !== 0 ? removeATempPlaylist(emitterObj.value) : undefined;
 
@@ -465,6 +468,10 @@ export default {
         isMapPannable.value = true;
         // only clickable when the emotion map is shown and the screen is showing the homepage
         if (showMap.index !== 0 && isClickable.value && !diary.isShown) {
+          const songIndices = {
+            i: null,
+            j: null,
+          };
           const mouseIndices = coordinatesToIndices(p.mouseX, p.mouseY, width, height);
           const mood = posOnMap(width, height, starDots, p.mouseX, p.mouseY);
           if (mapProperties.status && typeof (mood.valence) === 'number' && typeof (mood.arousal) === 'number') {
@@ -476,6 +483,9 @@ export default {
                 for (let k = 0; k < songDots.length; k += 1) {
                   if (songDots[k].onHover()) {
                     track = songDots[k];
+                    const { songIndexI, songIndexJ } = songDots[k].findSongOriginalIndices(width, height);
+                    songIndices.i = songIndexI;
+                    songIndices.j = songIndexJ;
                   }
                 }
               } else track = null;
@@ -491,9 +501,43 @@ export default {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
             } else if (region === 4 && showMap.index === 4 && !isZoomable.value) {
               locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+
             // FOR MOBILE ONLY
             } else if (isMobile.value && isZoomable.value && !mapWasPanned.value) {
-              locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+              // In Case of The After Effects of Either or Both The Zoom and Panning Features Applied to The Map
+              if (songIndices.i !== null && songIndices.j !== null) {
+                // Search For Song Indices instead of Mouse's Based on It's Original Location
+                locationChosen(songIndices.i, songIndices.j, searchType, track, counter);
+              // If User Doesn't Choose A Song But instead Chooses An Emotion Region
+              } else if (zoomVal.value !== 0 || panningVal.value.x !== 0 || panningVal.value.y !== 0) {
+                const roi = {
+                  x: window.innerWidth / 2,
+                  y: window.innerHeight / 2,
+                };
+
+                let OFFSET_ZOOM = {
+                  x: 0,
+                  y: 0,
+                };
+                const ZOOM_STEPS = 5;
+                if (zoomVal.value > 0) {
+                  for (let z = 0; z < zoomVal.value / ZOOM_STEPS; z += 1) {
+                    OFFSET_ZOOM = zoom(ZOOM_STEPS, roi, p.mouseX, p.mouseY, p, true);
+                  }
+                }
+
+                // Invert The Panning Values
+                panningVal.value.x = -panningVal.value.x;
+                panningVal.value.y = -panningVal.value.y;
+
+                const generatedX = p.mouseX + OFFSET_ZOOM.x + panningVal.value.x;
+                const generatedY = p.mouseY + OFFSET_ZOOM.y + panningVal.value.y;
+
+                const offsetMouseIndices = coordinatesToIndices(generatedX, generatedY, width, height);
+                locationChosen(offsetMouseIndices.i, offsetMouseIndices.j, searchType, track, counter);
+              } else if (zoomVal.value === 0) {
+                locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
+              }
             }
 
             counter += 1;
@@ -516,7 +560,8 @@ export default {
                 } else {
                   track = songDots[k];
                   searchType = track === null ? 'random' : 'search';
-                  locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter, 'transition');
+                  const { songIndexI, songIndexJ } = songDots[k].findSongOriginalIndices(width, height);
+                  locationChosen(songIndexI, songIndexJ, searchType, track, counter, 'transition');
                   counter += 1;
                 }
                 break;
@@ -541,9 +586,9 @@ export default {
       // Mouse Distance
       function calculateMouseVectorDistance(px, py, cx, cy) {
         // if the sign is -, mouse moving to the left and likewise
-        const x = cx - px;
-        const y = cy - py;
-        return { x, y };
+        const dx = cx - px;
+        const dy = cy - py;
+        return { dx, dy };
       }
 
       p.mousePressed = () => {
@@ -555,20 +600,35 @@ export default {
       p.touchEnded = () => {
         if (isMobile.value && isClickable.value) {
           if (mapWasPanned.value) {
-            const { x, y } = calculateMouseVectorDistance(prevMousePos.touchPos.x, prevMousePos.touchPos.y, p.mouseX, p.mouseY);
-            panningVal.value.x = x;
-            panningVal.value.y = y;
+            // Change The Chosen Point positions too
+            // to Update The Zone
+            const { dx, dy } = calculateMouseVectorDistance(prevMousePos.touchPos.x, prevMousePos.touchPos.y, p.mouseX, p.mouseY);
+            panningVal.value.x = dx;
+            panningVal.value.y = dy;
+
             // Only Store 2 Vectors
-            storeVectors(panningVal.value);
+            // DO NOT USE VUE REF OBJECT AS A NORMAL JAVASCRIPT VARIABLE BECAUSE IT WILL MESS UP ITS REACTIVITY
+            storeVectors(panningVal.value.x, panningVal.value.y);
             // Check The Length of The VECTORS variable
             if (checkVectorsArrayLength() === 2) {
-              const { newX, newY } = updateVectors(VECTORS[0], VECTORS[1]);
-              panningVal.value.x = newX;
-              panningVal.value.y = newY;
+              const { newDX, newDY } = updateVectors(VECTORS[0], VECTORS[1]);
+              panningVal.value.x = newDX;
+              panningVal.value.y = newDY;
+              storeVectors(panningVal.value.x, panningVal.value.y);
             }
-            updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
+            onScreenRegister();
+            // updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
+          } else if (!mapWasPanned.value) {
+            onScreenRegister();
+            if (!mapProperties.status) {
+              for (let i = 0; i < songDots.length; i += 1) {
+                songDots[i].reset();
+              }
+            }
+            zoomVal.value = 0;
+            panningVal.value.x = 0;
+            panningVal.value.y = 0;
           }
-          onScreenRegister();
         }
       };
 
@@ -598,8 +658,8 @@ export default {
           if (isClickable.value && songDots.length > 0 && !diary.isShown && isMapPannable.value) {
             for (let i = 0; i < songDots.length; i += 1) {
               // Calculate the distance between the previous and the latest touch positions
-              const { x, y } = e.touches.length === 1 ? calculateMouseVectorDistance(prevMousePos.x, prevMousePos.y, p.mouseX, p.mouseY) : undefined;
-              songDots[i].panning(x, y);
+              const { dx, dy } = e.touches.length === 1 ? calculateMouseVectorDistance(prevMousePos.x, prevMousePos.y, p.mouseX, p.mouseY) : undefined;
+              songDots[i].panning(dx, dy);
             }
 
             // Update the mouse positions
@@ -637,15 +697,21 @@ export default {
     }
 
     // MAP ZOOMING
-    function mapZooming(event, zoomFactor) {
+    const zoomLevel = {
+      min: 0,
+      max: 20,
+    };
+    function mapZooming(zoomFactor) {
       if (isClickable.value) {
         zoomVal.value += zoomFactor;
-        // For The Next Generations of Song Dots
-        updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
-        // console.log(event.delta, zoomFactor);
-        for (let i = 0; i < songDots.length; i += 1) {
-          songDots[i].zoom(zoomFactor);
-        }
+        if (zoomVal.value >= zoomLevel.min && zoomVal.value <= zoomLevel.max) {
+          // For The Next Generations of Song Dots
+          // updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
+          // console.log(event.delta, zoomFactor);
+          for (let i = 0; i < songDots.length; i += 1) {
+            songDots[i].zoom(zoomFactor, zoomVal.value);
+          }
+        } else zoomVal.value -= zoomFactor;
       }
     }
 
