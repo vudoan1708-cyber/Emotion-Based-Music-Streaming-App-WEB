@@ -57,6 +57,7 @@ export function drawSongDots(starDots, chosenPoints, emitter) {
         // eslint-disable-next-line no-lonely-if
         if (songIndex === i) {
           emitter.emit('song_on_hover', null);
+          songIndex = -1;
 
           if (document.body.style.cursor === 'pointer') document.body.style.cursor = 'context-menu';
         }

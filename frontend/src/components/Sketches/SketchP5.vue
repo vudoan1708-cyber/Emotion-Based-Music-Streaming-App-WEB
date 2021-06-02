@@ -49,7 +49,21 @@
   </div>
 
   <!-- Song Info On The Map -->
-  <SongData :emitter="emitterObj" />
+  <div v-if="!isMobile">
+    <SongData :songX="songInfos.attr.x[0]" :songY="songInfos.attr.y[0]"
+              :songTitle="songInfos.title[0]" :songImgURL="songInfos.img_url[0]"
+              :songValence="songInfos.valence[0]" :songArousal="songInfos.arousal[0]"
+              :mobile="isMobile" />
+  </div>
+
+  <div v-else-if="isMobile && zoomVal >= 10 && songInfos.len > 0">
+    <div v-for="(songInfo, songDataKey) in songInfos.len" :key="songDataKey">
+      <SongData :songX="songInfos.attr.x[songDataKey]" :songY="songInfos.attr.y[songDataKey]"
+                :songTitle="songInfos.title[songDataKey]" :songImgURL="songInfos.img_url[songDataKey]"
+                :songValence="songInfos.valence[songDataKey]" :songArousal="songInfos.arousal[songDataKey]"
+                :mobile="isMobile"/>
+    </div>
+  </div>
 
   <!-- Instructions -->
   <transition name="fade">
@@ -217,6 +231,44 @@ export default {
       y: 0,
     });
 
+    // (Song Data) Related Info
+    const songInfos = reactive({
+      id: [],
+      attr: {
+        x: [],
+        y: [],
+      },
+      title: [],
+      img_url: [],
+      valence: [],
+      arousal: [],
+      len: 0,
+    });
+    // Listen on 'song_on_hover' event
+    emitterObj.value.on('song_on_hover', (song) => {
+      if (!isMobile.value) {
+        if (song !== null) {
+          songInfos.id[0] = song.id;
+          songInfos.attr.x[0] = song.x;
+          songInfos.attr.y[0] = song.y;
+          songInfos.title[0] = song.title;
+          songInfos.img_url[0] = song.album_imgs ? song.album_imgs.url : '#';
+          songInfos.valence[0] = song.valence;
+          songInfos.arousal[0] = song.arousal;
+          songInfos.len += 1;
+        } else {
+          songInfos.id.splice(0, songInfos.id.length);
+          songInfos.attr.x.splice(0, songInfos.attr.x.length);
+          songInfos.attr.y.splice(0, songInfos.attr.y.length);
+          songInfos.title.splice(0, songInfos.title.length);
+          songInfos.img_url.splice(0, songInfos.img_url.length);
+          songInfos.valence.splice(0, songInfos.valence.length);
+          songInfos.arousal.splice(0, songInfos.arousal.length);
+          songInfos.len = 0;
+        }
+      } else emitterObj.value.off('song_on_hover');
+    });
+
     // Delay Time To Display The Instruction Board
     const isInstructionsShown = ref(false);
     // setTimeout for deplaying the instruction to be displayed
@@ -230,6 +282,10 @@ export default {
     let p5Obj = null;
     const width = window.innerWidth;
     const height = window.innerHeight;
+    const roi = {
+      x: width / 2,
+      y: height / 2,
+    };
 
     function emitMapEvent(state) {
       // socket.io-like package (mitt) for emitting and listening to events
@@ -516,11 +572,6 @@ export default {
                 locationChosen(songIndices.i, songIndices.j, searchType, track, counter);
               // If User Doesn't Choose A Song But instead Chooses An Emotion Region
               } else if (zoomVal.value !== 0 || panningVal.value.x !== 0 || panningVal.value.y !== 0) {
-                const roi = {
-                  x: window.innerWidth / 2,
-                  y: window.innerHeight / 2,
-                };
-
                 let OFFSET_ZOOM = {
                   x: 0,
                   y: 0,
@@ -631,9 +682,12 @@ export default {
                 songDots[i].reset();
               }
             }
-            zoomVal.value = 0;
-            panningVal.value.x = 0;
-            panningVal.value.y = 0;
+
+            if (isMapPannable.value) {
+              zoomVal.value = 0;
+              panningVal.value.x = 0;
+              panningVal.value.y = 0;
+            }
           }
         }
       };
@@ -702,6 +756,22 @@ export default {
         starDots, width, height, p5Obj, emitterObj.value);
     }
 
+    // Create Song Data
+    function createSongData() {
+      if (songInfos.len < songDots.length) {
+        for (let i = 0; i < songDots.length; i += 1) {
+          songInfos.id.push(songDots[i].id);
+          songInfos.attr.x.push(songDots[i].x);
+          songInfos.attr.y.push(songDots[i].y);
+          songInfos.title.push(songDots[i].title);
+          songDots[i].album_imgs ? songInfos.img_url.push(songDots[i].album_imgs.url) : songInfos.img_url.push('#');
+          songInfos.valence.push(songDots[i].valence);
+          songInfos.arousal.push(songDots[i].arousal);
+          songInfos.len += 1;
+        }
+      }
+    }
+
     // MAP ZOOMING
     const zoomLevel = {
       min: 0,
@@ -714,10 +784,20 @@ export default {
           // For The Next Generations of Song Dots
           // updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
           // console.log(event.delta, zoomFactor);
+          songInfos.len = 0;
           for (let i = 0; i < songDots.length; i += 1) {
-            songDots[i].zoom(zoomFactor, zoomVal.value);
+            songDots[i].zoom(zoomFactor, zoomVal.value, roi);
+
+            const OFFSET_ZOOM = zoom(zoomFactor, roi, songInfos.attr.x[i], songInfos.attr.y[i], p5Obj, false);
+            songInfos.attr.x[i] += OFFSET_ZOOM.x;
+            songInfos.attr.y[i] += OFFSET_ZOOM.y;
+            songInfos.len += 1;
           }
-        } else zoomVal.value -= zoomFactor;
+        } else if (zoomVal.value > zoomLevel.max) {
+          zoomVal.value -= zoomFactor;
+        } else if (zoomVal.value < zoomLevel.min) {
+          zoomVal.value += zoomFactor;
+        }
       }
     }
 
@@ -737,6 +817,7 @@ export default {
           userSettingsData.value = datum;
         }
       });
+      if (isMobile.value) createSongData();
     });
 
     onMounted(() => {
@@ -760,6 +841,8 @@ export default {
       enterARMode,
       isZoomable,
       isMobile,
+      songInfos,
+      zoomVal,
     };
   },
 };

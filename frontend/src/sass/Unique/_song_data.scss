@@ -1,34 +1,44 @@
-#song_data {
+@import '../Mixin/user_select';
+
+.song_data {
   position: absolute;
   transform: translateX(-50%);
   padding: 5px;
   border-radius: 5px;
   background-color: rgba(58, 102, 80, 0.75);
-  z-index: 4;
   font-size: 0.75rem;
   color: rgb(172, 172, 172);
   width: 100px;
-  cursor: context-menu;
+  @include userSelect(none);
 
-  img {
+  .song_data_container {
+    position: relative;
     width: 100%;
-    opacity: 0.75;
+    height: 100%;
+
+    img {
+      width: 100%;
+      opacity: 0.75;
+    }
   }
 }
 
 /* Responsive Text */
 @media screen and (max-width: 770px) {
-  #song_data {
+  .song_data {
     font-size: 0.75rem !important;
+    width: 100px !important;
   }
 }
 @media screen and (max-width: 600px) {
-  #song_data {
+  .song_data {
     font-size: 0.7rem !important;
+    width: 80px !important;
   }
 }
 @media screen and (max-width: 469px) {
-  #song_data {
-    font-size: 0.5rem !important;
+  .song_data {
+    font-size: 0.3rem !important;
+    width: 45px !important;
   }
 }

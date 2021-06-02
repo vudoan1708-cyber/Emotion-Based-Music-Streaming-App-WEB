@@ -83,15 +83,10 @@ export default class SongDots {
     // } else this.reset();
   }
 
-  zoom(zoomFactor, zoomVal) {
+  zoom(zoomFactor, zoomVal, roi) {
     if (zoomFactor !== 0 && zoomVal !== 0) {
       // this.p5.push();
       this.size += zoomFactor / 10;
-
-      const roi = {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2,
-      };
 
       const OFFSET_ZOOM = zoom(zoomFactor, roi, this.x, this.y, this.p5, false);
 
