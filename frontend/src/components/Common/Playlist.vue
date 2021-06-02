@@ -61,7 +61,7 @@ import { getAllData, updateData } from '@/handlers/mongdb';
 import userJourneyObj from '@/components/JSON/userJourneyObj';
 
 import {
-  ref, reactive, watch, onBeforeMount,
+  ref, reactive, watch, onBeforeMount, toRef,
 } from 'vue';
 
 export default {
@@ -73,10 +73,14 @@ export default {
     mobile: {
       type: Boolean,
     },
+    rightPaneDisplayOnMobile: {
+      type: String,
+    },
   },
   setup(props) {
     // Props
     const isMobile = ref(props.mobile);
+    const rightPaneDisplay = toRef(props, 'rightPaneDisplayOnMobile');
 
     const allTracksStyling = ref(null);
     const collectedTracksStyling = ref(null);
@@ -352,6 +356,25 @@ export default {
         await addSongToQueue(draggableElement.metadata.id);
         isPlayerActive.value = false;
         draggableElement.metadata = '';
+
+        // Scroll To Bottom
+        const scrollProps = {
+          left: 0,
+          top: collectedTracksStyling.value.scrollHeight,
+          behavior: 'smooth',
+        };
+        collectedTracksStyling.value.scrollTo(scrollProps);
+      }
+    }
+
+    // Reset Playlist Track Styles
+    function resetStyles(displayVal) {
+      if (isMobile.value) {
+        // Scroll To Top
+        if (displayVal !== 'block') {
+          collectedTracksStyling.value.scrollTop = 0;
+          allTracksStyling.value.scrollTop = 0;
+        }
       }
     }
 
@@ -364,7 +387,9 @@ export default {
     }
 
     // Watch Function cannot wait for a response from an execution on ASYNC/AWAIT
-    watch((isPlayerActive), (isActive) => {
+    // eslint-disable-next-line no-unused-vars
+    watch(([isPlayerActive, rightPaneDisplay]), ([isActive, displayVal]) => {
+      resetStyles(displayVal);
       awaitToAddSong(isActive);
     });
 

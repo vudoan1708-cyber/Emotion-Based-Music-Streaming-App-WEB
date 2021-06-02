@@ -1,6 +1,7 @@
 <template>
-  <!-- Not Homepage (The Emotion Map) and Not The Right Pane Mobile Display -->
-  <div v-if="number !== 1 && number !== 5" id="center_pane">
+  <!-- Not Homepage (The Emotion Map), Not The Right Pane Mobile Display
+  Nor The Instruction on Mobile -->
+  <div v-if="number !== 1 && number !== 5 && number !== 6" id="center_pane">
     <!-- Search -->
     <Search v-if="number === 2" :emitter="emitterObj" />
 

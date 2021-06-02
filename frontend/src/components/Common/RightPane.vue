@@ -11,7 +11,7 @@
     <UserAccount :emitter="emitterObj" />
 
     <!-- Playlist Display -->
-    <Playlist :mobile="isMobile" :emitter="emitterObj" />
+    <Playlist :rightPaneDisplayOnMobile="displayVal" :mobile="isMobile" :emitter="emitterObj" />
 
     <!-- Right Pane Close Button (ONLY AVAILABLE IN MOBILE MODE) -->
     <div class="collapsible_btn" id="right_pane_close_button"

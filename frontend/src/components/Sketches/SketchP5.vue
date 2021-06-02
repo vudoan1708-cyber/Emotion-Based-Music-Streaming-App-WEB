@@ -53,7 +53,7 @@
 
   <!-- Instructions -->
   <transition name="fade">
-    <Instructions :emitter="emitterObj" v-if="isInstructionsShown" />
+    <Instructions :emitter="emitterObj" :mobile="isMobile" v-if="isInstructionsShown" />
   </transition>
 
   <!-- Diary -->
@@ -247,6 +247,12 @@ export default {
     // Listen on the 'instructions' event
     emitterObj.value.on('instructions', (isFinished) => {
       if (isFinished) isInstructionsShown.value = false;
+
+      // MOBILE ONLY
+      // Enable Clickable Emotion Map When The Instructions Are Finished
+      if (isMobile.value) {
+        emitterObj.value.emit('nav', 1);
+      }
     });
 
     // listen to click event from the dom elements

@@ -47,6 +47,9 @@ export default {
     emitter: {
       type: Object,
     },
+    mobile: {
+      type: Boolean,
+    },
   },
   setup(props) {
     // Instructions
@@ -63,6 +66,11 @@ export default {
     // References
     const notificationWrapperRef = ref(null);
 
+    // To Stop The Emotion Map Being Interfere With When Scrolling in This Section on MOBILE
+    if (props.mobile) {
+      props.emitter.emit('nav', 6);
+    }
+
     function changeInstructionStage(step) {
       instructions.stage += step;
       instructions.img = '';
@@ -74,7 +82,12 @@ export default {
       notificationWrapperRef.value.style.overflowY = 'scroll';
 
       // Scroll To Top At Every Page
-      notificationWrapperRef.value.scrollTop = 0;
+      const scrollProps = {
+        left: 0,
+        top: 0,
+        behavior: 'smooth',
+      };
+      notificationWrapperRef.value.scrollTo(scrollProps);
 
       if (instructions.stage === 1) {
         instructions.img = VA;
