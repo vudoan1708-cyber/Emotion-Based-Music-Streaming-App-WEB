@@ -73,6 +73,9 @@ export default {
       notificationWrapperRef.value.style.height = '90%';
       notificationWrapperRef.value.style.overflowY = 'scroll';
 
+      // Scroll To Top At Every Page
+      notificationWrapperRef.value.scrollTop = 0;
+
       if (instructions.stage === 1) {
         instructions.img = VA;
         instructions.header = 'The Emotion Map Section';
@@ -156,54 +159,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#notification {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.65);
-  z-index: 5;
-
-  #wrapper {
-    /* reset the width of the div to fit the inner content
-    with inline-block display */
-    display: inline-block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 15px;
-    border-radius: 5px;
-    background-color: rgb(63, 63, 63);
-    color: white;
-
-    .handbookImg {
-      margin: 10px;
-    }
-    h3, p {
-      text-align: left;
-      line-height: 1.5;
-    }
-    p {
-      color: rgb(223, 223, 223);
-    }
-
-    #btn_wrapper {
-      display: flex;
-      justify-content: space-around;
-      .notification_btn {
-        border-radius: 5px;
-        background-color: rgb(75, 131, 78);
-        margin-top: 20px;
-        padding: 10px;
-        cursor: pointer;
-
-        &:hover {
-          background-color: rgb(115, 185, 118);
-        }
-      }
-    }
-  }
-}
+@import '@/sass/Unique/_instructions';
 </style>

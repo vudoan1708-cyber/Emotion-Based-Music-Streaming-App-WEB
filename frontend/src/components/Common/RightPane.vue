@@ -68,6 +68,10 @@ export default {
     function toggleRightPane(mode) {
       if (isMobile.value) {
         displayVal.value = mode;
+
+        if (displayVal.value === 'block') {
+          emitterObj.value.emit('nav', 5);
+        } else emitterObj.value.emit('nav', 1);
       }
     }
 

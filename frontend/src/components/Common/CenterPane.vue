@@ -1,5 +1,6 @@
 <template>
-  <div v-if="number !== 1" id="center_pane">
+  <!-- Not Homepage (The Emotion Map) and Not The Right Pane Mobile Display -->
+  <div v-if="number !== 1 && number !== 5" id="center_pane">
     <!-- Search -->
     <Search v-if="number === 2" :emitter="emitterObj" />
 
@@ -7,7 +8,7 @@
     <Records v-else-if="number === 3" :emitter="emitterObj" :userJourney="userJourneyObj" />
 
     <!-- Portfolio -->
-    <Portfolio v-else :emitter="emitterObj" />
+    <Portfolio v-else-if="number === 4" :emitter="emitterObj" />
 
     <!-- Search Result Board -->
     <section v-if="number === 2 && searchResults.length !== 0" id="results">
