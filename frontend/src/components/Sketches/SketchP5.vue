@@ -58,7 +58,18 @@
 
   <div v-else-if="isMobile && zoomVal >= 5 && songInfos.len > 0 && isClickable">
     <div v-for="(songInfo, songDataKey) in songInfos.len" :key="songDataKey">
-      <SongData :songX="songInfos.attr.x[songDataKey]" :songY="songInfos.attr.y[songDataKey]"
+      <SongData v-if="zoomVal === 5"
+                :songX="songInfos.attr.x[songDataKey]" :songY="songInfos.attr.y[songDataKey]"
+                :songTitle="songInfos.title[songDataKey]" :songImgURL="''"
+                :songValence="-1" :songArousal="-1"
+                :zoomVal="zoomVal" :mobile="isMobile"/>
+      <SongData v-if="zoomVal === 10"
+                :songX="songInfos.attr.x[songDataKey]" :songY="songInfos.attr.y[songDataKey]"
+                :songTitle="songInfos.title[songDataKey]" :songImgURL="''"
+                :songValence="songInfos.valence[songDataKey]" :songArousal="songInfos.arousal[songDataKey]"
+                :zoomVal="zoomVal" :mobile="isMobile"/>
+      <SongData v-else-if="zoomVal > 10"
+                :songX="songInfos.attr.x[songDataKey]" :songY="songInfos.attr.y[songDataKey]"
                 :songTitle="songInfos.title[songDataKey]" :songImgURL="songInfos.img_url[songDataKey]"
                 :songValence="songInfos.valence[songDataKey]" :songArousal="songInfos.arousal[songDataKey]"
                 :zoomVal="zoomVal" :mobile="isMobile"/>

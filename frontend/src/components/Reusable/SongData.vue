@@ -5,11 +5,11 @@
               left: songInfo.attr.x + 'px',
               zIndex: songInfo.zIndexVal }">
     <div class="song_data_container">
-      <img v-if="zoomDegree > 10" draggable="false" @dragstart="false"
+      <img v-if="songInfo.img_url !== ''" draggable="false" @dragstart="false"
         :src="songInfo.img_url" />
-      <h3 v-if="songInfo.img_url !== ''">{{ songInfo.title }}</h3>
-      <p v-if="zoomDegree > 5">{{ songInfo.valence }}</p>
-      <p v-if="zoomDegree > 5">{{ songInfo.arousal }}</p>
+      <h3 v-if="songInfo.title !== ''">{{ songInfo.title }}</h3>
+      <p v-if="songInfo.valence !== -1">{{ songInfo.valence }}</p>
+      <p v-if="songInfo.arousal !== -1">{{ songInfo.arousal }}</p>
     </div>
   </div>
 </template>
