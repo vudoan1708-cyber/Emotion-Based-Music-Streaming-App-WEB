@@ -25,13 +25,13 @@ export default class SongDots {
     this.artist_names = artist_names;
     this.external_urls = external_urls;
 
-    this.prevX = x;
-    this.prevY = y;
+    this.originalX = x;
+    this.originalY = y;
     this.x = x;
     this.y = y;
 
     this.size = size;
-    this.oldSize = this.size;
+    this.originalSize = this.size;
 
     this.p5 = p5;
     if (zoomVal !== 0 || panningVal.x !== 0 || panningVal.y !== 0) {
@@ -39,7 +39,7 @@ export default class SongDots {
       this.panning(panningVal.x, panningVal.y);
     }
 
-    this.region = mapRegions(this.prevX, this.prevY, width, height);
+    this.region = mapRegions(this.originalX, this.originalY, width, height);
   }
 
   onHover() {
@@ -55,7 +55,7 @@ export default class SongDots {
   }
 
   findSongOriginalIndices(w, h) {
-    const { i, j } = coordinatesToIndices(this.prevX, this.prevY, w, h);
+    const { i, j } = coordinatesToIndices(this.originalX, this.originalY, w, h);
     const songIndexI = i;
     const songIndexJ = j;
     return { songIndexI, songIndexJ };
@@ -63,14 +63,14 @@ export default class SongDots {
 
   reset(which) {
     if (which === undefined) {
-      this.x = this.prevX;
-      this.y = this.prevY;
-      this.size = this.oldSize;
+      this.x = this.originalX;
+      this.y = this.originalY;
+      this.size = this.originalSize;
     } else if (which === 'positions') {
-      this.x = this.prevX;
-      this.y = this.prevY;
+      this.x = this.originalX;
+      this.y = this.originalY;
     } else if (which === 'size') {
-      this.size = this.oldSize;
+      this.size = this.originalSize;
     }
   }
 
@@ -151,7 +151,7 @@ export default class SongDots {
         this.label = 'accepted';
 
         // push it in the playlist array
-        updatePlaylist(this, 'add');
+        updatePlaylist(this, 'update');
       }
 
     } else {

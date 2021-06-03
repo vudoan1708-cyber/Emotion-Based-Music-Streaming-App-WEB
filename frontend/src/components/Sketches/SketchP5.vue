@@ -56,7 +56,7 @@
               :mobile="isMobile" />
   </div>
 
-  <div v-else-if="isMobile && zoomVal >= 10 && songInfos.len > 0">
+  <div v-else-if="isMobile && zoomVal >= 10 && songInfos.len > 0 && isClickable">
     <div v-for="(songInfo, songDataKey) in songInfos.len" :key="songDataKey">
       <SongData :songX="songInfos.attr.x[songDataKey]" :songY="songInfos.attr.y[songDataKey]"
                 :songTitle="songInfos.title[songDataKey]" :songImgURL="songInfos.img_url[songDataKey]"
@@ -237,6 +237,8 @@ export default {
       attr: {
         x: [],
         y: [],
+        originalX: [],
+        originalY: [],
       },
       title: [],
       img_url: [],
@@ -267,6 +269,28 @@ export default {
           songInfos.len = 0;
         }
       } else emitterObj.value.off('song_on_hover');
+    });
+
+    // Listen on 'song_data' event to fill the song info data variable
+    emitterObj.value.on('song_data', (data) => {
+      if (isMobile.value) {
+        // if a new song is added
+        if (data.how === 'add') {
+          songInfos.id.push(data.song.id);
+
+          songInfos.attr.x.push(data.song.x);
+          songInfos.attr.y.push(data.song.y);
+          songInfos.attr.originalX.push(data.song.x);
+          songInfos.attr.originalY.push(data.song.y);
+
+          songInfos.title.push(data.song.title);
+          data.song.album_imgs ? songInfos.img_url.push(data.song.album_imgs.url) : songInfos.img_url.push('#');
+
+          songInfos.valence.push(data.song.valence);
+          songInfos.arousal.push(data.song.arousal);
+          songInfos.len += 1;
+        }
+      }
     });
 
     // Delay Time To Display The Instruction Board
@@ -509,7 +533,7 @@ export default {
             drawMap(isClicked, starDots, chosenPoints, p);
 
             // Song Dots
-            drawSongDots(starDots, chosenPoints, emitterObj.value);
+            drawSongDots(starDots, chosenPoints, emitterObj.value, zoomVal.value, panningVal.value.x, panningVal.value.y);
 
             // Neighbours
             // drawNeighbours(p);
@@ -528,8 +552,9 @@ export default {
 
         // Allow Map Panning
         isMapPannable.value = true;
-        // only clickable when the emotion map is shown and the screen is showing the homepage
-        if (showMap.index !== 0 && isClickable.value && !diary.isShown) {
+        // only clickable when the emotion map is shown, the screen is showing the homepage
+        // not showing the diary and the emotion map was not panned
+        if (showMap.index !== 0 && isClickable.value && !diary.isShown && !mapWasPanned.value) {
           const songIndices = {
             i: null,
             j: null,
@@ -592,7 +617,7 @@ export default {
 
                 const offsetMouseIndices = coordinatesToIndices(generatedX, generatedY, width, height);
                 locationChosen(offsetMouseIndices.i, offsetMouseIndices.j, searchType, track, counter);
-              } else if (zoomVal.value === 0 || panningVal.value.x === 0 || panningVal.value.y === 0) {
+              } else if (zoomVal.value === 0 && panningVal.value.x === 0 && panningVal.value.y === 0) {
                 locationChosen(mouseIndices.i, mouseIndices.j, searchType, track, counter);
               }
             }
@@ -601,7 +626,7 @@ export default {
             // isChangeable.value = true;
             //   }
             // }
-          } else if (!mapProperties.status) {
+          } else if (!mapProperties.status && typeof (mood.valence) === 'number' && typeof (mood.arousal) === 'number') {
             for (let k = 0; k < songDots.length; k += 1) {
               // If click on a song dot on the map
               if (songDots[k].onHover()) {
@@ -675,14 +700,18 @@ export default {
             }
             onScreenRegister();
             // updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
-          } else if (!mapWasPanned.value) {
+          } else if (!mapWasPanned.value && !diary.isShown) {
             onScreenRegister();
-            if (!mapProperties.status) {
+            // If The Emotion Map is Still Shown and User Clicks Outbound
+            if (!mapProperties.status && isMapPannable.value) {
               for (let i = 0; i < songDots.length; i += 1) {
                 songDots[i].reset();
+                songInfos.attr.x[i] = songInfos.attr.originalX[i];
+                songInfos.attr.y[i] = songInfos.attr.originalY[i];
               }
             }
 
+            // Prevent Map Zoom and Panning Values To Reset If User Clicks Out of Bound
             if (isMapPannable.value) {
               zoomVal.value = 0;
               panningVal.value.x = 0;
@@ -720,6 +749,8 @@ export default {
               // Calculate the distance between the previous and the latest touch positions
               const { dx, dy } = e.touches.length === 1 ? calculateMouseVectorDistance(prevMousePos.x, prevMousePos.y, p.mouseX, p.mouseY) : undefined;
               songDots[i].panning(dx, dy);
+              songInfos.attr.x[i] += dx;
+              songInfos.attr.y[i] += dy;
             }
 
             // Update the mouse positions
@@ -756,26 +787,10 @@ export default {
         starDots, width, height, p5Obj, emitterObj.value);
     }
 
-    // Create Song Data
-    function createSongData() {
-      if (songInfos.len < songDots.length) {
-        for (let i = 0; i < songDots.length; i += 1) {
-          songInfos.id.push(songDots[i].id);
-          songInfos.attr.x.push(songDots[i].x);
-          songInfos.attr.y.push(songDots[i].y);
-          songInfos.title.push(songDots[i].title);
-          songDots[i].album_imgs ? songInfos.img_url.push(songDots[i].album_imgs.url) : songInfos.img_url.push('#');
-          songInfos.valence.push(songDots[i].valence);
-          songInfos.arousal.push(songDots[i].arousal);
-          songInfos.len += 1;
-        }
-      }
-    }
-
     // MAP ZOOMING
     const zoomLevel = {
       min: 0,
-      max: 20,
+      max: 50,
     };
     function mapZooming(zoomFactor) {
       if (isClickable.value) {
@@ -784,15 +799,15 @@ export default {
           // For The Next Generations of Song Dots
           // updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
           // console.log(event.delta, zoomFactor);
-          songInfos.len = 0;
+          isClickable.value = false;
           for (let i = 0; i < songDots.length; i += 1) {
             songDots[i].zoom(zoomFactor, zoomVal.value, roi);
 
             const OFFSET_ZOOM = zoom(zoomFactor, roi, songInfos.attr.x[i], songInfos.attr.y[i], p5Obj, false);
             songInfos.attr.x[i] += OFFSET_ZOOM.x;
             songInfos.attr.y[i] += OFFSET_ZOOM.y;
-            songInfos.len += 1;
           }
+          isClickable.value = true;
         } else if (zoomVal.value > zoomLevel.max) {
           zoomVal.value -= zoomFactor;
         } else if (zoomVal.value < zoomLevel.min) {
@@ -817,7 +832,6 @@ export default {
           userSettingsData.value = datum;
         }
       });
-      if (isMobile.value) createSongData();
     });
 
     onMounted(() => {
@@ -843,6 +857,7 @@ export default {
       isMobile,
       songInfos,
       zoomVal,
+      isClickable,
     };
   },
 };

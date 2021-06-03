@@ -202,7 +202,7 @@ export default {
     props.emitter.on('song_data', async (data) => {
       if (!data.beforeLoading) {
         // if a new song is added
-        if (data.how === 'add') {
+        if (data.how === 'add' || data.how === 'update') {
           // handle collected tracks, by the system or by the user
           if (data.song.label === 'accepted' || data.song.label === 'accepted_by_user') {
             acceptedSongData.value.push(data.song);
@@ -327,7 +327,7 @@ export default {
         if (draggableElement.metadata !== '') {
           // Update The Playlist and Visualisation Via This Function
           draggableElement.metadata.label = 'accepted_by_user';
-          updatePlaylist(draggableElement.metadata, 'add');
+          updatePlaylist(draggableElement.metadata, 'update');
 
           // Trigger Watch Function to Add Songs To The Player's Queue
           isPlayerActive.value = true;
