@@ -53,15 +53,15 @@
     <SongData :songX="songInfos.attr.x[0]" :songY="songInfos.attr.y[0]"
               :songTitle="songInfos.title[0]" :songImgURL="songInfos.img_url[0]"
               :songValence="songInfos.valence[0]" :songArousal="songInfos.arousal[0]"
-              :mobile="isMobile" />
+              :zoomVal="zoomVal" :mobile="isMobile" />
   </div>
 
-  <div v-else-if="isMobile && zoomVal >= 10 && songInfos.len > 0 && isClickable">
+  <div v-else-if="isMobile && zoomVal >= 5 && songInfos.len > 0 && isClickable">
     <div v-for="(songInfo, songDataKey) in songInfos.len" :key="songDataKey">
       <SongData :songX="songInfos.attr.x[songDataKey]" :songY="songInfos.attr.y[songDataKey]"
                 :songTitle="songInfos.title[songDataKey]" :songImgURL="songInfos.img_url[songDataKey]"
                 :songValence="songInfos.valence[songDataKey]" :songArousal="songInfos.arousal[songDataKey]"
-                :mobile="isMobile"/>
+                :zoomVal="zoomVal" :mobile="isMobile"/>
     </div>
   </div>
 
@@ -682,8 +682,6 @@ export default {
       p.touchEnded = () => {
         if (isMobile.value && isClickable.value) {
           if (mapWasPanned.value) {
-            // Change The Chosen Point positions too
-            // to Update The Zone
             const { dx, dy } = calculateMouseVectorDistance(prevMousePos.touchPos.x, prevMousePos.touchPos.y, p.mouseX, p.mouseY);
             panningVal.value.x = dx;
             panningVal.value.y = dy;
@@ -702,7 +700,7 @@ export default {
             // updateMapValues(zoomVal.value, panningVal.value.x, panningVal.value.y);
           } else if (!mapWasPanned.value && !diary.isShown) {
             onScreenRegister();
-            // If The Emotion Map is Still Shown and User Clicks Outbound
+            // If The Emotion Map is Still Shown and User Clicks Inbound
             if (!mapProperties.status && isMapPannable.value) {
               for (let i = 0; i < songDots.length; i += 1) {
                 songDots[i].reset();
@@ -711,7 +709,7 @@ export default {
               }
             }
 
-            // Prevent Map Zoom and Panning Values To Reset If User Clicks Out of Bound
+            // Prevent Map Zoom and Panning Values To Reset If User Clicks Inbound
             if (isMapPannable.value) {
               zoomVal.value = 0;
               panningVal.value.x = 0;
@@ -803,15 +801,25 @@ export default {
           for (let i = 0; i < songDots.length; i += 1) {
             songDots[i].zoom(zoomFactor, zoomVal.value, roi);
 
-            const OFFSET_ZOOM = zoom(zoomFactor, roi, songInfos.attr.x[i], songInfos.attr.y[i], p5Obj, false);
-            songInfos.attr.x[i] += OFFSET_ZOOM.x;
-            songInfos.attr.y[i] += OFFSET_ZOOM.y;
+            // To Hanlde Reset Song Info Positions
+            const OFFSET_ZOOM = zoomVal.value !== 0
+              ? zoom(zoomFactor, roi, songInfos.attr.x[i], songInfos.attr.y[i], p5Obj, false)
+              : undefined;
+            // If OFFSET_ZOOM is not undefined, perform the zoom feature normally
+            if (OFFSET_ZOOM !== undefined) {
+              songInfos.attr.x[i] += OFFSET_ZOOM.x;
+              songInfos.attr.y[i] += OFFSET_ZOOM.y;
+            // Otherwise, Reset The Song Info Display Positions back to Original
+            } else {
+              songInfos.attr.x[i] = songInfos.attr.originalX[i];
+              songInfos.attr.y[i] = songInfos.attr.originalY[i];
+            }
           }
           isClickable.value = true;
         } else if (zoomVal.value > zoomLevel.max) {
-          zoomVal.value -= zoomFactor;
+          zoomVal.value = zoomLevel.max;
         } else if (zoomVal.value < zoomLevel.min) {
-          zoomVal.value += zoomFactor;
+          zoomVal.value = zoomLevel.min;
         }
       }
     }

@@ -106,3 +106,9 @@ export function storeVectors(vx, vy) {
 export function checkVectorsArrayLength() {
   return VECTORS.length;
 }
+
+// RULE OF THREE
+export function ruleOfThree(a, aRelated, b) {
+  // Find b_related
+  return (b * aRelated) / a;
+}
