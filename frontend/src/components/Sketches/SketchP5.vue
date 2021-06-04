@@ -544,7 +544,7 @@ export default {
             drawMap(isClicked, starDots, chosenPoints, p);
 
             // Song Dots
-            drawSongDots(starDots, chosenPoints, emitterObj.value, zoomVal.value, panningVal.value.x, panningVal.value.y);
+            drawSongDots(starDots, chosenPoints, emitterObj.value, zoomVal.value, panningVal.value.x, panningVal.value.y, mapWasPanned.value);
 
             // Neighbours
             // drawNeighbours(p);

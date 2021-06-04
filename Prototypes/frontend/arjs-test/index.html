@@ -12,6 +12,10 @@
   <script>
       THREEx.ArToolkitContext.baseURL = 'https://raw.githack.com/jeromeetienne/ar.js/master/three.js/'
   </script>
+  
+  <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  <script src="https://google-ar.github.io/three.ar.js/dist/three.ar.js"></script>
+  <script src="https://raw.githack.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script> -->
   <script src="./script.js"></script>
   <link rel="stylesheet" type="text/css" href="./style.css"/>
   <title>AR.js Test</title>
@@ -23,21 +27,27 @@
     embedded
     arjs="sourceType: webcam; sourceWidth:1920; sourceHeight:1080; displayWidth: 1920; displayHeight: 1080; debugUIEnabled: false;"
   >
-    <!-- <a-text
+    <a-text
       value="This content will always face you."
       look-at="[gps-camera]"
       scale="120 120 120"
-      gps-entity-place="latitude: <add-your-latitude>; longitude: <add-your-longitude>;"
-    ></a-text> -->
-    <a-entity
+      gps-entity-place="latitude: 51.4545; longitude: 2.5879;"
+    ></a-text>
+    <!-- <a-entity
       look-at="[gps-camera]"
       gltf-model="./assets/magnemite/scene.gltf"
       rotation="0 180 0"
       scale="0.05 0.05 0.05"
-      gps-entity-place="latitude: 108.2772; longitude: 14.0583;" animation-mixer/>
-    <!-- <a-box material="color: yellow" gps-entity-place="latitude: <your-latitude>; longitude: <your-longitude>"/> -->
+      gps-entity-place="latitude: 51.4545; longitude: 2.5879;" animation-mixer/> -->
+    <a-box material="color: yellow" gps-entity-place="latitude: 51.4545; longitude: 2.5879;"/>
     <a-camera look-controls-enabled='false' arjs-look-controls='smoothingFactor: 0.1' gps-camera rotation-reader> </a-camera>
   </a-scene>
+  <!-- <a-scene ar>
+    <a-box width="0.25" height="0.25" depth="0.25" position="-0.25 0.125 -0.75" rotation="0 45 0" color="#4CC3D9"></a-box>
+    <a-sphere position="0 0.3125 -1.25" radius="0.3125" color="#EF2D5E"></a-sphere>
+    <a-cylinder position="0.25 0.1875 -0.75" radius="0.125" height="0.375" color="#FFC65D"></a-cylinder>
+    <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="#7BC8A4" shadow></a-plane>
+  </a-scene> -->
 
   <div class="centered">
     <button data-action="change"></button>

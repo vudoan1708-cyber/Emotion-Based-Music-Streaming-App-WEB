@@ -34,12 +34,12 @@ export function createSongDots(label, title, valence, arousal, id,
   emitter.emit('song_data', emitData);
 }
 
-export function drawSongDots(starDots, chosenPoints, emitter, zoomValue, panX, panY) {
+export function drawSongDots(starDots, chosenPoints, emitter, zoomValue, panX, panY, mapWasPanned) {
   if (songLoaded) {
     for (let i = songDots.length - 1; i >= 0; i -= 1) {
       songDots[i].show();
 
-      if (chosenPoints.length > 0 && zoomValue === 0 && panX === 0 && panY === 0) {
+      if (chosenPoints.length > 0 && zoomValue === 0 && panX === 0 && panY === 0 && !mapWasPanned) {
         // live updating every song dots positions
         songDots[i].updateLabels(starDots, chosenPoints);
       }
