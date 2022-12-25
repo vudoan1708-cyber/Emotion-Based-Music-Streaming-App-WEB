@@ -33,6 +33,8 @@ import {
 import { randomCharacters } from '@/components/Utils/logic/random';
 import isEmpty from '@/components/Utils/logic/object';
 
+import { PRODUCTION, DEPLOY_APP_URL } from '@/helpers/constants';
+
 // assets
 import userDefaultImg from '@/assets/icons/user.png';
 
@@ -83,7 +85,6 @@ export default {
     // Log Out
     function logOut() {
       cursorStyle.style = 'wait';
-      const PRODUCTION = process.env.NODE_ENV;
 
       const URL = 'https://accounts.spotify.com/en/logout ';
 
@@ -93,7 +94,7 @@ export default {
       // then close the small window and redirect the system back to the spotify login page
       setTimeout(() => {
         spotifyLogoutWindow.close();
-        window.location.href = (PRODUCTION === 'production') ? 'https://muserfly.herokuapp.com/' : 'http://localhost:8080/';
+        window.location.href = (PRODUCTION === 'production') ? DEPLOY_APP_URL : 'http://localhost:8080/';
       }, 500);
       cursorStyle.style = 'context-menu';
     }
