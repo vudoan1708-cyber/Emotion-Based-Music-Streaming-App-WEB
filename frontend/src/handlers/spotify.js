@@ -50,9 +50,9 @@ export function updateMapValues(z, panX, panY) {
 export function LoginHandlers(instructions) {
 
   // if it's production mode, get rid of the proxied server,
-  // because, the client will be built on top of Python then,
-  // and it is served by Python as static files
-  // otherwise, run these two sides separately,
+  // because, the client will be run on top of a Node app then,
+  // and it is served by Node as static files
+  // otherwise, run these separately,
   // with the endpoint /api as a proxy to the server
   const ENDPOINT = (PRODUCTION === 'production') ? '' : '/api';
   try {
@@ -63,11 +63,12 @@ export function LoginHandlers(instructions) {
   }
 }
 
+let player = null;
 // Set up the Web Playback SDK PLAYER
 window.onSpotifyWebPlaybackSDKReady = () => {
 
   // eslint-disable-next-line no-undef
-  const player = new Spotify.Player({
+  player = new Spotify.Player({
     name: 'Muserfly',
     getOAuthToken: (cb) => { cb(TOKEN); },
   });
@@ -89,7 +90,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     else document.title = `${state.track_window.current_track.name} - ${state.track_window.current_track.artists[0].name}`;
   });
 
-  // Player Ready
   player.on('ready', (data) => {
     console.log('Ready with Device ID', data.device_id);
     
@@ -397,7 +397,8 @@ async function checkCloselyMatched(audio_features, valence, arousal, how, trackO
         if (isSearching) {
           isSearching = false;
           console.log(`End The Loop With ${playlist.length} songs`);
-          isPlaying = await playSong(0);
+          await playSong(0);
+          isPlaying = true;
 
           const data = {
             song: song_data,
@@ -466,6 +467,8 @@ export async function playSong(position_ms, offset, playlistParam) {
     // eslint-disable-next-line no-param-reassign
     if (playlistParam === undefined) playlistParam = playlist;
 
+    if (!playlistParam || playlistParam.length === 0) return {};
+
     const URL = `${BUILT_APP_URL}/player/play/?token=${TOKEN}&playlist=${playlistParam}&player_id=${spotifyPlayerID}&position_ms=${position_ms}&offset=${offset}`;
     const response = await useFetch(URL, 'GET');
     const errorStatus = response.error !== undefined
@@ -475,6 +478,11 @@ export async function playSong(position_ms, offset, playlistParam) {
       // Do Some Error Handling Here
       // const { message } = response.error;
     }
+    /* For some reason, the playback SDK cannot play a song
+      if the UI isn't transitioned to a screen that lists out the tracks,
+      so need to give it a little nudge with this method
+    */
+    player.togglePlay(spotifyPlayerID);
     return response;
   } catch (err) {
     // Do Some Error Handling Here
@@ -521,6 +529,9 @@ export async function getUserPersonalisation(type, offsetNum) {
 
 // Song Fetch
 export async function handlingSongsData(valence, arousal, how, trackObj, userSettingsData, starDots, chosenPoints, width, height, p5, emitterObj, transition) {
+  console.log('isSearching', isSearching);
+  console.log('playlist', playlist);
+  console.log('minTracks', minTracks);
   if (isSearching || playlist.length < minTracks) {
     isSearching = true;
     emitter = emitterObj;
@@ -544,8 +555,11 @@ export async function handlingSongsData(valence, arousal, how, trackObj, userSet
         false, trackObj, userSettingsData, starDots, width, height, chosenPoints, p5, transition);
   
     } else KEYWORD = getKeyword(how, trackObj);
+    console.log('KEYWORD', KEYWORD);
+    console.log('trackObj', trackObj);
     // get songs' valence and arousal data
     let audio_features = await getSongsData(Romanisation(KEYWORD), 'track', chosenGenre);
+    console.log('audio_features', audio_features);
     // error comes from no audio features values detected
     if (audio_features === null) audio_features = await getSongsData(Romanisation(KEYWORD), 'album', chosenGenre);
     // error comes from JSON input

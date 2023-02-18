@@ -75,8 +75,10 @@ module.exports = (app) => {
     const OFFSET = req.query.offset !== 'undefined' ? Number(req.query.offset) : undefined;
 
     try {
-      const songPlay = await getSongPlay(TOKEN, PLAYLIST, PLAYER_ID, POSITION_MS, OFFSET);
-      res.json(songPlay);
+      await getSongPlay(TOKEN, PLAYLIST, PLAYER_ID, POSITION_MS, OFFSET);
+      res.json({
+        statusCode: 204,
+      });
     } catch(err) {
       res.json(err);
     }
