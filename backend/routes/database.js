@@ -5,6 +5,7 @@ const createConnection = require('../data/connection');
 const getAllData = require('../logic/mongodb/getAllData');
 const createOneData = require('../logic/mongodb/createOneData');
 const updateOneData = require('../logic/mongodb/updateOneData');
+const deleteData = require('../logic/mongodb/deleteData');
 
 module.exports = async function databaseRouter(app) {
 
@@ -54,6 +55,21 @@ module.exports = async function databaseRouter(app) {
       const data = NUM_OF_COLLECTION === 0
         ? await updateOneData(personalisation_db, ID, PARAM)
         : await updateOneData(user_journey_db, ID, PARAM);
+      res.json(data);
+    } catch (err) {
+      res.json(err);
+    }
+  });
+
+  // route to delete data
+  app.put('/data/delete', async (req, res) => {
+    try {
+      const ID = req.query.id;
+      const NUM_OF_COLLECTION = Number(req.query.num);
+  
+      const data = NUM_OF_COLLECTION === 0
+        ? await deleteData(personalisation_db, ID)
+        : await deleteData(user_journey_db, ID);
       res.json(data);
     } catch (err) {
       res.json(err);

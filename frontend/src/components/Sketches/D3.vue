@@ -8,12 +8,16 @@
           <img id="prev" src="@/assets/icons/up.png" />
         </div>
         <div id="song_wrapper">
-          <h4 v-for="(song, songKey) in songInfoDisplay.titles"
+          <div v-for="(song, songKey) in songInfoDisplay.titles"
              :key="songKey"
-             :class="isActive === songKey ? 'active' : 'songs'"
+             :class="isActive === songKey ? 'active' : 'inactive'"
+             class="recorded_songs"
              @click="replaySong(songKey)">
-            {{ song }} - {{ songInfoDisplay.artists[songKey] }}
-          </h4>
+             <div class="close_btn" @click.stop="removeSong(songKey)">
+              <span>X</span>
+            </div>
+            <h4>{{ song }}</h4> - <small>{{ songInfoDisplay.artists[songKey] }}</small>
+          </div>
         </div>
         <div v-if="end < journey.songs.titles.length - 1" class="btns" @click="changesongInfoDisplay(3)">
           <img id="next" src="@/assets/icons/up.png" />
@@ -95,7 +99,7 @@
       </svg>
 
       <!-- Close Button -->
-      <div id="close_btn" @click="closeRecordDetailWindow">
+      <div class="close_btn" @click="closeRecordDetailWindow">
         <h2>X</h2>
       </div>
 
@@ -165,7 +169,7 @@ export default {
     },
   },
   setup(props) {
-    // using `toRefs` to create a Reactive Reference to the `recordDetails` property of props
+    // using `toRefs` to create a Reactive Reference to the `recordDetails` field
     const {
       which, journey, colour, databaseID,
     } = toRefs(props.recordDetails);
@@ -292,6 +296,58 @@ export default {
       }
     }
 
+    async function removeSong(idx) {
+      journey.value.songs.titles = journey.value.songs.titles
+        .filter((_, titleIdx) => titleIdx !== idx + start.value);
+      journey.value.songs.artists = journey.value.songs.artists
+        .filter((_, artistIdx) => artistIdx !== idx + start.value);
+
+      journey.value.songs.mood_scores.valence = journey.value.songs.mood_scores.valence
+        .filter((_, moodIdx) => moodIdx !== idx + start.value);
+      journey.value.songs.mood_scores.arousal = journey.value.songs.mood_scores.arousal
+        .filter((_, moodIdx) => moodIdx !== idx + start.value);
+      journey.value.songs.spotify.uris = journey.value.songs.spotify.uris
+        .filter((_, uriIdx) => uriIdx !== idx + start.value);
+      journey.value.songs.spotify.img_urls = journey.value.songs.spotify.img_urls
+        .filter((_, uriIdx) => uriIdx !== idx + start.value);
+
+      // Update song list to play songs correctly
+      songDot.artist = [...journey.value.songs.artists];
+      songDot.title = [...journey.value.songs.titles];
+      songDot.valence = [...journey.value.songs.mood_scores.valence];
+      songDot.arousal = [...journey.value.songs.mood_scores.arousal];
+      songDot.image = [...journey.value.songs.spotify.img_urls];
+      songDot.uris = [...journey.value.songs.spotify.uris];
+
+      // Update song display on the song board
+      songInfoDisplay.artists = journey.value.songs.artists.slice(start.value, end.value);
+      songInfoDisplay.titles = journey.value.songs.titles.slice(start.value, end.value);
+
+      // Structure the user journey object
+      const dataObj = userJourneyObj(journey.value.user.id,
+        journey.value.user.position.x, journey.value.user.position.y,
+        journey.value.user.indices.i, journey.value.user.indices.j,
+        diary.title, diary.content,
+        journey.value.songs.titles, journey.value.songs.artists,
+        journey.value.songs.mood_scores.valence,
+        journey.value.songs.mood_scores.arousal,
+        journey.value.songs.spotify.uris,
+        journey.value.songs.spotify.img_urls,
+        journey.value.date, journey.value.time);
+
+      // Update user journey database
+      await updateData(databaseID.value, dataObj, 1);
+      const emittedObj = {
+        data: {
+          data: dataObj,
+          _id: databaseID.value,
+        },
+        index: which.value,
+        status: 'updateDiary',
+      };
+      props.emitter.emit('user_journey', emittedObj);
+    }
+
     // Change Song Display Via Button Clicks
     function changesongInfoDisplay(num) {
       start.value += num;
@@ -383,6 +439,7 @@ export default {
       collapseStoryWindow,
       collapsibleRef,
       updateDiary,
+      removeSong,
     };
   },
 };

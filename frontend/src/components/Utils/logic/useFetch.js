@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-export default async function useFetch(URL, methodType, data) {
+export default async function useFetch(URL, methodType, data = {}) {
   let options;
 
   // if method is GET
