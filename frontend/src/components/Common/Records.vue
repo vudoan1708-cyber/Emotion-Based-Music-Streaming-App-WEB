@@ -18,11 +18,24 @@
             <!-- <div id="dates_carousel">
               <span><p>Today</p></span>
             </div> -->
+            <!-- Update Button -->
+            <div class="update_btn" v-if="!editing" @click="$event => { editing = true; }">
+              <img src="@/assets/icons/pen.png" />
+            </div>
+            <!-- Accept Button -->
+            <div class="update_btn" v-else @click="$event => { editing = false; }">
+              <img src="@/assets/icons/okay.png" />
+            </div>
           </div>
 
           <!-- Grid System to Display User Journey -->
           <!-- 1 Group of Reading -->
           <div class="records_wrapper" v-for="(score, scoreKey) in moodScores" :key="scoreKey">
+
+            <!-- Close Button -->
+            <div class="close_btn" v-if="editing" @click="removeMoodScore(scoreKey)">
+              <h2>X</h2>
+            </div>
 
             <div class="records_details" @click="viewRecordDetail(scoreKey)">
               <svg :style="{ width: `${canvas.width}%`, height: `${canvas.height}%` }">
@@ -65,7 +78,10 @@ import {
   onMounted, reactive, ref, watch,
 } from 'vue';
 
-import isEmpty from '@/components/Utils/logic/object';
+import isEmpty, { deepClone } from '@/components/Utils/logic/object';
+
+// MongoDB
+import { deleteData } from '@/handlers/mongdb';
 
 // D3 Module
 import { extent, scaleQuantize } from 'd3';
@@ -122,6 +138,8 @@ export default {
       contents: [],
     });
 
+    const editing = ref(false);
+
     // Show A General View of All Record Cards
     function updateAffectiveScore() {
       moodScores.value = [];
@@ -176,10 +194,7 @@ export default {
       colour: null,
     });
 
-    // Listen on 'record_detail_window' event to detect record detail window being closed
-    emitterObj.value.on('record_detail_window', (val) => {
-      recordDetails.isOpen = val;
-
+    function reset() {
       dates.value = [];
       times.value = [];
       diary.titles = [];
@@ -192,7 +207,12 @@ export default {
       colours.value = [];
       texts.value = [];
       averageMoodScores.value = [];
+    }
 
+    // Listen on 'record_detail_window' event to detect record detail window being closed
+    emitterObj.value.on('record_detail_window', (val) => {
+      recordDetails.isOpen = val;
+      reset();
       updateAffectiveScore();
     });
 
@@ -206,6 +226,22 @@ export default {
         // eslint-disable-next-line no-underscore-dangle
         recordDetails.databaseID = userJourneyObj.value[recordDetails.which]._id;
       }
+    }
+
+    async function removeMoodScore(key) {
+      const selected = deepClone(userJourneyObj.value[key]);
+      reset();
+      userJourneyObj.value = userJourneyObj.value.filter((_, index) => key !== index);
+      updateAffectiveScore();
+
+      // Update user journey database
+      // eslint-disable-next-line
+      await deleteData(selected._id, 1);
+      const emittedObj = {
+        index: key,
+        status: 'removeMood',
+      };
+      props.emitter.emit('user_journey', emittedObj);
     }
 
     onMounted(() => {
@@ -232,6 +268,8 @@ export default {
       viewRecordDetail,
       recordDetails,
       diary,
+      editing,
+      removeMoodScore,
     };
   },
 };

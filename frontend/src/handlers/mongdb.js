@@ -24,6 +24,17 @@ export async function updateData(ID, PARAM, NUM) {
   }
 }
 
+export async function deleteData(ID, NUM) {
+  const URL = `${BUILT_APP_URL}/data/delete/?id=${ID}&num=${NUM}`;
+
+  try {
+    const response = await useFetch(URL, 'DELETE');
+    return response;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function getAllData(NUM) {
   const URL = `${BUILT_APP_URL}/data/get/all/?num=${NUM}`;
 

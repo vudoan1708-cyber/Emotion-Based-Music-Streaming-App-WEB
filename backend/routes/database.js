@@ -62,7 +62,7 @@ module.exports = async function databaseRouter(app) {
   });
 
   // route to delete data
-  app.put('/data/delete', async (req, res) => {
+  app.delete('/data/delete', async (req, res) => {
     try {
       const ID = req.query.id;
       const NUM_OF_COLLECTION = Number(req.query.num);

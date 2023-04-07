@@ -98,6 +98,8 @@ export default {
               }
             }
           }
+        } else if (journey.status === 'removeMood') {
+          userJourney.value = userJourney.value.filter((_, idx) => idx !== journey.index);
         } else if (journey.status === 'updateDiary') {
           // If a diary content is changed, replace the old one to a new one
           // eslint-disable-next-line max-len
