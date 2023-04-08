@@ -29,6 +29,10 @@ export default async function useFetch(URL, methodType, data = {}) {
     const response = await request.json();
     return response;
   } catch (err) {
+    if (err.detail) {
+      // eslint-disable-next-line
+      alert(err.detail);
+    }
     return err;
   }
 }

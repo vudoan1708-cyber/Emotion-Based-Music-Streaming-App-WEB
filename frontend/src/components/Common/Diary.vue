@@ -27,7 +27,7 @@
     </div>
 
     <!-- Loading -->
-    <div id="loading" ref="loadingRef" style="display: none;">
+    <div class="loading" ref="loadingRef" style="display: none;">
       <div id="icon">
         <img :src="Loading" />
       </div>

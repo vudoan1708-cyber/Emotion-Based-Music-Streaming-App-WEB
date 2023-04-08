@@ -10,18 +10,37 @@
     display: flex;
     flex-direction: column;
     // justify-content: center;
-    min-height: 100vh;
+    min-height: calc(100vh - 160px);
     position: relative;
     text-align: center;
 
     #records_board {
       position: relative;
       width: 100%;
-      height: 100%;
+      height: calc(100vh - 160px);
+
+      .loading {
+        @include positionProperties(absolute, 50%, '', 50%, '');
+        width: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.25);
+        .icon {
+          position: relative;
+          img {
+            width: 15%;
+          }
+        }
+      }
 
       #records_placeholder {
-        @include positionProperties(absolute, 50%, '', 50%, '');
-        transform: translate(-50%, -50%);
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
       }
 
       #records_display {
