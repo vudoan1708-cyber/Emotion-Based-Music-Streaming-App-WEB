@@ -18,13 +18,19 @@
             <!-- <div id="dates_carousel">
               <span><p>Today</p></span>
             </div> -->
-            <!-- Update Button -->
-            <div class="update_btn" v-if="!editing" @click="$event => { editing = true; }">
-              <img src="@/assets/icons/pen.png" />
-            </div>
-            <!-- Accept Button -->
-            <div class="update_btn" v-else @click="$event => { editing = false; }">
-              <img src="@/assets/icons/okay.png" />
+            <div class="toolbar">
+              <!-- Search -->
+              <input ref="searchInputRef" v-model="searchInput" type="text"
+                placeholder="Search Diary...">
+
+              <!-- Update Button -->
+              <div class="update_btn" v-if="!editing" @click="$event => { editing = true; }">
+                <img src="@/assets/icons/pen.png" />
+              </div>
+              <!-- Accept Button -->
+              <div class="update_btn" v-else @click="$event => { editing = false; }">
+                <img src="@/assets/icons/okay.png" />
+              </div>
             </div>
           </div>
 
@@ -107,6 +113,7 @@ export default {
     const emitterObj = ref(props.emitter);
     // userJourney
     const userJourneyObj = ref(props.userJourney);
+    const tempUserJourney = deepClone(userJourneyObj.value);
     const isObjEmpty = ref(isEmpty(userJourneyObj.value));
 
     // D3
@@ -138,7 +145,10 @@ export default {
       contents: [],
     });
 
+    // Edit
     const editing = ref(false);
+    // Search input value
+    const searchInput = ref(null);
 
     // Show A General View of All Record Cards
     function updateAffectiveScore() {
@@ -255,6 +265,19 @@ export default {
       updateAffectiveScore();
     });
 
+    watch(searchInput, (val) => {
+      reset();
+      if (!val) {
+        userJourneyObj.value = deepClone(tempUserJourney);
+        updateAffectiveScore();
+        return;
+      }
+      userJourneyObj.value = tempUserJourney.filter((journey) => (
+        journey.data.user.diary.title.toLowerCase().indexOf(val.toLowerCase()) > -1
+      ));
+      updateAffectiveScore();
+    });
+
     return {
       emitterObj,
       userJourneyObj,
@@ -270,6 +293,7 @@ export default {
       diary,
       editing,
       removeMoodScore,
+      searchInput,
     };
   },
 };

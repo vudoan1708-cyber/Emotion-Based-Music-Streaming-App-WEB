@@ -9,7 +9,7 @@ module.exports = async function updateOneData(db, id, data) {
 
     // handle no item found for update
     if (!returnedItem) return null;
-    else return await db.update({
+    return await db.update({
       /* update needed data */
       _id: id,
     }, {

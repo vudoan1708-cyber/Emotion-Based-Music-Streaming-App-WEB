@@ -8,7 +8,7 @@ module.exports = async function deleteData(db, id) {
 
     // handle no item found for update
     if (!returnedItem) return null;
-    else return await db.remove({
+    return await db.remove({
       /* remove data */
       _id: id,
     });
