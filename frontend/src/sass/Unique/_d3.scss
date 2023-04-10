@@ -151,38 +151,26 @@
       height: 100%;
       background-color: rgba(12, 12, 12, 0.95);
       padding: 20px;
-
-      .update_btn {
-        @include positionProperties(absolute, '', 0, '', 0);
-        width: 10%;
-        background-color: rgb(160, 160, 160);
-        padding: 5px;
-        border-radius: 10px;
-        cursor: pointer;
-        @include transitionProperties(all, 0.2s);
-
-        img {
-          width: 100%;
-          filter: invert(0);
-        }
-
-        &:hover {
-          background-color: rgb(0, 0, 0);
-
-          img {
-            filter: invert(100%);
-          }
-        }
-      }
+      overflow-y: auto;
 
       #diary_wrapper {
-        @include positionProperties(relative, 50%, '', 50%, '');
-        transform: translate(-50%, -50%);
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 16px;
 
         #story_title,
         #story_content {
-          margin: 10px;
-          padding: 10px;
+          position: relative;
+          width: 100%;
+          width: -moz-available;          /* WebKit-based browsers will ignore this. */
+          width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+          width: fill-available;
+          margin: 0 10px;
+          padding: 0 10px;
           color: rgb(199, 199, 199);
           white-space: pre-line;
 
@@ -201,6 +189,38 @@
           }
         }
       }
+
+      #diary_wrapper.hasScroller {
+        justify-content: flex-start;
+      }
+    }
+
+    .update_btn {
+      @include positionProperties(absolute, '', 0, '', 0);
+      width: 5%;
+      background-color: rgb(160, 160, 160);
+      padding: 5px;
+      border-radius: 10px;
+      cursor: pointer;
+      @include transitionProperties(all, 0.2s);
+
+      img {
+        width: 100%;
+        filter: invert(0);
+      }
+
+      &:hover {
+        background-color: rgb(0, 0, 0);
+
+        img {
+          filter: invert(100%);
+        }
+      }
+    }
+
+    #story:has(#diary_wrapper.hasScroller) ~ .update_btn_wrapper .update_btn,
+    &:has(#story):has(#diary_wrapper.hasScroller) .close_btn {
+      right: 5px;
     }
   }
 }
@@ -286,16 +306,15 @@
     }
     
     #mood {
+      .close_btn {
+        padding: 8px;
+      }
 
       #collapse_btn {
         padding: 15px !important;
       }
 
       #story {
-        .update_btn {
-          width: 15% !important;
-        }
-
         #diary_wrapper {
           #story_title,
           #story_content {
@@ -308,6 +327,10 @@
             }
           }
         }
+      }
+
+      .update_btn {
+        width: 8% !important;
       }
     }
   }
@@ -345,10 +368,6 @@
       }
 
       #story {
-        .update_btn {
-          width: 15% !important;
-        }
-
         #diary_wrapper {
           #story_title,
           #story_content {
@@ -360,6 +379,10 @@
               }
             }
           }
+        }
+        
+        .update_btn {
+          width: 10% !important;
         }
       }
     }

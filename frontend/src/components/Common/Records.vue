@@ -301,4 +301,7 @@ export default {
 
 <style scoped lang="scss">
 @import '@/sass/Unique/_records.scss';
+:global(#center_pane:has(#records_area):has(#record_detail)) {
+  overflow-y: hidden !important;
+}
 </style>

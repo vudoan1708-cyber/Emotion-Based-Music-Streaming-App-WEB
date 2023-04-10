@@ -104,17 +104,8 @@
       </div>
 
       <!-- Diary Display -->
-      <div id="story" v-if="diary.collapsible === 1">
-        <!-- Update Button -->
-        <div class="update_btn" v-if="!diary.updateContent || !diary.updateTitle" @click="updateDiary('update')">
-          <img src="@/assets/icons/pen.png" />
-        </div>
-        <!-- Accept Button -->
-        <div class="update_btn" v-else @click="updateDiary('acceptChanges')">
-          <img src="@/assets/icons/okay.png" />
-        </div>
-
-        <div id="diary_wrapper">
+      <div id="story" ref="storyWrapper" v-if="diary.collapsible === 1">
+        <div id="diary_wrapper" :class="{ hasScroller: hasScroller }">
           <div id="story_title">
             <h2 v-if="!diary.updateTitle">{{ diary.title }}</h2>
             <!-- Update Title -->
@@ -123,7 +114,7 @@
             </div>
           </div>
 
-          <div id="story_content">
+          <div id="story_content" ref="storyContent">
             <p  v-if="!diary.updateContent">{{ diary.content }}</p>
 
             <!-- Update Content -->
@@ -139,13 +130,24 @@
         <h2 v-if="diary.collapsible === 1">&#8883;</h2>
         <h2 v-else>&#8882;</h2>
       </div>
+
+      <div class="update_btn_wrapper" v-if="diary.collapsible === 1">
+        <!-- Update Button -->
+        <div class="update_btn" v-if="!diary.updateContent || !diary.updateTitle" @click="updateDiary('update')">
+          <img src="@/assets/icons/pen.png" />
+        </div>
+        <!-- Accept Button -->
+        <div class="update_btn" v-else @click="updateDiary('acceptChanges')">
+          <img src="@/assets/icons/okay.png" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import {
-  reactive, ref, toRefs, watch,
+  onMounted, reactive, ref, toRefs, watch,
 } from 'vue';
 
 // Spotify
@@ -175,6 +177,8 @@ export default {
     } = toRefs(props.recordDetails);
     // DOM Ref
     const collapsibleRef = ref(null);
+    const storyWrapper = ref(null);
+    const storyContent = ref(null);
 
     const start = ref(0);
     const end = ref(3);
@@ -182,6 +186,7 @@ export default {
     // const zoomValue = ref(1);
 
     const isActive = ref(false);
+    const hasScroller = ref(false);
 
     // Song Display
     const songInfoDisplay = reactive({
@@ -409,6 +414,15 @@ export default {
       props.emitter.emit('map', mapProperties);
     }
 
+    onMounted(() => {
+      if (!storyWrapper.value?.clientHeight || !storyContent.value?.clientHeight) return;
+      if (storyWrapper.value.clientHeight < storyContent.value.clientHeight) {
+        hasScroller.value = true;
+        return;
+      }
+      hasScroller.value = false;
+    });
+
     watch(() => [which, journey], ([key, d]) => {
       which.value = key;
       journey.value = d;
@@ -440,6 +454,9 @@ export default {
       collapsibleRef,
       updateDiary,
       removeSong,
+      storyWrapper,
+      storyContent,
+      hasScroller,
     };
   },
 };
