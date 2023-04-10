@@ -104,8 +104,8 @@
       </div>
 
       <!-- Diary Display -->
-      <div id="story" ref="storyWrapper" v-if="diary.collapsible === 1">
-        <div id="diary_wrapper" :class="{ hasScroller: hasScroller }">
+      <div id="story" v-if="diary.collapsible === 1">
+        <div id="diary_wrapper" ref="diaryWrapper" :class="{ hasScroller: hasScroller }">
           <div id="story_title">
             <h2 v-if="!diary.updateTitle">{{ diary.title }}</h2>
             <!-- Update Title -->
@@ -177,7 +177,7 @@ export default {
     } = toRefs(props.recordDetails);
     // DOM Ref
     const collapsibleRef = ref(null);
-    const storyWrapper = ref(null);
+    const diaryWrapper = ref(null);
     const storyContent = ref(null);
 
     const start = ref(0);
@@ -415,8 +415,8 @@ export default {
     }
 
     onMounted(() => {
-      if (!storyWrapper.value?.clientHeight || !storyContent.value?.clientHeight) return;
-      if (storyWrapper.value.clientHeight < storyContent.value.clientHeight) {
+      if (!diaryWrapper.value?.clientHeight || !storyContent.value?.clientHeight) return;
+      if (diaryWrapper.value.clientHeight < storyContent.value.clientHeight) {
         hasScroller.value = true;
         return;
       }
@@ -454,7 +454,7 @@ export default {
       collapsibleRef,
       updateDiary,
       removeSong,
-      storyWrapper,
+      diaryWrapper,
       storyContent,
       hasScroller,
     };
